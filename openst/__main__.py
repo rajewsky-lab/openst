@@ -2,7 +2,9 @@ import logging
 
 from openst.cli import cmdline_main
 
-logging.basicConfig(format="%(levelname)s %(asctime)s - %(message)s", level=logging.INFO)
+def run_openst():
+    logging.basicConfig(format="%(levelname)s %(asctime)s - %(message)s", level=logging.INFO)
+    cmdline_main()
 
 if __name__ == "__main__":
-    cmdline_main()
+    run_openst()
