@@ -1,9 +1,9 @@
 # run this Makefile on your dataset loader script,
-# > make check_file=src/<subdir>/<script_name>.py
+# > make check_file=openst/<subdir>/<script_name>.py
 
 .PHONY: quality
 
-datasets_dir := src
+source_dir := openst
 examples_dir := examples
 
 # Format source code automatically (one file)
@@ -15,6 +15,6 @@ quality:
 
 # Format source code automatically (all files)
 quality_all:
-	black --check --line-length 119 --target-version py38 $(datasets_dir)
-	isort --check-only $(datasets_dir)
-	flake8 $(datasets_dir) --max-line-length 119 --ignore=E203,W503
+	black --check --line-length 119 --target-version py38 $(source_dir)
+	isort --check-only $(source_dir)
+	flake8 $(source_dir) --max-line-length 119 --ignore=E203,W503

@@ -1,6 +1,6 @@
 import io
 import os
-from setuptools import find_packages, setup
+from setuptools import setup
 
 def read(*paths, **kwargs):
     content = ""
@@ -24,6 +24,5 @@ setup(
     version="0.1.0",
     description="Computational tools of the open-ST pipeline",
     author="Daniel León-Periñán",
-    packages=find_packages(exclude=["tests", ".github"]),
-    install_requires=read_requirements("requirements.txt")
+    packages=['openst']
 )
