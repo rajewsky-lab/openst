@@ -1,4 +1,4 @@
-name: openst_dev
+name: openst
 channels:
   - defaults
 dependencies:
@@ -127,4 +127,3 @@ dependencies:
       - triton==2.0.0
       - typing-extensions==4.7.1
       - tzdata==2023.3
-prefix: /home/dleonpe/miniconda3/envs/openst_dev
