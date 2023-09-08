@@ -1,4 +1,4 @@
-name: openst
+name: openst_dev
 channels:
   - defaults
 dependencies:
@@ -88,16 +88,25 @@ dependencies:
   - pip:
       - anndata==0.9.2
       - cellpose==2.2.3
+      - certifi==2023.7.22
+      - charset-normalizer==3.2.0
       - cmake==3.27.4.1
+      - contourpy==1.1.0
+      - cycler==0.11.0
+      - dill==0.3.7
       - fastremap==1.14.0
       - filelock==3.12.3
+      - fonttools==4.42.1
       - h5py==3.9.0
+      - idna==3.4
       - imagecodecs==2023.9.4
       - jinja2==3.1.2
+      - kiwisolver==1.4.5
       - kornia==0.7.0
       - lit==16.0.6
       - llvmlite==0.40.1
       - markupsafe==2.1.3
+      - matplotlib==3.7.2
       - mpmath==1.3.0
       - natsort==8.4.0
       - numba==0.57.1
@@ -113,17 +122,29 @@ dependencies:
       - nvidia-cusparse-cu11==11.7.4.91
       - nvidia-nccl-cu11==2.14.3
       - nvidia-nvtx-cu11==11.7.91
+      - opencv-python==4.8.0.76
       - opencv-python-headless==4.8.0.76
+      - openst==0.1.0
       - pandas==2.1.0
+      - psutil==5.9.5
+      - py-cpuinfo==9.0.0
+      - pyparsing==3.0.9
       - python-dateutil==2.8.2
       - pytz==2023.3.post1
+      - requests==2.31.0
       - roifile==2023.8.30
       - scipy==1.11.2
+      - seaborn==0.12.2
       - six==1.16.0
       - sympy==1.12
+      - threadpoolctl==3.2.0
       - tifffile==2023.8.30
       - torch==2.0.1
+      - torchvision==0.15.2
       - tqdm==4.66.1
       - triton==2.0.0
       - typing-extensions==4.7.1
       - tzdata==2023.3
+      - ultralytics==8.0.173
+      - urllib3==2.0.4
+prefix: /home/dleonpe/miniconda3/envs/openst_dev
