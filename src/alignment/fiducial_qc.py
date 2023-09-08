@@ -1,1 +1,0 @@
-# TODO: implement the script that checks the pairwise distance between fiducial markers, at each of the tiles
