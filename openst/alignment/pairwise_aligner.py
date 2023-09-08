@@ -536,7 +536,7 @@ def run_registration(
             dst,
             flips=[_best_flip],
             rotations=[_best_rotation],
-            src_preprocessor=src_preprocessor,
+            src_augmenter=src_preprocessor,
             ransac_min_samples=args.ransac_fine_min_samples,
             ransac_residual_threshold=args.ransac_fine_residual_threshold,
             ransac_max_trials=args.ransac_fine_max_trials,
