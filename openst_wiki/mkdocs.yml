@@ -1,11 +1,47 @@
 site_name: open-ST wiki
 site_url: https://open.st
+site_author: Daniel Leon-Perinan
+
+
+repo_url: https://github.com/ajitjohnson/scimap
+edit_uri: https://github.com/ajitjohnson/scimap/edit/master/docs
 nav:
   - Home: index.md
   - 1. Experimental: experimental.md
   - 2. Computational: computational.md
   - FAQ: faq.md
-  - About: about.md
+  - API: api.md
 
 theme:
-  name: terminal
+  name: material
+  features:
+    - navigation.instant
+  features:
+    - navigation.tabs
+    - navigation.tabs.sticky
+    - navigation.top
+    - search.highlight
+  palette:
+    - scheme: default
+      primary: teal
+      toggle:
+        primary: teal
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    - scheme: slate
+      primary: teal
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
+
+plugins:
+- search:
+    prebuild_index: true
+- autorefs
+
+extra:
+  copyright: Copyright &copy; 2020 - 2022 Ajit Johnson Nirmal
+  social:
+    - icon: fontawesome/brands/twitter
+      link: https://twitter.com/ajitjohnson_n
+      name: Twitter

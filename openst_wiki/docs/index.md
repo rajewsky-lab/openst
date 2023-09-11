@@ -1,3 +1,11 @@
+---
+title: SCIMAP
+description: Spatial Single-Cell Analysis Toolkit
+hide:
+  - toc
+  - nav       # Hide table of contents
+---
+
 # Welcome to Open-ST Documentation
 
 **Open-ST** is a high-resolution spatial transcriptomics method that aims to democratize spatial transcriptomics by making it accessible to any laboratory.
