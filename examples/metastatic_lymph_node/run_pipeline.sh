@@ -30,7 +30,7 @@
 #     --no_npy
 
 # Run pairwise alignment
-python -m openst pairwise_aligner \
+openst pairwise_aligner \
     --image-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/1_images_ln/stitched/fc_sts_63_4/Image_Stitched_Composite.tif \
     --h5-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/stitched/fc_sts_063_4_merged_stitched_spots.h5ad \
     --h5-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_4_stitched_spots_aligned.h5ad \
@@ -42,7 +42,8 @@ python -m openst pairwise_aligner \
     --ransac-coarse-residual-threshold 2 \
     --ransac-coarse-min-samples 2 \
     --metadata-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_4_alignment_metadata.pkl \
-    --threshold-counts-coarse 2
+    --threshold-counts-coarse 2 \
+    --fiducial-model /data/rajewsky/home/dleonpe/projects/openst_paper/repos/openst/models/yolov8s_fiducial_detection_universal.pt
 
 # # Assign transcripts to cells using the segmentation mask. Needs metadata alignment
 # openst assign_transcripts_to_mask
