@@ -1,14 +1,15 @@
 import logging
-import numpy as np
-
 from collections.abc import Callable
 from itertools import product
+
+import numpy as np
 from skimage.measure import ransac
 from skimage.transform import SimilarityTransform
 
-SUPPORTED_MATCHING_METHODS = ['LoFTR', 'SIFT']
+SUPPORTED_MATCHING_METHODS = ["LoFTR", "SIFT"]
 
-def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "outdoor") -> tuple:
+
+def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "outdoor", device: str = "cpu") -> tuple:
     """
     Find matching keypoints between two images using LoFTR.
 
@@ -36,11 +37,11 @@ def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "o
                Please run 'pip install kornia'"""
         )
 
-    matcher = KF.LoFTR(pretrained=pretrained)
+    matcher = KF.LoFTR(pretrained=pretrained).to(device)
 
     input_dict = {
-        "image0": torch.tensor(im_0)[None, None].float(),
-        "image1": torch.tensor(im_1)[None, None].float(),
+        "image0": torch.tensor(im_0)[None, None].float().to(device),
+        "image1": torch.tensor(im_1)[None, None].float().to(device),
     }
 
     with torch.inference_mode():
@@ -49,7 +50,7 @@ def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "o
     return correspondences["keypoints0"].cpu().numpy(), correspondences["keypoints1"].cpu().numpy()
 
 
-def _find_matches_sift(im_0: np.ndarray, im_1: np.ndarray) -> tuple:
+def _find_matches_sift(im_0: np.ndarray, im_1: np.ndarray, *args, **kwargs) -> tuple:
     """
     Find matching keypoints between two images using SIFT.
 
@@ -68,8 +69,10 @@ def _find_matches_sift(im_0: np.ndarray, im_1: np.ndarray) -> tuple:
     try:
         from skimage.feature import SIFT, match_descriptors
     except ImportError:
-        raise ImportError("""Could not find module scikit-image. 
-                          Please run 'pip install scikit-image'""")
+        raise ImportError(
+            """Could not find module scikit-image.
+                          Please run 'pip install scikit-image'"""
+        )
     feat_descriptor = SIFT()
 
     feat_descriptor.detect_and_extract(im_0)
@@ -85,7 +88,16 @@ def _find_matches_sift(im_0: np.ndarray, im_1: np.ndarray) -> tuple:
     return keypoints0[matches01[:, 0]], keypoints1[matches01[:, 1]]
 
 
-def find_matches(src: list, dst: list, method="LoFTR") -> tuple:
+def find_matches(
+    src: list,
+    dst: list,
+    method="LoFTR",
+    prefilter: bool = False,
+    ransac_min_samples: float = 1,
+    ransac_residual_threshold: float = 1,
+    ransac_max_trials: float = 10000,
+    device: str = "cpu",
+) -> tuple:
     """
     Find matching keypoints between source and destination images using a specified method.
 
@@ -113,25 +125,45 @@ def find_matches(src: list, dst: list, method="LoFTR") -> tuple:
 
     if type(dst) is not list:
         raise TypeError("'dst' must be a list of images")
-    
+
     if method not in SUPPORTED_MATCHING_METHODS:
         raise ValueError(f"Feature matching method '{method}' is not supported")
 
-    mkpts0 = np.array([[0, 0]])
-    mkpts1 = np.array([[0, 0]])
+    mkpts0 = np.array([])
+    mkpts1 = np.array([])
 
     for _i_dst in dst:
         for _i_src in src:
             if method == "LoFTR":
-                _i_mkpts0, _i_mkpts1 = _find_matches_loftr(_i_dst, _i_src)
+                _i_mkpts0, _i_mkpts1 = _find_matches_loftr(_i_dst, _i_src, device=device)
             elif method == "SIFT":
                 _i_mkpts0, _i_mkpts1 = _find_matches_sift(_i_dst, _i_src)
             else:
                 raise ValueError(f"Registration method {method} not supported")
 
-            if len(_i_mkpts0) > 0:
+            if prefilter and _i_mkpts0.size > 0:
+                _, inliers = ransac(
+                    (_i_mkpts0, _i_mkpts1),
+                    SimilarityTransform,
+                    min_samples=ransac_min_samples,
+                    residual_threshold=ransac_residual_threshold,
+                    max_trials=ransac_max_trials,
+                )
+
+                if inliers is not None:
+                    inliers = inliers > 0
+                    _i_mkpts0 = _i_mkpts0[inliers.flatten()]
+                    _i_mkpts1 = _i_mkpts1[inliers.flatten()]
+                else:
+                    _i_mkpts0 = []
+                    _i_mkpts1 = []
+
+            if len(_i_mkpts0) > 0 and len(mkpts0) > 0:
                 mkpts0 = np.concatenate([_i_mkpts0, mkpts0])
                 mkpts1 = np.concatenate([_i_mkpts1, mkpts1])
+            elif len(_i_mkpts0) > 0 and len(mkpts0) == 0:
+                mkpts0 = _i_mkpts0
+                mkpts1 = _i_mkpts1
 
     return mkpts0, mkpts1
 
@@ -139,14 +171,17 @@ def find_matches(src: list, dst: list, method="LoFTR") -> tuple:
 def match_images(
     src: np.ndarray,
     dst: np.ndarray,
-    feature_matcher: str = 'LoFTR',
+    feature_matcher: str = "LoFTR",
     flips: list = [[1, 1], [1, -1], [-1, 1], [-1, -1]],
-    rotations: list  = [0, 90],
+    rotations: list = [0, 90],
     src_augmenter: Callable = None,
     dst_augmenter: Callable = None,
+    prefilter: bool = False,
+    ransac_enabled: bool = True,
     ransac_min_samples: float = 1,
     ransac_residual_threshold: float = 1,
     ransac_max_trials: float = 10000,
+    device: str = "cpu",
 ) -> (np.ndarray, np.ndarray, list, float):
     """
     Matching of two images (A,B), with augmentation (optionally)
@@ -169,6 +204,7 @@ def match_images(
     """
     # TODO: check flips list
     # TODO: check rotations list
+    # TODO: documentation
 
     _src, _dst = src, dst
     max_keypoints = 0
@@ -187,29 +223,40 @@ def match_images(
             _dst = dst_augmenter(dst, flip=[_flip_x, _flip_y], rotation=_rotation)
 
         # Find matching keypoints between image and STS pseudoimage modalities
-        mkpts0, mkpts1 = find_matches(_src, _dst, feature_matcher)
+        mkpts0, mkpts1 = find_matches(_src, _dst, feature_matcher, prefilter, device=device)
 
         logging.info(f"{len(mkpts0)} matches")
 
-        # Run RANSAC to remove outliers
-        _, inliers = ransac(
-            (mkpts0, mkpts1),
-            SimilarityTransform,
-            min_samples=ransac_min_samples,
-            residual_threshold=ransac_residual_threshold,
-            max_trials=ransac_max_trials,
-        )
-        inliers = inliers > 0
+        # Run RANSAC to remove outliers,
+        # after all pairwise channels have been matched
+        if ransac_enabled:
+            sum_inliers = 0
+            best_inliers = None
+            for _ in range(ransac_max_trials):
+                _, inliers = ransac(
+                    (mkpts0, mkpts1),
+                    SimilarityTransform,
+                    min_samples=ransac_min_samples,
+                    residual_threshold=ransac_residual_threshold,
+                    max_trials=1000,
+                )
+                inliers = inliers > 0
+
+                if inliers.sum() > sum_inliers:
+                    sum_inliers = inliers.sum()
+                    best_inliers = inliers
+        else:
+            best_inliers = np.ones(len(mkpts0), dtype=bool)
 
         if len(mkpts0) > max_keypoints:
             max_keypoints = len(mkpts0)
             best_flip = [_flip_x, _flip_y]
             best_rotation = _rotation
 
-            _best_mkpts0 = mkpts0[inliers.flatten()]
-            _best_mkpts1 = mkpts1[inliers.flatten()]
+            _best_mkpts0 = mkpts0[best_inliers.flatten()]
+            _best_mkpts1 = mkpts1[best_inliers.flatten()]
 
-        logging.info(f"{inliers.sum()} inliers (RANSAC)")
+        logging.info(f"{best_inliers.sum()} inliers (RANSAC)")
 
     # Retrieve the results for the best flip combination
     # Filter keypoints with selected inliers

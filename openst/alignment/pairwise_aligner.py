@@ -1,5 +1,3 @@
-#!/usr/bin/env python3
-
 """
 Automatic Pairwise Alignment of Spatial Transcriptomics and Imaging Data (open-ST)
 
@@ -19,7 +17,7 @@ openst pairwise_aligner --image-in input_image.jpg --h5-in input_data.h5ad --h5-
                      --pseudoimage-size-coarse 4000 --pseudoimage-size-fine 6000 --ransac-coarse-min-samples 3
                      --ransac-coarse-residual-threshold 2 --ransac-coarse-max-trials 10000 --ransac-fine-min-samples 10
                      --ransac-fine-residual-threshold 2 --ransac-fine-max-trials 10000 --max-image-pixels 933120000
-                     --feature-matcher 'SIFT' --n-threads 2
+                     --feature-matcher 'LoFTR' --n-threads 2 --fine-min-matches 50 --fiducial-model model.pt
 """
 
 import argparse
@@ -32,15 +30,16 @@ from scipy import ndimage
 from skimage.color import rgb2hsv
 from skimage.exposure import equalize_adapthist
 from skimage.filters import gaussian, threshold_otsu
-from skimage.transform import SimilarityTransform, estimate_transform, rotate
+from skimage.transform import estimate_transform, rotate
 from threadpoolctl import threadpool_limits
 
-from openst.alignment import feature_matching
+from openst.alignment import feature_matching, fiducial_detection
 from openst.alignment.metadata import (AlignmentResult,
                                        PairwiseAlignmentMetadata)
+from openst.alignment.transformation import apply_transform
 from openst.utils.file import (check_adata_structure, check_directory_exists,
-                         check_file_exists, load_properties_from_adata,
-                         save_pickle)
+                               check_file_exists, load_properties_from_adata,
+                               save_pickle)
 from openst.utils.pseudoimage import create_pseudoimage
 
 
@@ -52,7 +51,7 @@ def get_pairwise_aligner_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="open-ST pairwise alignment of two-dimensional spatial transcriptomics and imaging data.",
+        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
         allow_abbrev=False,
         add_help=False,
     )
@@ -172,7 +171,7 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--ransac-fine-min-samples",
         type=int,
-        default=10,
+        default=3,
         help="'min_samples' parameter of RANSAC, during fine registration",
     )
     parser.add_argument(
@@ -190,8 +189,8 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--max-image-pixels",
         type=int,
-        default=933120000,
-        help="'max_trials' parameter of RANSAC, during fine registration",
+        deafult=933120000,
+        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     parser.add_argument(
         "--n-threads",
@@ -212,6 +211,26 @@ def get_pairwise_aligner_parser():
         default=50,
         help="Minimum number of matching keypoints between modalities during fine alignment",
     )
+    parser.add_argument(
+        "--fiducial-model",
+        type=str,
+        default="",
+        help="Path to a object detection model (YOLO) to detect fiducial markers",
+    )
+    parser.add_argument(
+        "--genes-coarse",
+        nargs="+",
+        type=str,
+        default=None,
+        help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
+    )
+    parser.add_argument(
+        "--genes-fine",
+        nargs="+",
+        type=str,
+        default=None,
+        help="Genes used for plotting the pseudoimage during the fine alignment phase.",
+    )
     return parser
 
 
@@ -219,12 +238,24 @@ def setup_pairwise_aligner_parser(parent_parser):
     """setup_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "pairwise_aligner",
-        help="simulate pairwise_aligner on PASTA-seq data",
+        help="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
         parents=[get_pairwise_aligner_parser()],
     )
     parser.set_defaults(func=_run_pairwise_aligner)
 
     return parser
+
+
+def transform_image(im, flip: list = None, crop: list = None, rotation: int = None):
+    _im = im
+    if flip is not None:
+        _im = _im[:: flip[0], :: flip[1]]
+    if rotation is not None:
+        _im = rotate(_im, rotation)
+    if crop is not None:
+        _im[crop[0] : crop[1], crop[2] : crop[3]]
+
+    return _im
 
 
 def prepare_image_for_feature_matching(
@@ -279,6 +310,7 @@ def prepare_image_for_feature_matching(
     if not isinstance(crop, list) or len(crop) != 4:
         raise ValueError("The 'crop' argument should be a list with four elements [x_min, x_max, y_min, y_max].")
 
+    image = transform_image(image, flip, crop, rotation)
     hsv_image = rgb2hsv(image)
 
     if mask_tissue:
@@ -304,13 +336,8 @@ def prepare_image_for_feature_matching(
         image_out = image
         hsv_image_out = hsv_image
 
-    def _transform(im, flip, crop):
-        return gaussian(rotate(equalize_adapthist(im)[:: flip[0], :: flip[1]].copy(), rotation), gaussian_blur)[
-            crop[0] : crop[1], crop[2] : crop[3]
-        ]
-
-    prepared_images = [_transform(im, flip, crop) for im in hsv_image_out.transpose(2, 0, 1)]
-    prepared_images += [_transform(im, flip, crop) for im in image_out.transpose(2, 0, 1)]
+    prepared_images = [gaussian(equalize_adapthist(im), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
+    prepared_images += [gaussian(equalize_adapthist(im), gaussian_blur) for im in image_out.transpose(2, 0, 1)]
     return prepared_images
 
 
@@ -340,31 +367,6 @@ def prepare_pseudoimage_for_feature_matching(
     """
     _image = image.copy() if not invert else ((-image) - ((-image).min()))
     return [gaussian(_image, gaussian_blur)[:: flip[0], :: flip[1]]]
-
-
-def apply_transform(in_coords: np.ndarray, transform: SimilarityTransform, check_bounds=False):
-    # Check if transform within the acceptable bounds
-    if (
-        check_bounds
-        and (transform.rotation > np.pi / 4)
-        or (transform.scale > 2 or transform.scale < 0.5)
-        or (transform.translation.max() > in_coords.max(axis=0).max())
-    ):
-        return in_coords
-
-    # If the previous filter passes, apply the transformation
-    out_coords = np.dot(
-        transform.params,
-        np.concatenate(
-            [
-                in_coords[:, ::-1],
-                np.ones((len(in_coords), 1)),
-            ],
-            axis=1,
-        ).T,
-    ).T
-
-    return out_coords
 
 
 def run_registration(
@@ -406,7 +408,7 @@ def run_registration(
 
     def src_augmenter(x, flip, rotation):
         return prepare_image_for_feature_matching(
-            x,
+            image=x,
             flip=flip,
             rotation=rotation,
             mask_tissue=args.mask_tissue,
@@ -515,9 +517,9 @@ def run_registration(
         # Preparing image and pseudoimage modalities for feature detection (imaging modality has optimal flip)
         def src_preprocessor(x, flip, rotation):
             return prepare_image_for_feature_matching(
-                x,
-                flip,
-                rotation,
+                image=x,
+                flip=flip,
+                rotation=rotation,
                 gaussian_blur=args.fine_registration_gaussian_sigma,
                 crop=[x_min, x_max, y_min, y_max],
                 mask_tissue=args.mask_tissue,
@@ -541,6 +543,22 @@ def run_registration(
             ransac_residual_threshold=args.ransac_fine_residual_threshold,
             ransac_max_trials=args.ransac_fine_max_trials,
         )
+
+        # Detect fiducial markers with the YOLO model
+        if args.fiducial_model != "" and check_file_exists(args.fiducial_model, exception=False):
+            logging.info("Running fiducial marker refinement")
+            fiducial_points_src = fiducial_detection.find_fiducial(
+                transform_image(src, _best_flip, [x_min, x_max, y_min, y_max], _best_rotation), args.fiducial_model
+            )
+            fiducial_points_dst = fiducial_detection.find_fiducial(dst, args.fiducial_model)
+
+            _t_mkpts0_fiducial, _t_mkpts1_fiducial = fiducial_detection.correspondences_fiducials(
+                fiducial_points_src, fiducial_points_dst, distance_threshold=50
+            )
+
+            logging.info(f"{len(_t_mkpts0_fiducial)} fiducial matches")
+            _t_mkpts0 = np.concatenate([_t_mkpts0_fiducial, _t_mkpts0], axis=1)
+            _t_mkpts1 = np.concatenate([_t_mkpts1_fiducial, _t_mkpts1], axis=1)
 
         # Compute similarity matrix and compute point transformation
         _t_tform_points = estimate_transform("similarity", _t_mkpts0, _t_mkpts1)
@@ -574,7 +592,9 @@ def run_registration(
     return (
         out_coords_output_coarse,
         out_coords_output_fine,
-        rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation),
+        rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation, preserve_range=True).astype(
+            np.uint8
+        ),
         metadata,
     )
 
@@ -640,292 +660,3 @@ if __name__ == "__main__":
     args = get_pairwise_aligner_parser().parse_args()
     with threadpool_limits(limits=args.n_threads):
         _run_pairwise_aligner(args)
-
-# def _run_registration(
-#     in_coords: np.ndarray,
-#     total_counts: np.ndarray,
-#     puck_id: np.ndarray,
-#     staining_image: np.ndarray,
-#     args,
-# ) -> (np.ndarray, np.ndarray, PairwiseAlignmentMetadata):
-#     """
-#     Perform registration of spatial transcriptomics (STS) data with a staining image.
-
-#     Args:
-#         in_coords (np.ndarray): Input STS coordinates.
-#         total_counts (np.ndarray): Total UMI counts for each STS coordinate.
-#         puck_id: Identifier for each STS coordinate. During the fine registration,
-#                  this 'puck_id' is used to aggregate the coordinates into buckets that
-#                  are aligned separately. Recommended for flow-cell based STS.
-#         staining_image (np.ndarray): Staining image for registration.
-#         args: Namespace containing various registration parameters.
-
-#     Returns:
-#         tuple: A tuple containing four elements:
-#             - out_coords_output_coarse (np.ndarray): Registered STS coordinates after coarse registration
-#             - out_coords_output_fine (np.ndarray): Registered STS coordinates after fine registration
-#             - registered_staining_image (np.ndarray): Staining image after registration.
-#             - metadata (PairwiseAlignmentMetadata)
-#     """
-#     ROTATION_INVARIANT = ["SIFT"]
-
-#     # Create metadata object
-#     metadata = PairwiseAlignmentMetadata(args)
-
-#     # Create output object
-#     out_coords_output_fine = np.zeros_like(in_coords)
-
-#     # STAGE 1: coarse alignment (low-resolution feature matching)
-#     logging.info(f"Coarse registration, {len(in_coords)} coordinates")
-
-#     # Filter coordinates to only include UMI > args.threshold_counts_coarse
-#     sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
-
-#     staining_image_rescaled = staining_image[:: args.rescale_factor_coarse, :: args.rescale_factor_coarse]
-
-#     # Create a pseudoimage from the STS coordinates
-#     sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, staining_image_rescaled.shape)
-
-#     # Run feature matching between modalities
-#     dst = prepare_pseudoimage_for_feature_matching(sts_pseudoimage["pseudoimage"])
-
-#     _flips = [[1, 1], [1, -1], [-1, 1], [-1, -1]]
-#     _rotations = [0] if args.feature_matcher in ROTATION_INVARIANT else [0, 90]
-
-#     max_keypoints = 0
-#     _best_flip = _flips[0]
-#     _best_rotation = _rotations[0]
-#     _best_mkpts0 = None
-#     _best_mkpts1 = None
-
-#     for (_flip_x, _flip_y), _rotation in product(_flips, _rotations):
-#         logging.info(f"Aligning with image modality at flip {_flip_x, _flip_y} and rotation {_rotation}")
-#         # Preparing image and pseudoimage modalities for the feature matching model
-#         src = prepare_image_for_feature_matching(
-#             staining_image_rescaled,
-#             flip=[_flip_x, _flip_y],
-#             rotation=_rotation,
-#             mask_tissue=args.mask_tissue,
-#             keep_black_background=args.keep_black_background,
-#             mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
-#         )
-
-#         # Find matching keypoints between image and STS pseudoimage modalities
-#         mkpts0, mkpts1 = feature_matching.find_matches(src, dst, args.feature_matcher)
-
-#         logging.info(f"{len(mkpts0)} matches")
-
-#         # Run RANSAC to remove outliers
-#         _, inliers = ransac(
-#             (mkpts0, mkpts1),
-#             SimilarityTransform,
-#             min_samples=args.ransac_coarse_min_samples,
-#             residual_threshold=args.ransac_coarse_residual_threshold,
-#             max_trials=args.ransac_coarse_max_trials,
-#         )
-#         inliers = inliers > 0
-
-#         if len(mkpts0) > max_keypoints:
-#             max_keypoints = len(mkpts0)
-#             _best_flip = [_flip_x, _flip_y]
-#             _best_rotation = _rotation
-#             _best_mkpts0 = mkpts0[inliers.flatten()]
-#             _best_mkpts1 = mkpts1[inliers.flatten()]
-
-#         logging.info(f"{inliers.sum()} inliers (RANSAC)")
-
-#     # Retrieve the results for the best flip combination
-#     # Filter keypoints with selected inliers
-#     in_mkpts0 = _best_mkpts0
-#     in_mkpts1 = _best_mkpts1
-
-#     # Estimate the transform
-#     tform_points = estimate_transform("similarity", in_mkpts0, in_mkpts1)
-
-#     # Apply the transform
-#     sts_coords_to_transform = sts_pseudoimage["coords_rescaled"] * sts_pseudoimage["rescaling_factor"]
-#     sts_coords_transformed = np.dot(
-#         tform_points.params,
-#         np.concatenate(
-#             [
-#                 sts_coords_to_transform[:, ::-1],
-#                 np.ones((len(sts_coords_to_transform), 1)),
-#             ],
-#             axis=1,
-#         ).T,
-#     ).T
-#     sts_coords_transformed = sts_coords_transformed * args.rescale_factor_coarse
-
-#     # Filter out the sts locations that lie outside of the staining image
-#     _i_sts_coords_coarse_within_image_bounds = np.where(
-#         (sts_coords_transformed[:, 0] > 0)
-#         & (sts_coords_transformed[:, 0] < staining_image.shape[1])
-#         & (sts_coords_transformed[:, 1] > 0)
-#         & (sts_coords_transformed[:, 1] < staining_image.shape[0])
-#     )
-#     sts_coords_transformed = sts_coords_transformed[_i_sts_coords_coarse_within_image_bounds][:, :-1]
-
-#     # Transform 'all' coordinates, to accomodate the fine transformation
-#     sts_coords_fine = in_coords.copy()
-#     sts_coords_fine -= sts_pseudoimage["offset_factor"]
-#     sts_coords_fine = (
-#         (sts_coords_fine / sts_pseudoimage["rescale_factor"]) * sts_pseudoimage["scale"]
-#     ) * sts_pseudoimage["rescaling_factor"]
-
-#     sts_coords_fine = np.dot(
-#         tform_points.params,
-#         np.concatenate(
-#             [
-#                 sts_coords_fine[:, ::-1],
-#                 np.ones((len(sts_coords_fine), 1)),
-#             ],
-#             axis=1,
-#         ).T,
-#     ).T
-#     sts_coords_fine = sts_coords_fine * args.rescale_factor_coarse
-#     sts_coords_fine = sts_coords_fine[:, :-1]
-#     out_coords_output_coarse = sts_coords_fine.copy()
-
-#     # Saving alignment results here
-#     _align_result = AlignmentResult(
-#         im_0=None,
-#         im_1=sts_pseudoimage["pseudoimage"],
-#         transformation_matrix=tform_points.params,
-#         ransac_results=None,
-#         sift_results=None,
-#         keypoints0=in_mkpts0,
-#         keypoints1=in_mkpts1,
-#     )
-#     metadata.add_alignment_result(_align_result)
-
-#     if args.only_coarse:
-#         return (
-#             out_coords_output_coarse,
-#             None,
-#             rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation),
-#             metadata,
-#         )
-
-#     # STAGE 2: fine registration per tile
-#     logging.info(f"Fine registration with {_best_flip} flip and {_best_rotation} rotation")
-
-#     # Collect tile identifiers
-#     tile_codes = np.unique(puck_id.codes)
-
-#     # Apply scaling to input image again, for fine registration
-#     staining_image_rescaled = staining_image[:: args.rescale_factor_fine, :: args.rescale_factor_fine]
-
-#     for tile_code in tile_codes:
-#         # Create a pseudoimage
-#         _t_puck_id = puck_id.codes == tile_code
-#         _t_valid_coords = (
-#             puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds]
-#             == tile_code
-#         )
-
-#         logging.info(f"Registering tile {tile_code} with {len(_t_valid_coords)} coordinates")
-
-#         _t_sts_pseudoimage = create_pseudoimage(
-#             sts_coords_transformed[:, ::-1],  # we need to flip these coordinates
-#             args.pseudoimage_size_fine,
-#             staining_image_rescaled.shape,
-#             _t_valid_coords,
-#         )
-
-#         # Axis limits to crop both modalities to tile region
-#         _t_sts_coords_to_transform = _t_sts_pseudoimage["coords_rescaled"] * _t_sts_pseudoimage["rescaling_factor"]
-
-#         min_lim, max_lim = _t_sts_coords_to_transform[_t_valid_coords].min(axis=0).astype(
-#             int
-#         ), _t_sts_coords_to_transform[_t_valid_coords].max(axis=0).astype(int)
-#         x_min, y_min = min_lim
-#         x_max, y_max = max_lim
-
-#         # Preparing image and pseudoimage modalities for feature detection (imaging modality has optimal flip)
-#         src = prepare_image_for_feature_matching(
-#             staining_image_rescaled,
-#             flip=_best_flip,
-#             rotation=_best_rotation,
-#             gaussian_blur=args.fine_registration_gaussian_sigma,
-#             crop=[x_min, x_max, y_min, y_max],
-#             mask_tissue=args.mask_tissue,
-#             keep_black_background=args.keep_black_background,
-#             mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
-#         )
-#         dst = prepare_pseudoimage_for_feature_matching(
-#             _t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
-#             gaussian_blur=args.fine_registration_gaussian_sigma,
-#         )
-
-#         # Finding matches between modalities
-#         _t_mkpts0, _t_mkpts1 = feature_matching.find_matches(src, dst, args.feature_matcher)
-#         logging.info(f"{len(_t_mkpts0)} matches*")
-
-#         if len(_t_mkpts0) < args.fine_min_matches:
-#             logging.warn(f"Less than {args.fine_min_matches} were found. Skipping fine alignment at {tile_code}.")
-#             out_coords_output_fine[_t_puck_id] = sts_coords_fine[_t_puck_id]
-#             continue
-
-#         _, inliers = ransac(
-#             (_t_mkpts0, _t_mkpts1),
-#             SimilarityTransform,
-#             min_samples=args.ransac_fine_min_samples,
-#             residual_threshold=args.ransac_fine_residual_threshold,
-#             max_trials=args.ransac_fine_max_trials,
-#         )
-#         inliers = inliers > 0
-#         logging.info(f"{inliers.sum()} inliers (RANSAC)")
-
-#         # Compute similarity matrix and compute point transformation
-#         _t_tform_points = estimate_transform("similarity", _t_mkpts0[inliers.flatten()], _t_mkpts1[inliers.flatten()])
-
-#         # Apply the same transformation to the tiles
-#         _t_sts_coords_fine_to_transform = sts_coords_fine[_t_puck_id] / args.rescale_factor_fine
-
-#         # Check if transform within the acceptable bounds
-#         if (
-#             (_t_tform_points.rotation > np.pi / 4)
-#             or (_t_tform_points.scale > 2 or _t_tform_points.scale < 0.5)
-#             or (_t_tform_points.translation.max() > _t_sts_coords_fine_to_transform.max(axis=0).max())
-#         ):
-#             logging.warn(f"Transformation matrix out of bounds for tile {tile_code}")
-#             out_coords_output_fine[_t_puck_id] = sts_coords_fine[_t_puck_id]
-#             continue
-
-#         # If the previous filter passes, apply the transformation
-#         _t_sts_coords_fine_to_transform = (_t_sts_coords_fine_to_transform - np.array([[y_min, x_min]]))[:, ::-1]
-#         _t_sts_coords_fine_transformed = np.dot(
-#             _t_tform_points.params,
-#             np.concatenate(
-#                 [
-#                     _t_sts_coords_fine_to_transform[:, ::-1],
-#                     np.ones((len(_t_sts_coords_fine_to_transform), 1)),
-#                 ],
-#                 axis=1,
-#             ).T,
-#         ).T
-
-#         # Rescale points to original HE dimensions
-#         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed[:, :-1] + np.array([[y_min, x_min]])
-#         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed * args.rescale_factor_fine
-
-#         out_coords_output_fine[_t_puck_id] = _t_sts_coords_fine_transformed
-
-#         # Saving alignment results here (only when passed)
-#         _align_result = AlignmentResult(
-#             im_0=None,
-#             im_1=sts_pseudoimage["pseudoimage"],
-#             transformation_matrix=tform_points.params,
-#             ransac_results=None,
-#             sift_results=None,
-#             keypoints0=in_mkpts0,
-#             keypoints1=in_mkpts1,
-#         )
-#         metadata.add_alignment_result(_align_result)
-
-#     return (
-#         out_coords_output_coarse,
-#         out_coords_output_fine,
-#         rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation),
-#         metadata,
-#     )
