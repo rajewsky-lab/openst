@@ -111,6 +111,10 @@ def _run_to_3d_registration(args):
     adata = sc.read_h5ad(args.in_adata)
 
     logging.info("Preprocessing adata")
+    adata.obsm['spatial'] -= adata.obsm['spatial'].min(axis=0)
+    if args.rescale != 1:
+        adata.obsm["spatial"] = adata.obsm["spatial"] * args.rescale
+
     if args.filter_umi_min >= 0:
         sc.pp.filter_cells(adata, min_counts=args.filter_umi_min)
     if args.filter_umi_max != -1 and args.filter_umi_max > args.filter_umi_min:
@@ -118,10 +122,6 @@ def _run_to_3d_registration(args):
     if args.lognorm:
         sc.pp.normalize_total(adata, inplace=True)
         sc.pp.log1p(adata)
-
-    adata.obsm['spatial'] -= adata.obsm['spatial'].min(axis=0)
-    if args.rescale != 1:
-        adata.obsm["spatial"] = adata.obsm["spatial"] * args.rescale
 
     logging.info("Converting adata to crosstab")
     df_locations, df_genes = convert_adata_to_crosstab(adata, args.genes)
