@@ -1,0 +1,89 @@
+{
+    "metadata_type": "pairwise_alignment",
+    "args": {"--keypoints": "0", "--infile": "file.h5ad"},
+    "cmdline": "openst pairwise_aligner",
+    "metadata": {
+        "alignment_results": [
+            {
+                "name": "fine_alignment_tile_1",
+                "transformation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                "image0": "path0.jpg",
+                "image1": "path1.jpg",
+                "ransac_results": {
+                    "output": "<a text summary of RANSAC results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                },
+                "sift_results": {
+                    "output": "<a text summary of SIFT results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                }
+            },
+            {
+                "name": "fine_alignment_tile_1",
+                "transformation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                "image0": "path0.jpg",
+                "image1": "path1.jpg",
+                "ransac_results": {
+                    "output": "<a text summary of RANSAC results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                },
+                "sift_results": {
+                    "output": "<a text summary of SIFT results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                }
+            },
+            {
+                "name": "fine_alignment_tile_1",
+                "transformation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                "image0": "path0.jpg",
+                "image1": "path1.jpg",
+                "ransac_results": {
+                    "output": "<a text summary of RANSAC results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                },
+                "sift_results": {
+                    "output": "<a text summary of SIFT results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                }
+            },
+            {
+                "name": "fine_alignment_tile_1",
+                "transformation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                "image0": "path0.jpg",
+                "image1": "path1.jpg",
+                "ransac_results": {
+                    "output": "<a text summary of RANSAC results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                },
+                "sift_results": {
+                    "output": "<a text summary of SIFT results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                }
+            },
+            {
+                "name": "fine_alignment_tile_2",
+                "transformation_matrix": [[1, 0, 0], [0, 1, 0], [0, 0, 1]],
+                "image0": "path0.jpg",
+                "image1": "path1.jpg",
+                "ransac_results": {
+                    "output": "<a text summary of RANSAC results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                },
+                "sift_results": {
+                    "output": "<a text summary of SIFT results>",
+                    "keypoints0": "<a list of  2d keypoints>",
+                    "keypoints1": "<a list of keypoints>"
+                }
+            }
+        ]
+    }
+}
