@@ -118,6 +118,8 @@ def _run_to_3d_registration(args):
     if args.lognorm:
         sc.pp.normalize_total(adata, inplace=True)
         sc.pp.log1p(adata)
+
+    adata.obsm['spatial'] -= adata.obsm['spatial'].min(axis=0)
     if args.rescale != 1:
         adata.obsm["spatial"] = adata.obsm["spatial"] * args.rescale
 
