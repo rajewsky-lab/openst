@@ -4,6 +4,10 @@
 
 Explain the package, there are several tools: alignment, segmentation, visualization, conversion.
 
+## openst.barcode_preprocessing
+
+From the first sequencing, code to preprocess the barcodes (uses bcl2fastq)
+
 ## openst.from_3d_registration
 
 Explain all arguments; FAQ
