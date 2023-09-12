@@ -7,6 +7,8 @@ from openst.preprocessing.image_stitch import setup_image_stitch_parser
 from openst.preprocessing.spatial_stitch import setup_spatial_stitch_parser
 from openst.segmentation.segment import setup_segment_parser
 from openst.threed.to_3d_registration import setup_to_3d_registration_parser
+from openst.threed.from_3d_registration import setup_from_3d_registration_parser
+
 
 def cmdline_args():
     parent_parser = argparse.ArgumentParser(
@@ -30,6 +32,8 @@ def cmdline_args():
     setup_transcript_assign_parser(parent_parser_subparsers)
     # create the parser for the "to_3d_registration" command
     setup_to_3d_registration_parser(parent_parser_subparsers)
+    # create the parser for the "from_3d_registration" command
+    setup_from_3d_registration_parser(parent_parser_subparsers)
 
     return parent_parser, parent_parser.parse_args()
 
