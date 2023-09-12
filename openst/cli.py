@@ -3,11 +3,14 @@ import argparse
 from openst.alignment.pairwise_aligner import setup_pairwise_aligner_parser
 from openst.alignment.transcript_assign import setup_transcript_assign_parser
 from openst.metadata.report import setup_report_parser
+from openst.preprocessing.barcode_preprocessing import \
+    setup_barcode_preprocessing_parser
 from openst.preprocessing.image_stitch import setup_image_stitch_parser
 from openst.preprocessing.spatial_stitch import setup_spatial_stitch_parser
 from openst.segmentation.segment import setup_segment_parser
+from openst.threed.from_3d_registration import \
+    setup_from_3d_registration_parser
 from openst.threed.to_3d_registration import setup_to_3d_registration_parser
-from openst.threed.from_3d_registration import setup_from_3d_registration_parser
 
 
 def cmdline_args():
@@ -34,6 +37,8 @@ def cmdline_args():
     setup_to_3d_registration_parser(parent_parser_subparsers)
     # create the parser for the "from_3d_registration" command
     setup_from_3d_registration_parser(parent_parser_subparsers)
+    # create the parser for the "barcode_preprocessing" command
+    setup_barcode_preprocessing_parser(parent_parser_subparsers)
 
     return parent_parser, parent_parser.parse_args()
 
