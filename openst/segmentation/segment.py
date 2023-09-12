@@ -45,25 +45,25 @@ def get_segment_parser():
     parser.add_argument(
         "--flow-threshold",
         type=float,
-        deafult=0.5,
+        default=0.5,
         help="cellpose's 'flow_threshold' parameter",
     )
     parser.add_argument(
         "--cellprob-threshold",
         type=float,
-        deafult=0,
+        default=0,
         help="cellpose's 'cellprob_threshold' parameter",
     )
     parser.add_argument(
         "--diameter",
         type=float,
-        deafult=20,
+        default=20,
         help="cellpose's 'diameter' parameter",
     )
     parser.add_argument(
         "--tile-size",
         type=int,
-        deafult=512,
+        default=512,
         help="When prediction of the mask runs in separate tiles, this is the tile square size (in pixels)",
     )
     parser.add_argument(
@@ -74,7 +74,7 @@ def get_segment_parser():
     parser.add_argument(
         "--max-image-pixels",
         type=int,
-        deafult=933120000,
+        default=933120000,
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     parser.add_argument(

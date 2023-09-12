@@ -15,6 +15,7 @@ def get_spatial_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         description="stitching spatial transcriptomics tiles into a common global coordinate system",
+        add_help=False,
     )
 
     parser.add_argument(

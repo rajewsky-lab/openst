@@ -14,6 +14,8 @@ def get_barcode_preprocessing_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
+        allow_abbrev=False,
+        add_help=False,
         description="convert fastq files into spatial barcode files (sequence and coordinates)"
     )
     parser.add_argument("--in-fastq", type=str, required=True, help="path to the fastq file")

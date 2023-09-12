@@ -9,6 +9,7 @@ from openst.utils.file import check_directory_exists, check_file_exists
 def get_image_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
+        add_help=False,
         description="stitching various image tiles into a single image (wrapper for ImageJ)",
     )
 
@@ -61,8 +62,8 @@ def get_image_stitch_parser():
 def setup_image_stitch_parser(parent_parser):
     """setup_image_stitch_parser"""
     parser = parent_parser.add_parser(
-        "spatial_stitch",
-        help="stitching STS tiles into a global coordinate system",
+        "image_stitch",
+        help="stitching image tiles into a single image (wrapper for ImageJ)",
         parents=[get_image_stitch_parser()],
     )
     parser.set_defaults(func=_run_image_stitch)

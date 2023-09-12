@@ -12,9 +12,10 @@ from openst.utils.file import (check_directory_exists, check_file_exists,
 from openst.utils.spacemake import reassign_indices_adata
 
 
-def get_transcript_assign_parser(parser):
+def get_transcript_assign_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
+        add_help=False,
         description="openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask",
     )
 
@@ -49,7 +50,7 @@ def get_transcript_assign_parser(parser):
     parser.add_argument(
         "--max-image-pixels",
         type=int,
-        deafult=933120000,
+        default=933120000,
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     parser.add_argument(
