@@ -1,10 +1,14 @@
-import h5py
 import logging
 import os
 import pickle
+import shutil
+from pathlib import Path
+from typing import Union
 
-from anndata import read_h5ad
+import h5py
+from anndata import AnnData
 from anndata._io.specs import read_elem
+
 
 def save_pickle(obj, file_path):
     """
@@ -36,7 +40,7 @@ def load_pickle(file_path):
     return obj
 
 
-def check_file_exists(f):
+def check_file_exists(f, exception=True):
     """
     Check whether the file exists.
 
@@ -48,8 +52,30 @@ def check_file_exists(f):
     """
 
     if not os.path.exists(f):
-        raise FileNotFoundError(f"The file '{f}' does not exist.")
-    
+        if exception:
+            raise FileNotFoundError(f"The file '{f}' does not exist.")
+        else:
+            return False
+
+    return True
+
+
+def check_directory_exists(path):
+    """
+    Check if a file exists, or if its parent directory exists.
+
+    Parameters:
+        path (str): Path to the file or directory.
+
+    Returns:
+        bool: True if the parent directory exists or if the file exists, False otherwise.
+    """
+    if os.path.isdir(path):
+        return os.path.exists(path)
+    else:
+        parent_directory = os.path.dirname(path)
+        return os.path.exists(parent_directory)
+
 
 def check_adata_structure(f):
     """
@@ -76,7 +102,7 @@ def check_adata_structure(f):
             logging.warn("The AnnData file has a 'spatial_aligned' layer")
 
 
-def load_properties_from_adata(f: str, properties: list = ["obsm/spatial"]) -> dict:
+def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm/spatial"]) -> dict:
     """
     Load specified properties from an AnnData file (h5py format).
 
@@ -98,25 +124,58 @@ def load_properties_from_adata(f: str, properties: list = ["obsm/spatial"]) -> d
 
     parsed_properties = {}
 
-    with h5py.File(f) as f:
+    if isinstance(f, AnnData):
         for p in properties:
             parsed_properties[p] = read_elem(f[p])
+    elif isinstance(f, str):
+        with h5py.File(f) as f:
+            for p in properties:
+                parsed_properties[p] = read_elem(f[p])
+    else:
+        raise TypeError("Type of 'f' is incorrect. It needs to be an AnnData or str object.")
 
     return parsed_properties
 
 
-def check_directory_exists(path):
+def check_obs_unique(adata: AnnData, obs_key: str = "tile_id") -> bool:
     """
-    Check if a file exists, or if its parent directory exists.
+    Check if the values in a specified observation key in an AnnData object are unique.
 
-    Parameters:
-        path (str): Path to the file or directory.
+    Args:
+        adata (AnnData): AnnData object to check for unique observations.
+        obs_key (str, optional): The name of the observation key to check for uniqueness. Defaults to "tile_id".
 
     Returns:
-        bool: True if the parent directory exists or if the file exists, False otherwise.
+        bool: True if the specified observation key has unique values, False otherwise.
+
+    Raises:
+        ValueError: If the specified observation key exists in the AnnData object but is not unique.
     """
-    if os.path.isdir(path):
-        return os.path.exists(path)
+    return adata.obs[obs_key].nunique() == 1
+
+
+def copytree2(source: str, dest: str) -> str:
+    """
+    Recursively copy the contents of a source directory to a destination directory.
+
+    Args:
+        source (str): The source directory to be copied.
+        dest (str): The destination directory where the contents will be copied to.
+
+    Returns:
+        str: The path to the destination directory where the contents were copied.
+
+    Notes:
+        - This function creates the destination directory and its parent directories if they do not exist.
+        - It checks if the source and destination directories already exist and have the same size.
+          If so, it skips copying.
+        - If the source and destination directories differ in size or do not exist, it performs a recursive copy.
+
+    """
+    Path(dest).mkdir(parents=True, exist_ok=True)
+    dest_dir = os.path.join(dest, os.path.basename(source))
+    if os.path.exists(dest_dir) and os.path.getsize(dest_dir) == os.path.getsize(source):
+        print("The directory {OUTFILE} was already copied. Skipping!")
     else:
-        parent_directory = os.path.dirname(path)
-        return os.path.exists(parent_directory)
+        shutil.copytree(source, dest_dir, dirs_exist_ok=True)
+    return dest_dir
