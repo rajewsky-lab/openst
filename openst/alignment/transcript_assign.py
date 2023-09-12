@@ -1,17 +1,23 @@
+import argparse
+import logging
+
 import numpy as np
 import pandas as pd
-import scanpy as sc
-
+from anndata import read_h5ad
 from PIL import Image
 from skimage import measure
-from tqdm import tqdm
 
-from skimage.segmentation import expand_labels
-from scipy.sparse import csr_matrix, csc_matrix, vstack, dok_matrix
+from openst.utils.file import (check_directory_exists, check_file_exists,
+                               load_properties_from_adata)
+from openst.utils.spacemake import reassign_indices_adata
 
-Image.MAX_IMAGE_PIXELS = 933120000
 
-def setup_parser(parser):
+def get_transcript_assign_parser(parser):
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False,
+        description="openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask",
+    )
+
     parser.add_argument(
         "--adata",
         type=str,
@@ -27,6 +33,13 @@ def setup_parser(parser):
     )
 
     parser.add_argument(
+        "--mask-in-adata",
+        default=False,
+        action="store_true",
+        help="When specified, the image mask is loaded from the adata, at the internal path specified by '--mask'",
+    )
+
+    parser.add_argument(
         "--output",
         type=str,
         help="path and filename for output file that will be generated",
@@ -34,140 +47,60 @@ def setup_parser(parser):
     )
 
     parser.add_argument(
-        "--dilate-px",
+        "--max-image-pixels",
         type=int,
-        help="specify how many pixels the outlines of the segmentation mask will be extended",
-        required=False,
-        default=0
+        deafult=933120000,
+        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
+    )
+    parser.add_argument(
+        "--metadata-out",
+        type=str,
+        default="",
+        help="""Path where the metadata will be stored.
+        If not specified, metadata is not saved.
+        Warning: a report (via openst report) cannot be generated without metadata!""",
     )
 
     return parser
 
-def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
-    import scanpy as sc
-    import pandas as pd
 
-    # calculate mitochondrial gene percentage
-    adata.var["mt"] = (
-        adata.var_names.str.startswith("Mt-")
-        | adata.var_names.str.startswith("mt-")
-        | adata.var_names.str.startswith("MT-")
+def setup_transcript_assign_parser(parent_parser):
+    """setup_transcript_assign_parser"""
+    parser = parent_parser.add_parser(
+        "transcript_assign",
+        help="assign transcripts into previously aligned segmentation mask",
+        parents=[get_transcript_assign_parser()],
     )
+    parser.set_defaults(func=_run_transcript_assign)
 
-    sc.pp.calculate_qc_metrics(
-        adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True
-    )
+    return parser
 
-    add_reads = False
-    if dge_summary_path is not None:
-        dge_summary = pd.read_csv(
-            dge_summary_path,
-            skiprows=7,
-            sep="\t",
-            index_col="cell_bc",
-            names=["cell_bc", "n_reads", "n_umi", "n_genes"],
-        )
-
-        adata.obs = pd.merge(
-            adata.obs, dge_summary[["n_reads"]], left_index=True, right_index=True
-        )
-
-        add_reads = True
-
-    if n_reads is not None:
-        adata.obs["n_reads"] = n_reads
-        add_reads = True
-
-    if add_reads:
-        adata.obs["reads_per_counts"] = adata.obs.n_reads / adata.obs.total_counts
-
-def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, labels):
-    import pandas as pd
-    import scanpy as sc
-    import numpy as np
-    import anndata
-    
-    original_ilocs = np.arange(new_ilocs.shape[0])
-    sorted_ix = np.argsort(new_ilocs)
-    new_ilocs = new_ilocs[sorted_ix]
-    original_ilocs = original_ilocs[sorted_ix]
-
-    joined_C = adata.X[original_ilocs]
-
-    change_ix = np.where(new_ilocs[:-1] != new_ilocs[1:])[0] + 1
-
-    ix_array = np.asarray(np.split(np.arange(new_ilocs.shape[0]), change_ix, axis=0), dtype='object')
-
-    joined_C_sumed = vstack([csr_matrix(joined_C[ix_array[n].astype(int), :].sum(0)) for n in tqdm(range(len(ix_array)))])
-
-    adata_out = anndata.AnnData(csc_matrix(joined_C_sumed), 
-        obs = pd.DataFrame({'x_pos': joined_coordinates[:, 0],
-                            'y_pos': joined_coordinates[:, 1],
-                            'cell_ID_mask': labels}),
-        var = adata.var)
-
-    adata_out.obsm['spatial'] = joined_coordinates
-    adata_out.uns['spatial'] = {'mask': mask_image}
-
-    # rename index
-    adata_out.obs.index.name = 'cell_bc'
-
-    def summarise_adata_obs_column(adata, column, summary_fun=sum):
-        vals_to_join = adata.obs[column].to_numpy()[original_ilocs]
-        vals_joined = np.array(
-            [summary_fun(vals_to_join[ix_array[n].astype(int)])
-                for n in tqdm(range(len(ix_array)))])
-        return vals_joined
-
-    # summarise and attach n_reads, calculate metrics (incl. pcr)
-    calculate_adata_metrics(adata_out,
-        # provide the n_reads as a parameter
-        n_reads = summarise_adata_obs_column(adata, 'n_reads'))
-
-    adata_out.obs['n_joined'] = [len(x) for x in ix_array]
-
-    mesh_bc_ilocs = np.arange(len(original_ilocs))[original_ilocs]
-
-    joined_dict = {i: mesh_bc_ilocs[x] for i, x in enumerate(ix_array)}
-
-    indices_joined_spatial_units = dok_matrix(
-        (len(joined_dict), len(adata.obs_names)), dtype=np.int8
-    )
-
-    for obs_name_aggregate, obs_name_to_aggregate in joined_dict.items():
-        indices_joined_spatial_units[obs_name_aggregate, obs_name_to_aggregate] = 1
-
-    indices_joined_spatial_units = indices_joined_spatial_units.tocsr()
-    adata_out.uns["spatial_units_obs_names"] = np.array(adata.obs_names)
-    adata_out.uns["indices_joined_spatial_units"] = indices_joined_spatial_units
-
-    from statistics import mean
-
-    for column in ['exact_entropy', 'theoretical_entropy', 'exact_compression',\
-        'theoretical_compression']:
-        adata_out.obs[column] = summarise_adata_obs_column(adata, column, mean)
-
-    return adata_out
 
 def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
-    joined_coordinates = np.array([props_filter['centroid-0'], props_filter['centroid-1']]).T
+    joined_coordinates = np.array([props_filter["centroid-0"], props_filter["centroid-1"]]).T
     joined_coordinates = np.vstack([np.array([0, 0]), joined_coordinates])
 
-    cell_ID_merged = np.array(props_filter['label'])
+    cell_ID_merged = np.array(props_filter["label"])
     cell_ID_merged = np.hstack([np.array([0]), cell_ID_merged])
 
-    adata_by_cell = reassign_indices_adata(adata_transformed_coords, np.array(adata_transformed_coords.obs["cell_ID"]), joined_coordinates, label_image, cell_ID_merged)
+    adata_by_cell = reassign_indices_adata(
+        adata_transformed_coords,
+        np.array(adata_transformed_coords.obs["cell_ID"]),
+        joined_coordinates,
+        label_image,
+        cell_ID_merged,
+    )
 
     spatial_units_obs_names_dict = {}
 
-    for sn in tqdm(adata_by_cell.uns['spatial_units_obs_names']):
+    for sn in adata_by_cell.uns["spatial_units_obs_names"]:
         bc, tile = sn.split(":")
         if tile in spatial_units_obs_names_dict.keys():
             spatial_units_obs_names_dict[tile] += [bc]
         else:
             spatial_units_obs_names_dict[tile] = [bc]
 
-    for sn in tqdm(adata_by_cell.uns['spatial_units_obs_names']):
+    for sn in adata_by_cell.uns["spatial_units_obs_names"]:
         bc, tile = sn.split(":")
         if tile in spatial_units_obs_names_dict.keys():
             spatial_units_obs_names_dict[tile] += [bc]
@@ -176,52 +109,59 @@ def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
 
     return adata_by_cell
 
-def prepare_mask_and_adata(mask, adata, dilate_px : int = 0 ):
-    if dilate_px > 0:
-        _mask = expand_labels(mask, distance=dilate_px)
-    else:
-        _mask = mask
 
-    label_image = measure.label(_mask)
-    adata = adata[(adata.obsm['spatial'][:, 0] <= label_image.shape[0]) &
-                                                        (adata.obsm['spatial'][:, 1] <= label_image.shape[1])]
+def subset_adata_to_mask(mask, adata):
+    # Subset adata to the valid coordinates from the mask
+    adata = adata[(adata.obsm["spatial"][:, 0] <= mask.shape[0]) & (adata.obsm["spatial"][:, 1] <= mask.shape[1])]
 
-    labels = label_image[adata.obsm['spatial'][:, 0].astype(int),
-                        adata.obsm['spatial'][:, 1].astype(int)]
+    # Subset the labels to those in the mask
+    labels = mask[adata.obsm["spatial"][:, 0].astype(int), adata.obsm["spatial"][:, 1].astype(int)]
 
+    # Assign label as cell_ID
     adata.obs["cell_ID"] = labels
 
-    props = measure.regionprops_table(label_image,
-                            properties=['label', 'centroid', 'area', 'axis_major_length', 'axis_minor_length'])
+    # Get centroid and label ID from mask
+    props = measure.regionprops_table(mask, properties=["label", "centroid"])
     props = pd.DataFrame(props)
 
     props_filter = props[props.label.isin(np.unique(adata.obs["cell_ID"]))]
-    return _mask, adata, props_filter
+    return adata, props_filter
+
+
+def _run_transcript_assign(args):
+    """_run_transcript_assign."""
+    logging.info("openst spatial transcriptomics stitching; running with parameters:")
+    logging.info(args.__dict__)
+
+    Image.MAX_IMAGE_PIXELS = args.max_image_pixels
+
+    logging.info("Loading data")
+    check_file_exists(args.adata)
+    check_file_exists(args.mask)
+
+    if not check_directory_exists(args.output):
+        raise FileNotFoundError("Parent directory for --output does not exist")
+
+    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+        raise FileNotFoundError("Parent directory for the metadata does not exist")
+
+    adata = read_h5ad(args.adata)
+
+    if args.mask_in_adata:
+        mask = load_properties_from_adata(adata, args.mask)[args.mask]
+    else:
+        mask = np.array(Image.open(args.mask))
+
+    logging.info("Subsetting adata coordinates to mask")
+    adata, props_filter = subset_adata_to_mask(mask, adata)
+
+    logging.info("Assigning transcripts to cells in mask")
+    adata_by_cell = transfer_segmentation(adata, mask, props_filter)
+
+    logging.info(f"Writing output to {args.output}")
+    adata_by_cell.write_h5ad(args.output)
+
 
 if __name__ == "__main__":
-    import argparse
-
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        description="transfer a segmentation mask to the individual spots from a previously aligned AnnData file",
-    )
-
-    parser = setup_parser(parser)
-    args = parser.parse_args()
-
-    print("Loading aligned AnnData")
-    adata_transformed_coords = sc.read_h5ad(args.adata)
-    non_barcodes = pd.Series(adata_transformed_coords.obs_names).apply(lambda x: x.split(":")[0].isnumeric()).values
-    adata_transformed_coords = adata_transformed_coords[~non_barcodes].copy()
-
-    print("Loading image mask")
-    stitched_image_he_mask = np.array(Image.open(args.mask))
-    
-    print("Preparing segmentation mask and fixing AnnData spatial coordinates")
-    label_image, adata_transformed_coords, props_filter = prepare_mask_and_adata(stitched_image_he_mask, adata_transformed_coords, args.dilate_px)
-
-    print("Transferring spatial data to segmentation mask")
-    adata_by_cell = transfer_segmentation(adata_transformed_coords, label_image, props_filter)
-
-    print("Writing output")
-    adata_by_cell.write_h5ad(args.output)
+    args = get_transcript_assign_parser().parse_args()
+    _run_transcript_assign(args)
