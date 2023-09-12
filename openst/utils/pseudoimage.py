@@ -1,11 +1,15 @@
 import numpy as np
 from skimage.transform import resize
 
+
 def create_pseudoimage(
     coords: np.ndarray,
     scale: float,
     target_size: tuple = None,
     valid_locations: np.ndarray = None,
+    recenter=True,
+    rescale=True,
+    values=None,
 ) -> dict:
     """
     Create a pseudoimage representation from input coordinates (two-dimensional).
@@ -15,6 +19,9 @@ def create_pseudoimage(
         scale (float): Scaling factor applied to rescaled coordinates.
         target_size (tuple, optional): Target size for the pseudoimage. If provided, preserves aspect ratio.
         valid_locations (np.ndarray, optional): Boolean mask indicating valid locations for creating the pseudoimage.
+        recenter (bool, optional): If True, the minimum (x, y) coordinate will be offset to a new (0, 0).
+        rescale (bool, optional): If True, a new scaling will be applied according to the argument 'scale'.
+        values (np.ndarray, optional): When not None, will be used to populate the image intensity values.
 
     Returns:
         dict: A dictionary containing the pseudoimage and related metadata.
@@ -42,14 +49,22 @@ def create_pseudoimage(
 
     # Apply coordinate transformation (zero-rescaling)
     coords = coords.copy()
-    offset_factor = coords.min(axis=0)
-    coords -= offset_factor
+    offset_factor = None
+
+    if recenter:
+        offset_factor = coords.min(axis=0)
+        coords -= offset_factor
 
     # Rescale the coordinates to have approximately PSEUDOIMG_SIZE
-    rescale_factor = coords.max(axis=0).min()
-    coords_rescaled = coords / rescale_factor
-    coords_rescaled *= scale
-    coords_rescaled_int = coords_rescaled.astype(int)
+    if rescale:
+        rescale_factor = coords.max(axis=0).min()
+        coords_rescaled = coords / rescale_factor
+        coords_rescaled *= scale
+        coords_rescaled_int = coords_rescaled.astype(int)
+    else:
+        rescale_factor = None
+        coords_rescaled = coords
+        coords_rescaled_int = coords_rescaled.astype(int)
 
     dim_1, dim_2 = coords_rescaled_int.max(axis=0)
 
@@ -70,7 +85,10 @@ def create_pseudoimage(
     if valid_locations is not None:
         coords_rescaled_int = coords_rescaled_int[valid_locations]
 
-    _sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += 1
+    if values is None:
+        values = 1
+
+    _sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
 
     sts_pseudoimage = resize(_sts_pseudoimage, target_size[:2], anti_aliasing=True)
 
