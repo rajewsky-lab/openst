@@ -27,5 +27,7 @@ setup(
     packages=find_packages(exclude=["tests", ".github", "models", "examples"]),
     entry_points = {
         'console_scripts': ['openst=openst.__main__:run_openst'],
-    }
+    },
+    package_data={'': ['openst/metadata/templates/*.html', '*/templates/*.html', 'openst/preprocessing/imagej_macros/*.ijm', '*/preprocessing/imagej_macros/*.ijm']},
+    include_package_data=True,
 )
