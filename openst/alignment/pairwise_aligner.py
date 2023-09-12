@@ -189,7 +189,7 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--max-image-pixels",
         type=int,
-        deafult=933120000,
+        default=933120000,
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     parser.add_argument(

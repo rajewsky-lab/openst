@@ -5,8 +5,7 @@ import os
 
 import anndata as ad
 import numpy as np
-import scanpy as sc
-from anndata import AnnData
+from anndata import AnnData, read_h5ad
 from PIL import Image
 # from scipy.ndimage import binary_fill_holes
 # from skimage.color import rgb2hsv
@@ -109,7 +108,7 @@ def get_from_3d_registration_parser():
     parser.add_argument(
         "--max-image-pixels",
         type=int,
-        deafult=933120000,
+        default=933120000,
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     return parser
@@ -294,7 +293,7 @@ def _run_from_3d_registration(args):
     # Loading spatial transcriptomics data
     samples_adata = []
     for sample in tqdm(args.h5_files):
-        samples_adata.append(sc.read_h5ad(sample))
+        samples_adata.append(read_h5ad(sample))
 
     # Loading image data, if specified
     if args.images == "":

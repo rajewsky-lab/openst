@@ -1,6 +1,5 @@
 import numpy as np
 import pandas as pd
-import scanpy as sc
 from anndata import AnnData
 from scipy.sparse import csc_matrix, csr_matrix, dok_matrix, vstack
 from tqdm import tqdm
@@ -14,7 +13,12 @@ def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
         | adata.var_names.str.startswith("MT-")
     )
 
-    sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
+    try:
+        import scanpy as sc
+        sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
+    except ImportError:
+        logging.warn("""Could not calculate 'mt' metrics with scanpy, as it could not find the dependency.
+        Please install using pip install scanpy""")
 
     add_reads = False
     if dge_summary_path is not None:

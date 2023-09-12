@@ -5,8 +5,7 @@ from pathlib import Path
 
 import numpy as np
 import pandas as pd
-import scanpy as sc
-from anndata import AnnData
+from anndata import AnnData, read_h5ad
 
 from openst.utils.file import check_directory_exists, check_file_exists
 
@@ -42,11 +41,6 @@ def get_to_3d_registration_parser():
         help="Preserve cells with at most < --filter-umi-max UMIs",
     )
     parser.add_argument(
-        "--lognorm",
-        action="store_true",
-        help="When specified, applies scanpy's log normalization to the raw counts",
-    )
-    parser.add_argument(
         "--rescale",
         type=float,
         default=1,
@@ -56,7 +50,7 @@ def get_to_3d_registration_parser():
         "--genes",
         type=str,
         nargs="+",
-        deafult=None,
+        default=None,
         help="Exports the expression level for the specified genes",
     )
     return parser
@@ -108,7 +102,7 @@ def _run_to_3d_registration(args):
         raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     logging.info(f"Loading file from {args.in_adata}")
-    adata = sc.read_h5ad(args.in_adata)
+    adata = read_h5ad(args.in_adata)
 
     logging.info("Preprocessing adata")
     adata.obsm["spatial"] -= adata.obsm["spatial"].min(axis=0)
@@ -116,12 +110,10 @@ def _run_to_3d_registration(args):
         adata.obsm["spatial"] = adata.obsm["spatial"] * args.rescale
 
     if args.filter_umi_min >= 0:
-        sc.pp.filter_cells(adata, min_counts=args.filter_umi_min)
+        # TODO: check if this dimension or other
+        adata = adata[np.array(adata.X.sum(axis=0)).flatten() > args.filter_umi_min]
     if args.filter_umi_max != -1 and args.filter_umi_max > args.filter_umi_min:
-        sc.pp.filter_genes(adata, max_counts=args.filter_umi_max)
-    if args.lognorm:
-        sc.pp.normalize_total(adata, inplace=True)
-        sc.pp.log1p(adata)
+        adata = adata[np.array(adata.X.sum(axis=0)).flatten() < args.filter_umi_max]
 
     logging.info("Converting adata to crosstab")
     df_locations, df_genes = convert_adata_to_crosstab(adata, args.genes)
