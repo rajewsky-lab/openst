@@ -14,7 +14,7 @@ This allows stitching and CUT restoration (if keyence)
 
 ## openst.image_stitch
 
-This allows stitching and CUT restoration (if keyence)
+Merge various image tiles into one (via image stitching)
 
 ## openst.pairwise_aligner
 
@@ -28,9 +28,9 @@ Explain all the arguments; FAQ. This accepts any metadata from any other program
 
 Explain all arguments; FAQ
 
-## openst.spatial_preprocess
+## openst.spatial_stitch
 
-This allows to run the data format checking and the stitching, if not done with spacemake
+Merge various spatial transcriptomic tiles into one (via coordinate system stitching)
 
 ## openst.to_3d_registration
 
