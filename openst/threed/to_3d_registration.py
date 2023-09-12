@@ -111,7 +111,7 @@ def _run_to_3d_registration(args):
     adata = sc.read_h5ad(args.in_adata)
 
     logging.info("Preprocessing adata")
-    adata.obsm['spatial'] -= adata.obsm['spatial'].min(axis=0)
+    adata.obsm["spatial"] -= adata.obsm["spatial"].min(axis=0)
     if args.rescale != 1:
         adata.obsm["spatial"] = adata.obsm["spatial"] * args.rescale
 
