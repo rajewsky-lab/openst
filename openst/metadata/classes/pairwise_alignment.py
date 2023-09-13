@@ -1,13 +1,23 @@
 from skimage.transform import SimilarityTransform
+from openst.metadata.classes.base import BaseMetadata
 
 
-class PairwiseAlignmentMetadata:
+class PairwiseAlignmentMetadata(BaseMetadata):
     def __init__(self, args):
-        self.args = args
+        super(AlignmentResult, self).__init__(args)
+
+        # it must be the same as the name of the HTML template under the templates dir
+        self.metadata_type = "pairwise_alignment"
         self.alignment_results = []
 
     def add_alignment_result(self, alignment_result):
         self.alignment_results.append(alignment_result)
+
+    def render(self):
+        pass
+
+    def save_json(self, path):
+        pass
 
 
 class AlignmentResult:
@@ -58,3 +68,6 @@ class AlignmentResult:
             plt.show()
         else:
             return axes
+
+
+    
