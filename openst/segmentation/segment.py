@@ -2,7 +2,6 @@ import argparse
 import logging
 
 import numpy as np
-from cellpose import models
 from PIL import Image
 from skimage import measure
 from skimage.segmentation import expand_labels
@@ -39,8 +38,7 @@ def get_segment_parser():
         "--model",
         type=str,
         default="",
-        help=f"""cellpose model - either a path or a valid model name.
-        Valid model names are {models.MODEL_NAMES}""",
+        help=f"""cellpose model - either a path or a valid string to pretrained model.""",
     )
     parser.add_argument(
         "--flow-threshold",
@@ -217,6 +215,11 @@ def _run_segment(args):
     """
     logging.info("openst segmentation; running with parameters:")
     logging.info(args.__dict__)
+
+    try:
+        from cellpose import models
+    except ImportError:
+        raise ImportError("'cellpose' could not be found. Please install with 'pip install cellpose'")
 
     # Check input and output data
     check_file_exists(args.image_in)
