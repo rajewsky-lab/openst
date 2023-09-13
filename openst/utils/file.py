@@ -74,6 +74,9 @@ def check_directory_exists(path):
         return os.path.exists(path)
     else:
         parent_directory = os.path.dirname(path)
+        # handle file created in the same directory
+        if parent_directory == "":
+            return True
         return os.path.exists(parent_directory)
 
 
