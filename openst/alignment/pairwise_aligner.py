@@ -343,8 +343,8 @@ def prepare_image_for_feature_matching(
         image_out = image
         hsv_image_out = hsv_image
 
-    prepared_images += [gaussian((equalize_adapthist(rgb2gray(image_out))), gaussian_blur)]
-    prepared_images = [gaussian((equalize_adapthist(im)), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
+    prepared_images = [gaussian((equalize_adapthist(rgb2gray(image_out))), gaussian_blur)]
+    prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
     prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in image_out.transpose(2, 0, 1)]
     return prepared_images
 
