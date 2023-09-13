@@ -21,25 +21,25 @@ openst pairwise_aligner --image-in input_image.jpg --h5-in input_data.h5ad --h5-
 """
 
 import argparse
+from itertools import product
 import logging
 
 import numpy as np
 from anndata import read_h5ad
 from PIL import Image
 from scipy import ndimage
-from skimage.color import rgb2hsv
+from skimage.color import rgb2hsv, rgb2gray
 from skimage.exposure import equalize_adapthist
 from skimage.filters import gaussian, threshold_otsu
 from skimage.transform import estimate_transform, rotate
 from threadpoolctl import threadpool_limits
 
 from openst.alignment import feature_matching, fiducial_detection
-from openst.alignment.metadata import (AlignmentResult,
+from openst.metadata.classes.pairwise_alignment import (AlignmentResult,
                                        PairwiseAlignmentMetadata)
 from openst.alignment.transformation import apply_transform
 from openst.utils.file import (check_adata_structure, check_directory_exists,
-                               check_file_exists, load_properties_from_adata,
-                               save_pickle)
+                               check_file_exists, load_properties_from_adata,)
 from openst.utils.pseudoimage import create_pseudoimage
 
 
@@ -165,8 +165,8 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--ransac-coarse-max-trials",
         type=int,
-        default=10000,
-        help="'max_trials' parameter of RANSAC, during coarse registration",
+        default=50,
+        help="Times RANSAC will run (x1000 iterations) during coarse registration",
     )
     parser.add_argument(
         "--ransac-fine-min-samples",
@@ -183,8 +183,8 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--ransac-fine-max-trials",
         type=int,
-        default=10000,
-        help="'max_trials' parameter of RANSAC, during fine registration",
+        default=50,
+        help="Times RANSAC will run (x1000 iterations) during fine registration",
     )
     parser.add_argument(
         "--max-image-pixels",
@@ -231,6 +231,13 @@ def get_pairwise_aligner_parser():
         default=None,
         help="Genes used for plotting the pseudoimage during the fine alignment phase.",
     )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default='cpu',
+        choices=['cpu', 'cuda'],
+        help="Device used to run feature matching model. Can be ['cpu', 'cuda']",
+    )
     return parser
 
 
@@ -253,8 +260,8 @@ def transform_image(im, flip: list = None, crop: list = None, rotation: int = No
     if rotation is not None:
         _im = rotate(_im, rotation)
     if crop is not None:
-        _im[crop[0] : crop[1], crop[2] : crop[3]]
-
+        _im = _im[crop[0] : crop[1], crop[2] : crop[3]]
+    
     return _im
 
 
@@ -336,8 +343,9 @@ def prepare_image_for_feature_matching(
         image_out = image
         hsv_image_out = hsv_image
 
-    prepared_images = [gaussian(equalize_adapthist(im), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
-    prepared_images += [gaussian(equalize_adapthist(im), gaussian_blur) for im in image_out.transpose(2, 0, 1)]
+    prepared_images += [gaussian((equalize_adapthist(rgb2gray(image_out))), gaussian_blur)]
+    prepared_images = [gaussian((equalize_adapthist(im)), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
+    prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in image_out.transpose(2, 0, 1)]
     return prepared_images
 
 
@@ -366,7 +374,7 @@ def prepare_pseudoimage_for_feature_matching(
         - The 'flip' parameter specifies flipping along the x and y axes using a list of factors [x_flip, y_flip].
     """
     _image = image.copy() if not invert else ((-image) - ((-image).min()))
-    return [gaussian(_image, gaussian_blur)[:: flip[0], :: flip[1]]]
+    return [gaussian(equalize_adapthist(_image), gaussian_blur)[:: flip[0], :: flip[1]]]
 
 
 def run_registration(
@@ -428,6 +436,7 @@ def run_registration(
         ransac_min_samples=args.ransac_coarse_min_samples,
         ransac_residual_threshold=args.ransac_coarse_residual_threshold,
         ransac_max_trials=args.ransac_coarse_max_trials,
+        device=args.device
     )
 
     # Estimate and apply transform
@@ -487,6 +496,7 @@ def run_registration(
     # Apply scaling to input image again, for fine registration
     staining_image_rescaled = staining_image[:: args.rescale_factor_fine, :: args.rescale_factor_fine]
     src = staining_image_rescaled
+    src = transform_image(staining_image_rescaled, _best_flip, None, _best_rotation)
 
     for tile_code in tile_codes:
         # Create a pseudoimage
@@ -503,6 +513,21 @@ def run_registration(
             args.pseudoimage_size_fine,
             staining_image_rescaled.shape,
             _t_valid_coords,
+            recenter=False,
+            rescale=True,
+            values=None
+        )
+
+        _t_counts = total_counts[(total_counts > args.threshold_counts_coarse)][_i_sts_coords_coarse_within_image_bounds][_t_valid_coords]
+
+        _t_sts_pseudoimage_counts = create_pseudoimage(
+            sts_coords_transformed[:, ::-1],  # we need to flip these coordinates
+            args.pseudoimage_size_fine,
+            staining_image_rescaled.shape,
+            _t_valid_coords,
+            recenter=False,
+            rescale=True,
+            values=_t_counts.astype(int)
         )
 
         # Axis limits to crop both modalities to tile region
@@ -518,8 +543,6 @@ def run_registration(
         def src_preprocessor(x, flip, rotation):
             return prepare_image_for_feature_matching(
                 image=x,
-                flip=flip,
-                rotation=rotation,
                 gaussian_blur=args.fine_registration_gaussian_sigma,
                 crop=[x_min, x_max, y_min, y_max],
                 mask_tissue=args.mask_tissue,
@@ -527,10 +550,13 @@ def run_registration(
                 mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
             )
 
-        dst = prepare_pseudoimage_for_feature_matching(
-            _t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
-            gaussian_blur=args.fine_registration_gaussian_sigma,
-        )
+        dst = []
+        for pseudoimage, invert in product([_t_sts_pseudoimage, _t_sts_pseudoimage_counts], [True, False]):
+            dst = prepare_pseudoimage_for_feature_matching(
+                pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
+                gaussian_blur=args.fine_registration_gaussian_sigma,
+                invert=invert
+            )
 
         # Finding matches between modalities
         _t_mkpts0, _t_mkpts1, _, _ = feature_matching.match_images(
@@ -542,6 +568,7 @@ def run_registration(
             ransac_min_samples=args.ransac_fine_min_samples,
             ransac_residual_threshold=args.ransac_fine_residual_threshold,
             ransac_max_trials=args.ransac_fine_max_trials,
+            device=args.device
         )
 
         # Detect fiducial markers with the YOLO model
@@ -592,9 +619,7 @@ def run_registration(
     return (
         out_coords_output_coarse,
         out_coords_output_fine,
-        rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation, preserve_range=True).astype(
-            np.uint8
-        ),
+        src.astype(np.uint8),
         metadata,
     )
 
@@ -637,7 +662,8 @@ def _run_pairwise_aligner(args):
 
     # Saving the metadata (for QC)
     if args.metadata_out != "":
-        save_pickle(metadata, args.metadata_out)
+        metadata.render_images()
+        metadata.save_json(args.metadata_out)
 
     # Exporting the data
     logging.info(f"Loading {args.h5_in}")
