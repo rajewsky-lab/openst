@@ -21,25 +21,25 @@ openst pairwise_aligner --image-in input_image.jpg --h5-in input_data.h5ad --h5-
 """
 
 import argparse
-from itertools import product
 import logging
+from itertools import product
 
 import numpy as np
 from anndata import read_h5ad
 from PIL import Image
 from scipy import ndimage
-from skimage.color import rgb2hsv, rgb2gray
+from skimage.color import rgb2gray, rgb2hsv
 from skimage.exposure import equalize_adapthist
 from skimage.filters import gaussian, threshold_otsu
-from skimage.transform import estimate_transform, rotate
+from skimage.transform import estimate_transform, rotate, rescale
 from threadpoolctl import threadpool_limits
 
 from openst.alignment import feature_matching, fiducial_detection
-from openst.metadata.classes.pairwise_alignment import (AlignmentResult,
-                                       PairwiseAlignmentMetadata)
 from openst.alignment.transformation import apply_transform
+from openst.metadata.classes.pairwise_alignment import (
+    AlignmentResult, PairwiseAlignmentMetadata)
 from openst.utils.file import (check_adata_structure, check_directory_exists,
-                               check_file_exists, load_properties_from_adata,)
+                               check_file_exists, load_properties_from_adata)
 from openst.utils.pseudoimage import create_pseudoimage
 
 
@@ -234,8 +234,8 @@ def get_pairwise_aligner_parser():
     parser.add_argument(
         "--device",
         type=str,
-        default='cpu',
-        choices=['cpu', 'cuda'],
+        default="cpu",
+        choices=["cpu", "cuda"],
         help="Device used to run feature matching model. Can be ['cpu', 'cuda']",
     )
     return parser
@@ -261,7 +261,7 @@ def transform_image(im, flip: list = None, crop: list = None, rotation: int = No
         _im = rotate(_im, rotation)
     if crop is not None:
         _im = _im[crop[0] : crop[1], crop[2] : crop[3]]
-    
+
     return _im
 
 
@@ -328,6 +328,9 @@ def prepare_image_for_feature_matching(
         image_out = image * s_image_gaussian_binary[..., np.newaxis]
         hsv_image_out = hsv_image * s_image_gaussian_binary[..., np.newaxis]
 
+        image_out = ((image_out/image_out.max())*255).astype(int)
+        hsv_image_out = ((hsv_image_out/hsv_image_out.max())*255).astype(int)
+
         if not keep_black_background:
             image_out = np.where(
                 image_out == np.array([[0, 0, 0]]),
@@ -336,7 +339,7 @@ def prepare_image_for_feature_matching(
             )
             hsv_image_out = np.where(
                 hsv_image_out == np.array([[0, 0, 0]]),
-                np.array([[1, 1, 1]]),
+                np.array([[255, 255, 255]]),
                 hsv_image_out,
             )
     else:
@@ -410,9 +413,9 @@ def run_registration(
     logging.info(f"Coarse registration, {len(in_coords)} coordinates")
 
     # Preparing images and preprocessing routines
-    sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
-    staining_image_rescaled = staining_image[:: args.rescale_factor_coarse, :: args.rescale_factor_coarse]
-    sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, staining_image_rescaled.shape)
+    #src = cv2.resize(cv2.GaussianBlur(staining_image,(blur_antialias, blur_antialias),0), (0,0), fx=1/args.rescale_factor_coarse, fy=1/args.rescale_factor_coarse, interpolation=cv2.INTER_NEAREST) 
+    staining_image_rescaled = rescale(staining_image, 1/args.rescale_factor_coarse, preserve_range=True, anti_aliasing=True, channel_axis=-1).astype(np.uint8)
+    src = staining_image_rescaled
 
     def src_augmenter(x, flip, rotation):
         return prepare_image_for_feature_matching(
@@ -423,9 +426,10 @@ def run_registration(
             keep_black_background=args.keep_black_background,
             mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
         )
-
+    
+    sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
+    sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, staining_image_rescaled.shape)
     dst = prepare_pseudoimage_for_feature_matching(sts_pseudoimage["pseudoimage"])
-    src = staining_image_rescaled
 
     # Feature matching
     in_mkpts0, in_mkpts1, _best_flip, _best_rotation = feature_matching.match_images(
@@ -436,7 +440,7 @@ def run_registration(
         ransac_min_samples=args.ransac_coarse_min_samples,
         ransac_residual_threshold=args.ransac_coarse_residual_threshold,
         ransac_max_trials=args.ransac_coarse_max_trials,
-        device=args.device
+        device=args.device,
     )
 
     # Estimate and apply transform
@@ -467,14 +471,16 @@ def run_registration(
     out_coords_output_coarse = sts_coords_coarse.copy()
 
     # Saving alignment results here
+    # TODO: check order of keypoints (in all functions throughout package)
     _align_result = AlignmentResult(
-        im_0=None,
+        name="coarse_alignment_whole_section",
+        im_0=transform_image(src, _best_flip, [0, None, 0, None], _best_rotation),
         im_1=sts_pseudoimage["pseudoimage"],
         transformation_matrix=tform_points.params,
         ransac_results=None,
         sift_results=None,
-        keypoints0=in_mkpts0,
-        keypoints1=in_mkpts1,
+        keypoints0=in_mkpts1,
+        keypoints1=in_mkpts0,
     )
     metadata.add_alignment_result(_align_result)
 
@@ -483,7 +489,7 @@ def run_registration(
         return (
             out_coords_output_coarse,
             None,
-            rotate(staining_image[:: _best_flip[0], :: _best_flip[1]], _best_rotation),
+            transform_image(staining_image, _best_flip, None, _best_rotation).astype(np.uint8),
             metadata,
         )
 
@@ -494,17 +500,14 @@ def run_registration(
     tile_codes = np.unique(puck_id.codes)
 
     # Apply scaling to input image again, for fine registration
-    staining_image_rescaled = staining_image[:: args.rescale_factor_fine, :: args.rescale_factor_fine]
-    src = staining_image_rescaled
+    staining_image_rescaled = rescale(staining_image, 1/args.rescale_factor_fine, preserve_range=True, anti_aliasing=True, channel_axis=-1).astype(np.uint8)
+    src = staining_image_rescaled.astype(np.uint8)
     src = transform_image(staining_image_rescaled, _best_flip, None, _best_rotation)
 
     for tile_code in tile_codes:
         # Create a pseudoimage
-        _t_puck_id = puck_id.codes == tile_code
-        _t_valid_coords = (
-            puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds]
-            == tile_code
-        )
+        _t_puck_id = np.isin(puck_id.codes, tile_code)
+        _t_valid_coords = np.isin(puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds],tile_code)
 
         logging.info(f"Registering tile {tile_code} with {len(_t_valid_coords)} coordinates")
 
@@ -515,10 +518,12 @@ def run_registration(
             _t_valid_coords,
             recenter=False,
             rescale=True,
-            values=None
+            values=None,
         )
 
-        _t_counts = total_counts[(total_counts > args.threshold_counts_coarse)][_i_sts_coords_coarse_within_image_bounds][_t_valid_coords]
+        _t_counts = total_counts[(total_counts > args.threshold_counts_coarse)][
+            _i_sts_coords_coarse_within_image_bounds
+        ][_t_valid_coords]
 
         _t_sts_pseudoimage_counts = create_pseudoimage(
             sts_coords_transformed[:, ::-1],  # we need to flip these coordinates
@@ -527,7 +532,7 @@ def run_registration(
             _t_valid_coords,
             recenter=False,
             rescale=True,
-            values=_t_counts.astype(int)
+            values=_t_counts,
         )
 
         # Axis limits to crop both modalities to tile region
@@ -551,11 +556,13 @@ def run_registration(
             )
 
         dst = []
-        for pseudoimage, invert in product([_t_sts_pseudoimage, _t_sts_pseudoimage_counts], [True, False]):
-            dst = prepare_pseudoimage_for_feature_matching(
-                pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
+        for pseudoimage, invert in product(
+            [_t_sts_pseudoimage["pseudoimage"], _t_sts_pseudoimage_counts["pseudoimage"].astype(int)], [False, True]
+        ):
+            dst += prepare_pseudoimage_for_feature_matching(
+                pseudoimage[x_min:x_max, y_min:y_max],
                 gaussian_blur=args.fine_registration_gaussian_sigma,
-                invert=invert
+                invert=invert,
             )
 
         # Finding matches between modalities
@@ -568,11 +575,12 @@ def run_registration(
             ransac_min_samples=args.ransac_fine_min_samples,
             ransac_residual_threshold=args.ransac_fine_residual_threshold,
             ransac_max_trials=args.ransac_fine_max_trials,
-            device=args.device
+            device=args.device,
         )
 
         # Detect fiducial markers with the YOLO model
         if args.fiducial_model != "" and check_file_exists(args.fiducial_model, exception=False):
+            raise NotImplementedError("Fiducial marker refinement is not implemented yet")
             logging.info("Running fiducial marker refinement")
             fiducial_points_src = fiducial_detection.find_fiducial(
                 transform_image(src, _best_flip, [x_min, x_max, y_min, y_max], _best_rotation), args.fiducial_model
@@ -605,21 +613,23 @@ def run_registration(
         out_coords_output_fine[_t_puck_id] = _t_sts_coords_fine_transformed
 
         # Saving alignment results here (only when passed)
+        # TODO: check order of keypoints (in all functions throughout package)
         _align_result = AlignmentResult(
-            im_0=None,
-            im_1=sts_pseudoimage["pseudoimage"],
-            transformation_matrix=tform_points.params,
+            name=f"fine_alignment_tile_{tile_code}",
+            im_0=src,
+            im_1=_t_sts_pseudoimage["pseudoimage"],
+            transformation_matrix=_t_tform_points.params,
             ransac_results=None,
             sift_results=None,
-            keypoints0=in_mkpts0,
-            keypoints1=in_mkpts1,
+            keypoints0=_t_mkpts1,
+            keypoints1=_t_mkpts0,
         )
         metadata.add_alignment_result(_align_result)
 
     return (
         out_coords_output_coarse,
         out_coords_output_fine,
-        src.astype(np.uint8),
+        transform_image(staining_image, _best_flip, None, _best_rotation).astype(np.uint8),
         metadata,
     )
 
@@ -632,6 +642,9 @@ def _run_pairwise_aligner(args):
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
     check_file_exists(args.image_in)
+
+    if args.fiducial_model != "" and check_file_exists(args.fiducial_model, exception=False):
+        raise NotImplementedError("Fiducial marker refinement is not implemented yet")
 
     if not check_directory_exists(args.h5_out):
         raise FileNotFoundError("Parent directory for --h5-out does not exist")
@@ -662,7 +675,7 @@ def _run_pairwise_aligner(args):
 
     # Saving the metadata (for QC)
     if args.metadata_out != "":
-        metadata.render_images()
+        metadata.render()
         metadata.save_json(args.metadata_out)
 
     # Exporting the data
