@@ -618,7 +618,7 @@ def run_registration(
         _align_result = AlignmentResult(
             name=f"fine_alignment_tile_{tile_code}",
             im_0=src[x_min:x_max, y_min:y_max],
-            im_1=_t_sts_pseudoimage["pseudoimage"],
+            im_1=_t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
             transformation_matrix=_t_tform_points.params.tolist(),
             ransac_results=None,
             sift_results=None,
