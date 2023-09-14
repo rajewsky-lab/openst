@@ -1728,6 +1728,8 @@
             <p><img src="data:image/png;base64, {{ alignment_result.alignment_rendered }}" /></p>
             <p><b>Matching keypoints between staining and STS</b></p>
             <p><img src="data:image/png;base64, {{ alignment_result.keypoints_rendered }}" /></p>
+            <p><b>Estimated affine transformation model</b></p>
+            <pre>{{ alignment_result.transformation_matrix }}</pre>
           </div>
           {% endfor %}
         </div>
