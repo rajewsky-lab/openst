@@ -258,7 +258,7 @@ def transform_image(im, flip: list = None, crop: list = None, rotation: int = No
     if flip is not None:
         _im = _im[:: flip[0], :: flip[1]]
     if rotation is not None:
-        _im = rotate(_im, rotation)
+        _im = rotate(_im, rotation, clip=True, preserve_range=True)
     if crop is not None:
         _im = _im[crop[0] : crop[1], crop[2] : crop[3]]
 
@@ -479,8 +479,8 @@ def run_registration(
         transformation_matrix=tform_points.params,
         ransac_results=None,
         sift_results=None,
-        keypoints0=in_mkpts1,
-        keypoints1=in_mkpts0,
+        keypoints0=in_mkpts1.tolist(),
+        keypoints1=in_mkpts0.tolist(),
     )
     metadata.add_alignment_result(_align_result)
 
@@ -616,13 +616,13 @@ def run_registration(
         # TODO: check order of keypoints (in all functions throughout package)
         _align_result = AlignmentResult(
             name=f"fine_alignment_tile_{tile_code}",
-            im_0=src,
+            im_0=src[x_min:x_max, y_min:y_max],
             im_1=_t_sts_pseudoimage["pseudoimage"],
             transformation_matrix=_t_tform_points.params,
             ransac_results=None,
             sift_results=None,
-            keypoints0=_t_mkpts1,
-            keypoints1=_t_mkpts0,
+            keypoints0=_t_mkpts1.tolist(),
+            keypoints1=_t_mkpts0.tolist(),
         )
         metadata.add_alignment_result(_align_result)
 
