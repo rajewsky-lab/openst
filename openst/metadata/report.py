@@ -55,10 +55,7 @@ def generate_html_report(json_data, template_file):
         template_content = template_data.read()
         template = Template(template_content)
 
-    html_report = template.render(
-        program={"args": json_data["args"], "cmdline": json_data["cmdline"]},
-        metadata=json_data["metadata"]["alignment_results"],
-    )
+    html_report = template.render(metadata=json_data)
 
     return html_report
 

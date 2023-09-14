@@ -9,10 +9,10 @@
   <meta http-equiv="X-UA-Compatible" content="IE=EDGE" />
   
   
-  <meta name="author" content="Tamas Ryszard Sztanka-Toth, Nikolaos Karaiskos" />
+  <meta name="author" content="Daniel León-Periñán" />
   
   
-  <title>tmpd7l_bkhf.qc_sequencing_create_sheet.knit</title>
+  <title>openst report: {{ metadata.metadata_type }}</title>
   
   <script>// Pandoc 2.9 adds attributes on both header and div. We remove the former (to
   // be compatible with the behavior of Pandoc < 2.8).
@@ -1686,7 +1686,7 @@
           <div id="program-info" class="section level3">
             <h3>Program Info</h3>
             <p>The program ran with the following command</p>
-            <pre> {{ program.cmdline }} </pre>
+            <pre> {{ metadata.cmdline }} </pre>
           </div>
           <div id="program-arguments" class="section level3">
             <h3>Arguments</h3>
@@ -1703,7 +1703,7 @@
                   </th>
               </thead>
               <tbody>
-                {% for key, value in program.args.items() %}
+                {% for key, value in metadata.args.items() %}
                 <tr>
                   <td style="text-align:left;border-right:1px solid;">
                     {{ key }}
@@ -1719,15 +1719,15 @@
         </div>
         <div id="alignment-results" class="section level2 tabset">
           <h2>Alignment Results</h2>
-          <p>We will show one alignment result per tab</p>
-          {% for alignment_result in metadata %}
+          <p>One alignment per tab</p>
+          {% for alignment_result in metadata.alignment_results %}
           <div id="{{ alignment_result.name }}" class="section level3 tabset">
             <h3 class="tabset">{{ alignment_result.name }}</h3>
-            <p>Below we show... </p>
-            <p><b>{{ alignment_result.name }}</p>b></p>
-            <p><img src="{{ alignment_result.image0 }}" /></p>
-            <p><b>{{ alignment_result.name }}</p>b></p>
-            <p><img src="{{ alignment_result.image1 }}" /></p>
+            <p>Below we show the results of the alignment process between the staining images of {{ alignment_result.name }} and the corresponding STS (spatial transcriptomics) images.</p>
+            <p><b>Before and after alignment (STS to staining)</b></p>
+            <p><img src="data:image/png;base64, {{ alignment_result.alignment_rendered }}" /></p>
+            <p><b>Matching keypoints between staining and STS</b></p>
+            <p><img src="data:image/png;base64, {{ alignment_result.keypoints_rendered }}" /></p>
           </div>
           {% endfor %}
         </div>
