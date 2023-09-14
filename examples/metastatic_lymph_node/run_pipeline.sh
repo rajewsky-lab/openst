@@ -49,9 +49,9 @@
 # # openst assign_transcripts_to_mask
 
 openst pairwise_aligner \
-    --image-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/1_images_ln/stitched/fc_sts_63_7/Image_Stitched_Composite.tif \
-    --h5-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/stitched/fc_sts_063_7_stitched_spots.h5ad \
-    --h5-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_7_stitched_spots_aligned.h5ad \
+    --image-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/1_images_ln/stitched/fc_sts_63_9/Image_Stitched_Composite.tif \
+    --h5-in /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/stitched/fc_sts_063_9_stitched_spots.h5ad \
+    --h5-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_9_stitched_spots_aligned.h5ad \
     --save-image-in-h5 \
     --feature-matcher LoFTR \
     --ransac-coarse-max-trials 50 \
@@ -59,8 +59,7 @@ openst pairwise_aligner \
     --n-threads 8 \
     --ransac-coarse-residual-threshold 2 \
     --ransac-coarse-min-samples 2 \
-    --metadata-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_7_alignment_metadata.json \
+    --metadata-out /data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/auto_aligned_he/fc_sts_063_9_alignment_metadata.json \
     --threshold-counts-coarse 5 \
     --mask-tissue \
-    --keep-black-background \
-    --only-coarse
+    --keep-black-background
