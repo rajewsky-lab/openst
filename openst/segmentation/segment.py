@@ -38,7 +38,7 @@ def get_segment_parser():
         "--model",
         type=str,
         default="",
-        help=f"""cellpose model - either a path or a valid string to pretrained model.""",
+        help="""cellpose model - either a path or a valid string to pretrained model.""",
     )
     parser.add_argument(
         "--flow-threshold",
