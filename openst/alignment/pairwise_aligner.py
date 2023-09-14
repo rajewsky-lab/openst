@@ -254,6 +254,7 @@ def setup_pairwise_aligner_parser(parent_parser):
 
 
 def transform_image(im, flip: list = None, crop: list = None, rotation: int = None):
+    _dtype = im.dtype
     _im = im
     if flip is not None:
         _im = _im[:: flip[0], :: flip[1]]
@@ -262,7 +263,7 @@ def transform_image(im, flip: list = None, crop: list = None, rotation: int = No
     if crop is not None:
         _im = _im[crop[0] : crop[1], crop[2] : crop[3]]
 
-    return _im
+    return _im.astype(_dtype)
 
 
 def prepare_image_for_feature_matching(
@@ -476,7 +477,7 @@ def run_registration(
         name="coarse_alignment_whole_section",
         im_0=transform_image(src, _best_flip, [0, None, 0, None], _best_rotation),
         im_1=sts_pseudoimage["pseudoimage"],
-        transformation_matrix=tform_points.params,
+        transformation_matrix=tform_points.params.tolist(),
         ransac_results=None,
         sift_results=None,
         keypoints0=in_mkpts1.tolist(),
@@ -618,7 +619,7 @@ def run_registration(
             name=f"fine_alignment_tile_{tile_code}",
             im_0=src[x_min:x_max, y_min:y_max],
             im_1=_t_sts_pseudoimage["pseudoimage"],
-            transformation_matrix=_t_tform_points.params,
+            transformation_matrix=_t_tform_points.params.tolist(),
             ransac_results=None,
             sift_results=None,
             keypoints0=_t_mkpts1.tolist(),
