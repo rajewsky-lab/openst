@@ -1,3 +1,5 @@
+import logging
+
 import numpy as np
 import pandas as pd
 from anndata import AnnData
@@ -15,10 +17,13 @@ def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
 
     try:
         import scanpy as sc
+
         sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
     except ImportError:
-        logging.warn("""Could not calculate 'mt' metrics with scanpy, as it could not find the dependency.
-        Please install using pip install scanpy""")
+        logging.warn(
+            """Could not calculate 'mt' metrics with scanpy, as it could not find the dependency.
+        Please install using pip install scanpy"""
+        )
 
     add_reads = False
     if dge_summary_path is not None:
