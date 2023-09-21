@@ -48,7 +48,7 @@ from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntV
 
 from openst.utils.pseudoimage import create_pseudoimage
 
-def setup_manual_pairwise_aligner_parser(parent_parser):
+def setup_manual_pairwise_aligner_gui_parser(parent_parser):
     """setup_manual_pairwise_aligner_gui_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner_gui",
