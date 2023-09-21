@@ -1,9 +1,11 @@
 import base64
-import numpy as np
 import io
 
+import numpy as np
 from skimage.transform import SimilarityTransform
+
 from openst.metadata.classes.base import BaseMetadata
+
 
 class PairwiseAlignmentMetadata(BaseMetadata):
     def __init__(self, args):
@@ -79,13 +81,13 @@ class AlignmentResult:
             plt.show()
         else:
             return fig, axes
-        
+
     def plot_to_base64(self, fig):
         my_stringIObytes = io.BytesIO()
-        fig.savefig(my_stringIObytes, format='jpg')
+        fig.savefig(my_stringIObytes, format="jpg")
         my_stringIObytes.seek(0)
         return base64.b64encode(my_stringIObytes.read()).decode()
-        
+
     def render(self):
         self.alignment_rendered, _ = self.visualize_alignment(axes=None, show=False)
         self.keypoints_rendered, _ = self.visualize_keypoints(axes=None, show=False)
