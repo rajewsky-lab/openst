@@ -1,5 +1,9 @@
 import argparse
 
+from openst.alignment.manual_pairwise_aligner import \
+    setup_manual_pairwise_aligner_parser
+from openst.alignment.manual_pairwise_aligner_gui import \
+    setup_manual_pairwise_aligner_gui_parser
 from openst.alignment.pairwise_aligner import setup_pairwise_aligner_parser
 from openst.alignment.transcript_assign import setup_transcript_assign_parser
 from openst.metadata.report import setup_report_parser
@@ -23,6 +27,10 @@ def cmdline_args():
     # TODO: do this iteratively
     # create the parser for the "pairwise_aligner" command
     setup_pairwise_aligner_parser(parent_parser_subparsers)
+    # create the parser for the "manual_pairwise_aligner" command
+    setup_manual_pairwise_aligner_parser(parent_parser_subparsers)
+    # create the parser for the "manual_pairwise_aligner" command
+    setup_manual_pairwise_aligner_gui_parser(parent_parser_subparsers)
     # create the parser for the "report" command
     setup_report_parser(parent_parser_subparsers)
     # create the parser for the "segment" command
