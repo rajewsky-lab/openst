@@ -3,8 +3,8 @@ site_url: https://open.st
 site_author: Daniel Leon-Perinan
 
 
-repo_url: https://github.com/ajitjohnson/scimap
-edit_uri: https://github.com/ajitjohnson/scimap/edit/master/docs
+repo_url: https://github.com/rajewsky-lab/openst
+edit_uri: https://github.com/rajewsky-lab/openst/edit/master/openst_wiki
 nav:
   - Home: index.md
   - 1. Experimental: experimental.md

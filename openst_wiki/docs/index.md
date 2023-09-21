@@ -1,5 +1,5 @@
 ---
-title: SCIMAP
+title: open-ST
 description: Spatial Single-Cell Analysis Toolkit
 hide:
   - toc
