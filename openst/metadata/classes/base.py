@@ -2,9 +2,11 @@ import copy
 import json
 import logging
 import sys
+
 import numpy as np
 
 from openst.utils.file import check_directory_exists
+
 
 class BaseMetadata:
     def __init__(self, args):
@@ -20,7 +22,7 @@ class BaseMetadata:
             NotImplementedError: This function is not implemented.
         """
         raise NotImplementedError("This function is not implemented")
-    
+
     def _get_dict_recursive(self, data):
         """
         Recursively convert an object and its attributes to a dictionary.
@@ -43,13 +45,15 @@ class BaseMetadata:
             for m in data:
                 output_data.append(self._get_dict_recursive(m))
         elif isinstance(data, np.ndarray):
-            logging.warn("""'np.ndarray' objects are not represented into a dictionary.
+            logging.warn(
+                """'np.ndarray' objects are not represented into a dictionary.
                          Hint: for large images, write a BaseMetadata.render method.
                                You can store compressed images as base64 strings. 
-                               Other large datasets must not be stored as plain text.""")
+                               Other large datasets must not be stored as plain text."""
+            )
             output_data = ""
         return output_data
-    
+
     def copy(self):
         """
         Create a deep copy of the current object.
@@ -58,7 +62,7 @@ class BaseMetadata:
             object: A deep copy of the current object.
         """
         return copy.deepcopy(self)
-    
+
     def get_dict(self):
         """
         Convert the current object and its attributes to a dictionary.
@@ -68,7 +72,7 @@ class BaseMetadata:
         """
         data = self.copy()
         return self._get_dict_recursive(data)
-    
+
     def save_json(self, path):
         """
         Save the object's data as JSON to a specified file path.
