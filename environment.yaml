@@ -1,4 +1,4 @@
-name: openst_dev
+name: openst
 channels:
   - defaults
 dependencies:
@@ -60,7 +60,6 @@ dependencies:
   - mkl_random=1.2.2=py310h1128e8f_1
   - ncurses=6.4=h6a678d5_0
   - networkx=3.1=py310h06a4308_0
-  - numpy-base=1.25.2=py310hb5e798b_0
   - openjpeg=2.4.0=h3ad879b_0
   - openssl=3.0.10=h7f8727e_2
   - packaging=23.1=py310h06a4308_0
@@ -129,6 +128,10 @@ dependencies:
       - psutil==5.9.5
       - py-cpuinfo==9.0.0
       - pyparsing==3.0.9
+      - pyqt5==5.15.9
+      - pyqt5-qt5==5.15.2
+      - pyqt5-sip==12.12.2
+      - pyqtgraph==0.13.3
       - python-dateutil==2.8.2
       - pytz==2023.3.post1
       - requests==2.31.0
@@ -147,4 +150,3 @@ dependencies:
       - tzdata==2023.3
       - ultralytics==8.0.173
       - urllib3==2.0.4
-prefix: /home/dleonpe/miniconda3/envs/openst_dev
