@@ -6,7 +6,7 @@ import numpy as np
 from skimage.measure import ransac
 from skimage.transform import SimilarityTransform
 
-SUPPORTED_MATCHING_METHODS = ["LoFTR", "SIFT"]
+SUPPORTED_MATCHING_METHODS = ["LoFTR", "SIFT", "KeyNet"]
 
 
 def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "outdoor", device: str = "cpu") -> tuple:
@@ -48,6 +48,69 @@ def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "o
         correspondences = matcher(input_dict)
 
     return correspondences["keypoints0"].cpu().numpy(), correspondences["keypoints1"].cpu().numpy()
+
+
+def _find_matches_keynet(im_0: np.ndarray, im_1: np.ndarray, device: str = "cpu") -> tuple:
+    """
+    Find matching keypoints between two images using LoFTR.
+
+    Args:
+        im_0 (np.ndarray): First input image.
+        im_1 (np.ndarray): Second input image.
+
+    Returns:
+        tuple: A tuple containing two arrays:
+            - keypoints0 (np.ndarray): Array of keypoints from the first image.
+            - keypoints1 (np.ndarray): Array of keypoints from the second image.
+
+    Notes:
+        - This function uses LoFTR to find matching keypoints between two input images.
+        - The 'pretrained' parameter specifies the variant of the LoFTR model to use.
+    """
+
+    try:
+        import kornia.feature as KF
+        import torch
+    except ImportError:
+        raise ImportError(
+            """Optional modules need to be installed to run thi s feature.
+               Please run 'pip install kornia'"""
+        )
+
+    feature = KF.KeyNetAffNetHardNet(5000, True).eval().to(device)
+
+    input_dict = {
+        "image0": torch.tensor(im_0)[None, None].float().to(device),
+        "image1": torch.tensor(im_1)[None, None].float().to(device),
+    }
+
+    hw1 = torch.tensor(input_dict['image0'].shape[2:])
+    hw2 = torch.tensor(input_dict['image0'].shape[2:])
+
+    adalam_config = {"device": device}
+
+    with torch.inference_mode():
+        lafs1, resps1, descs1 = feature(input_dict['image0'])
+        lafs2, resps2, descs2 = feature(input_dict['image1'])
+        dists, idxs = KF.match_adalam(
+            descs1.squeeze(0),
+            descs2.squeeze(0),
+            lafs1,
+            lafs2,  # Adalam takes into account also geometric information
+            config=adalam_config,
+            hw1=hw1,
+            hw2=hw2,  # Adalam also benefits from knowing image size
+        )
+
+    def get_matching_keypoints(lafs1, lafs2, idxs):
+        mkpts1 = KF.get_laf_center(lafs1).squeeze()[idxs[:, 0]].detach().cpu().numpy()
+        mkpts2 = KF.get_laf_center(lafs2).squeeze()[idxs[:, 1]].detach().cpu().numpy()
+
+        return mkpts1, mkpts2
+
+    mkpts1, mkpts2 = get_matching_keypoints(lafs1, lafs2, idxs)
+
+    return mkpts1, mkpts2
 
 
 def _find_matches_sift(im_0: np.ndarray, im_1: np.ndarray, *args, **kwargs) -> tuple:
@@ -138,6 +201,8 @@ def find_matches(
                 _i_mkpts0, _i_mkpts1 = _find_matches_loftr(_i_dst, _i_src, device=device)
             elif method == "SIFT":
                 _i_mkpts0, _i_mkpts1 = _find_matches_sift(_i_dst, _i_src)
+            elif method == 'KeyNet':
+                _i_mkpts0, _i_mkpts1 = _find_matches_keynet(_i_dst, _i_src, device=device)
             else:
                 raise ValueError(f"Registration method {method} not supported")
 
