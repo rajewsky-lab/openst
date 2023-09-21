@@ -1,3 +1,4 @@
+import cv2
 import numpy as np
 from skimage.transform import resize
 
@@ -10,6 +11,7 @@ def create_pseudoimage(
     recenter=True,
     rescale=True,
     values=None,
+    resize_method: str = 'scikit-image',
 ) -> dict:
     """
     Create a pseudoimage representation from input coordinates (two-dimensional).
@@ -39,7 +41,6 @@ def create_pseudoimage(
         - The rescaled coordinates are used to calculate the scaling ratio and apply transformations.
         - If target_size is provided, the pseudoimage is resized to match the target size.
     """
-
     if type(coords) is not np.ndarray:
         raise TypeError("'coords' is expected to be of type np.ndarray")
     elif coords.ndim == 2 and coords.shape[1] != 2:
@@ -90,7 +91,18 @@ def create_pseudoimage(
 
     _sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
 
-    sts_pseudoimage = resize(_sts_pseudoimage, target_size[:2], anti_aliasing=True)
+    if resize_method == 'scikit-image':
+        sts_pseudoimage = resize(_sts_pseudoimage, target_size[:2], anti_aliasing=True)
+    elif resize_method == 'cv2':
+        _ker = 2
+        if np.array(target_size).max() > 5000:
+            _ker = 6
+        elif np.array(target_size).max() > 1000:
+            _ker = 4
+        _sts_pseudoimage = cv2.blur(_sts_pseudoimage, (_ker, _ker))
+        sts_pseudoimage = cv2.resize(_sts_pseudoimage, target_size[:2][::-1], interpolation=cv2.INTER_NEAREST)
+    else:
+        raise NotImplementedError(f"The resize method '{resize_method}' was not implemented")
 
     # calculate scaling ratio from the initially transformed points;
     # use these points for applying the transform matrix (not integer)
