@@ -119,7 +119,7 @@ def apply_transform_to_coords(
         tile_codes = np.unique(puck_id.codes)
 
         for tile_code in tile_codes:
-            mkpts = keypoints[f'tile_{tile_code}']
+            mkpts = keypoints[f'{tile_code}']
             mkpts_fine0, mkpts_fine1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
 
             _t_valid_coords = puck_id.codes == tile_code
