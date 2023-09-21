@@ -12,9 +12,6 @@ from openst.alignment.transformation import apply_transform
 from openst.utils.file import (check_adata_structure, check_directory_exists,
                                check_file_exists, load_properties_from_adata)
 
-logging.basicConfig()
-logging.root.setLevel(logging.NOTSET)
-
 def get_manual_pairwise_aligner_parser():
     """
     Parse command-line arguments.
