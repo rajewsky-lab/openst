@@ -31,7 +31,7 @@ from scipy import ndimage
 from skimage.color import rgb2gray, rgb2hsv
 from skimage.exposure import equalize_adapthist
 from skimage.filters import gaussian, threshold_otsu
-from skimage.transform import estimate_transform, rotate, rescale
+from skimage.transform import estimate_transform, rescale, rotate
 from threadpoolctl import threadpool_limits
 
 from openst.alignment import feature_matching, fiducial_detection
@@ -202,7 +202,7 @@ def get_pairwise_aligner_parser():
         "--feature-matcher",
         type=str,
         default="LoFTR",
-        choices=["LoFTR", "SIFT"],
+        choices=["LoFTR", "SIFT", 'KeyNet'],
         help="Feature matching algorithm",
     )
     parser.add_argument(
@@ -329,8 +329,8 @@ def prepare_image_for_feature_matching(
         image_out = image * s_image_gaussian_binary[..., np.newaxis]
         hsv_image_out = hsv_image * s_image_gaussian_binary[..., np.newaxis]
 
-        image_out = ((image_out/image_out.max())*255).astype(int)
-        hsv_image_out = ((hsv_image_out/hsv_image_out.max())*255).astype(int)
+        image_out = ((image_out / image_out.max()) * 255).astype(int)
+        hsv_image_out = ((hsv_image_out / hsv_image_out.max()) * 255).astype(int)
 
         if not keep_black_background:
             image_out = np.where(
@@ -414,8 +414,10 @@ def run_registration(
     logging.info(f"Coarse registration, {len(in_coords)} coordinates")
 
     # Preparing images and preprocessing routines
-    #src = cv2.resize(cv2.GaussianBlur(staining_image,(blur_antialias, blur_antialias),0), (0,0), fx=1/args.rescale_factor_coarse, fy=1/args.rescale_factor_coarse, interpolation=cv2.INTER_NEAREST) 
-    staining_image_rescaled = rescale(staining_image, 1/args.rescale_factor_coarse, preserve_range=True, anti_aliasing=True, channel_axis=-1).astype(np.uint8)
+    # src = cv2.resize(cv2.GaussianBlur(staining_image,(blur_antialias, blur_antialias),0), (0,0), fx=1/args.rescale_factor_coarse, fy=1/args.rescale_factor_coarse, interpolation=cv2.INTER_NEAREST)
+    staining_image_rescaled = rescale(
+        staining_image, 1 / args.rescale_factor_coarse, preserve_range=True, anti_aliasing=True, channel_axis=-1
+    ).astype(np.uint8)
     src = staining_image_rescaled
 
     def src_augmenter(x, flip, rotation):
@@ -427,7 +429,7 @@ def run_registration(
             keep_black_background=args.keep_black_background,
             mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
         )
-    
+
     sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
     sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, staining_image_rescaled.shape)
     dst = prepare_pseudoimage_for_feature_matching(sts_pseudoimage["pseudoimage"])
@@ -477,11 +479,11 @@ def run_registration(
         name="coarse_alignment_whole_section",
         im_0=transform_image(src, _best_flip, [0, None, 0, None], _best_rotation),
         im_1=sts_pseudoimage["pseudoimage"],
-        transformation_matrix=tform_points.params.tolist(),
+        transformation_matrix=tform_points.params,
         ransac_results=None,
         sift_results=None,
-        keypoints0=in_mkpts1.tolist(),
-        keypoints1=in_mkpts0.tolist(),
+        keypoints0=in_mkpts1,
+        keypoints1=in_mkpts0,
     )
     metadata.add_alignment_result(_align_result)
 
@@ -501,14 +503,19 @@ def run_registration(
     tile_codes = np.unique(puck_id.codes)
 
     # Apply scaling to input image again, for fine registration
-    staining_image_rescaled = rescale(staining_image, 1/args.rescale_factor_fine, preserve_range=True, anti_aliasing=True, channel_axis=-1).astype(np.uint8)
+    staining_image_rescaled = rescale(
+        staining_image, 1 / args.rescale_factor_fine, preserve_range=True, anti_aliasing=True, channel_axis=-1
+    ).astype(np.uint8)
     src = staining_image_rescaled.astype(np.uint8)
     src = transform_image(staining_image_rescaled, _best_flip, None, _best_rotation)
 
     for tile_code in tile_codes:
         # Create a pseudoimage
         _t_puck_id = np.isin(puck_id.codes, tile_code)
-        _t_valid_coords = np.isin(puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds],tile_code)
+        _t_valid_coords = np.isin(
+            puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds],
+            tile_code,
+        )
 
         logging.info(f"Registering tile {tile_code} with {len(_t_valid_coords)} coordinates")
 
@@ -619,11 +626,11 @@ def run_registration(
             name=f"fine_alignment_tile_{tile_code}",
             im_0=src[x_min:x_max, y_min:y_max],
             im_1=_t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
-            transformation_matrix=_t_tform_points.params.tolist(),
+            transformation_matrix=_t_tform_points.params,
             ransac_results=None,
             sift_results=None,
-            keypoints0=_t_mkpts1.tolist(),
-            keypoints1=_t_mkpts0.tolist(),
+            keypoints0=_t_mkpts1,
+            keypoints1=_t_mkpts0,
         )
         metadata.add_alignment_result(_align_result)
 
@@ -635,7 +642,7 @@ def run_registration(
     )
 
 
-def _run_pairwise_aligner(args):
+def run_pairwise_aligner(args):
     logging.info("open-ST pairwise alignment; running with parameters:")
     logging.info(args.__dict__)
 
@@ -696,7 +703,11 @@ def _run_pairwise_aligner(args):
     logging.info(f"Output {args.h5_out} file was written")
 
 
+def _run_pairwise_aligner(args):
+    with threadpool_limits(limits=args.n_threads):
+        run_pairwise_aligner(args)
+
+
 if __name__ == "__main__":
     args = get_pairwise_aligner_parser().parse_args()
-    with threadpool_limits(limits=args.n_threads):
-        _run_pairwise_aligner(args)
+    _run_pairwise_aligner(args)
