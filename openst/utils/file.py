@@ -105,13 +105,14 @@ def check_adata_structure(f):
             logging.warn("The AnnData file has a 'spatial_aligned' layer")
 
 
-def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm/spatial"]) -> dict:
+def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm/spatial"], backed: bool=False) -> dict:
     """
     Load specified properties from an AnnData file (h5py format).
 
     Args:
         f (str): Path to the AnnData h5py file.
         properties (list, optional): List of property paths to load from the file.
+        backed (bool, optional): If True, data will not be read into memory.
 
     Returns:
         dict: A dictionary containing the loaded properties.
@@ -131,9 +132,14 @@ def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm
         for p in properties:
             parsed_properties[p] = read_elem(f[p])
     elif isinstance(f, str):
-        with h5py.File(f) as f:
-            for p in properties:
-                parsed_properties[p] = read_elem(f[p])
+            if backed:
+                _f = h5py.File(f)
+                for p in properties:
+                    parsed_properties[p] = _f[p]
+            else:
+                with h5py.File(f) as _f:
+                    for p in properties:
+                        parsed_properties[p] = read_elem(_f[p])
     else:
         raise TypeError("Type of 'f' is incorrect. It needs to be an AnnData or str object.")
 
