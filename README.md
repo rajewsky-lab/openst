@@ -1,3 +1,8 @@
+# openst
+Needs a new README file...
+
+
+(From the old README)
 # Automatic Pairwise Alignment of Spatial Transcriptomics and Imaging Data (open-ST)
 Author: Daniel León-Periñán @ N.Rajewsky Lab (BIMSB)
 Date: August 30, 2023
