@@ -53,6 +53,11 @@ def get_manual_pairwise_aligner_parser():
         action="store_true",
         help="If selected, fine (per tile) coarse alignment will be performed",
     )
+    parser.add_argument(
+        "--refine",
+        action="store_true",
+        help="If selected, refine (per tile) fine alignment will be performed",
+    )
     return parser
 
 
@@ -107,7 +112,7 @@ def apply_transform_to_coords(
         tuple: A tuple containing four elements:
             - sts_coords_transformed (np.ndarray): Registered STS coordinates after coarse registration
     """
-    sts_coords_transformed = np.zeros_like(in_coords)   
+    sts_coords_transformed = in_coords.copy()
     if puck_id is None:
         mkpts = keypoints['all_tiles_coarse']
         mkpts_coarse0, mkpts_coarse1 = np.array(mkpts['point_src']), np.array(mkpts['point_dst'])
@@ -119,6 +124,8 @@ def apply_transform_to_coords(
         tile_codes = np.unique(puck_id.codes)
 
         for tile_code in tile_codes:
+            if f'{tile_code}' not in keypoints.keys():
+                continue
             mkpts = keypoints[f'{tile_code}']
             mkpts_fine0, mkpts_fine1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
 
@@ -156,18 +163,22 @@ def _run_manual_pairwise_aligner(args):
     if args.h5_out == "":
         args.h5_out = args.h5_in
 
-    if args.coarse == args.fine:
-        raise ValueError("Please specify only one mode, either --coarse or --fine")
+    if args.refine == args.fine and args.fine == args.coarse:
+        raise ValueError("Please specify only one mode, either --coarse or --fine or --refine")
+    if args.refine:
+        args.fine = True
 
     
     _to_load = ["obs/total_counts"]
-    if args.fine:
+    if args.fine or args.refine:
         _to_load += ["obs/puck_id"]
     
     _spatial_name = "obsm/spatial_pairwise_aligned_coarse"
     _tile_ids = None
     if args.coarse:
         _spatial_name = "obsm/spatial"
+    if args.refine:
+        _spatial_name = "obsm/spatial_pairwise_aligned_fine"
 
     _to_load += [_spatial_name]
 
@@ -193,6 +204,9 @@ def _run_manual_pairwise_aligner(args):
     
     if args.fine:
         _spatial_output_name = "obsm/spatial_pairwise_aligned_fine"
+
+    if args.refine:
+        _spatial_output_name = "obsm/spatial_pairwise_aligned_refine"
 
     if check_file_exists(args.h5_out, exception = False):
         logging.info(f"The output file exists at {args.h5_out}")  
