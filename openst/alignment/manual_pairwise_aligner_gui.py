@@ -235,7 +235,7 @@ class ImageRenderer(QThread):
         self,
         in_coords: np.ndarray,
         total_counts: np.ndarray,
-        puck_id: np.ndarray,
+        tile_id: np.ndarray,
         staining_image: np.ndarray,
     ) -> (np.ndarray, np.ndarray):
         """
@@ -244,8 +244,8 @@ class ImageRenderer(QThread):
         Args:
             in_coords (np.ndarray): Input STS coordinates.
             total_counts (np.ndarray): Total UMI counts for each STS coordinate.
-            puck_id: Identifier for each STS coordinate. During the fine registration,
-                    this 'puck_id' is used to aggregate the coordinates into buckets that
+            tile_id: Identifier for each STS coordinate. During the fine registration,
+                    this 'tile_id' is used to aggregate the coordinates into buckets that
                     are aligned separately. Recommended for flow-cell based STS.
             staining_image (np.ndarray): Staining image for registration.
 
@@ -294,7 +294,7 @@ class ImageRenderer(QThread):
             # Apply scaling to input image again, for fine registration
             staining_image_rescaled = staining_image[:: self.rescale_factor_fine, :: self.rescale_factor_fine]
 
-            _t_valid_coords = puck_id[_i_counts_above_threshold][_i_sts_coords_coarse_within_image_bounds] == int(
+            _t_valid_coords = tile_id[_i_counts_above_threshold][_i_sts_coords_coarse_within_image_bounds] == int(
                 self.layer
             )
 
@@ -340,7 +340,7 @@ class ImageRenderer(QThread):
             image_pair = self.render_image_pair(
                 self.adata[self.spatial_path][:],
                 self.adata["obs/total_counts"][:],
-                self.adata["obs/puck_id/codes"][:],
+                self.adata["obs/tile_id/codes"][:],
                 self.adata[self.img_path],
             )
 
@@ -737,9 +737,9 @@ class ImageAlignmentApp(QMainWindow):
     def data_loaded(self, adata):
         self.adata = adata
 
-        # Get the layer names from the puck_id
+        # Get the layer names from the tile_id
         layers = ["all_tiles_coarse"]
-        layers += [f"{i}" for i in np.unique(self.adata["obs/puck_id/codes"])]
+        layers += [f"{i}" for i in np.unique(self.adata["obs/tile_id/codes"])]
         self.prepare_layers(layers)
 
         # Setup the tree structure

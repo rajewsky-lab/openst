@@ -384,7 +384,7 @@ def prepare_pseudoimage_for_feature_matching(
 def run_registration(
     in_coords: np.ndarray,
     total_counts: np.ndarray,
-    puck_id: np.ndarray,
+    tile_id: np.ndarray,
     staining_image: np.ndarray,
     args,
 ) -> (np.ndarray, np.ndarray, PairwiseAlignmentMetadata):
@@ -394,8 +394,8 @@ def run_registration(
     Args:
         in_coords (np.ndarray): Input STS coordinates.
         total_counts (np.ndarray): Total UMI counts for each STS coordinate.
-        puck_id: Identifier for each STS coordinate. During the fine registration,
-                 this 'puck_id' is used to aggregate the coordinates into buckets that
+        tile_id: Identifier for each STS coordinate. During the fine registration,
+                 this 'tile_id' is used to aggregate the coordinates into buckets that
                  are aligned separately. Recommended for flow-cell based STS.
         staining_image (np.ndarray): Staining image for registration.
         args: Namespace containing various registration parameters.
@@ -500,7 +500,7 @@ def run_registration(
     logging.info(f"Fine registration with {_best_flip} flip and {_best_rotation} rotation")
 
     # Collect tile identifiers
-    tile_codes = np.unique(puck_id.codes)
+    tile_codes = np.unique(tile_id.codes)
 
     # Apply scaling to input image again, for fine registration
     staining_image_rescaled = rescale(
@@ -511,9 +511,9 @@ def run_registration(
 
     for tile_code in tile_codes:
         # Create a pseudoimage
-        _t_puck_id = np.isin(puck_id.codes, tile_code)
+        _t_tile_id = np.isin(tile_id.codes, tile_code)
         _t_valid_coords = np.isin(
-            puck_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds],
+            tile_id[(total_counts > args.threshold_counts_coarse)].codes[_i_sts_coords_coarse_within_image_bounds],
             tile_code,
         )
 
@@ -607,7 +607,7 @@ def run_registration(
         _t_tform_points = estimate_transform("similarity", _t_mkpts0, _t_mkpts1)
 
         # Apply the same transformation to the tiles
-        _t_sts_coords_fine_to_transform = sts_coords_coarse[_t_puck_id] / args.rescale_factor_fine
+        _t_sts_coords_fine_to_transform = sts_coords_coarse[_t_tile_id] / args.rescale_factor_fine
         _t_sts_coords_fine_to_transform = (_t_sts_coords_fine_to_transform - np.array([[y_min, x_min]]))[:, ::-1]
 
         _t_sts_coords_fine_transformed = apply_transform(
@@ -618,7 +618,7 @@ def run_registration(
         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed[:, :-1] + np.array([[y_min, x_min]])
         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed * args.rescale_factor_fine
 
-        out_coords_output_fine[_t_puck_id] = _t_sts_coords_fine_transformed
+        out_coords_output_fine[_t_tile_id] = _t_sts_coords_fine_transformed
 
         # Saving alignment results here (only when passed)
         # TODO: check order of keypoints (in all functions throughout package)
@@ -667,7 +667,7 @@ def run_pairwise_aligner(args):
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 
     # Loading the spatial transcriptomics data
-    sts = load_properties_from_adata(args.h5_in, properties=["obsm/spatial", "obs/total_counts", "obs/puck_id"])
+    sts = load_properties_from_adata(args.h5_in, properties=["obsm/spatial", "obs/total_counts", "obs/tile_id"])
 
     # Loading image data
     staining_image = np.array(Image.open(args.image_in))
@@ -676,7 +676,7 @@ def run_pairwise_aligner(args):
     sts_aligned_coarse, sts_aligned_fine, staining_image_aligned, metadata = run_registration(
         sts["obsm/spatial"],
         sts["obs/total_counts"],
-        sts["obs/puck_id"],
+        sts["obs/tile_id"],
         staining_image,
         args,
     )

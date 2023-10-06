@@ -95,7 +95,7 @@ def coarse_align_coordinates(in_coords, sts_pseudoimage, mkpts0, mkpts1):
 
 def apply_transform_to_coords(
     in_coords: np.ndarray,
-    puck_id: np.ndarray,
+    tile_id: np.ndarray,
     keypoints: dict,
 ) -> (np.ndarray, np.ndarray):
     """
@@ -104,8 +104,8 @@ def apply_transform_to_coords(
     Args:
         in_coords (np.ndarray): Input STS coordinates.
         total_counts (np.ndarray): Total UMI counts for each STS coordinate.
-        puck_id: Identifier for each STS coordinate. During the fine registration,
-                 this 'puck_id' is used to aggregate the coordinates into buckets that
+        tile_id: Identifier for each STS coordinate. During the fine registration,
+                 this 'tile_id' is used to aggregate the coordinates into buckets that
                  are aligned separately. Recommended for flow-cell based STS.
 
     Returns:
@@ -113,7 +113,7 @@ def apply_transform_to_coords(
             - sts_coords_transformed (np.ndarray): Registered STS coordinates after coarse registration
     """
     sts_coords_transformed = in_coords.copy()
-    if puck_id is None:
+    if tile_id is None:
         mkpts = keypoints['all_tiles_coarse']
         mkpts_coarse0, mkpts_coarse1 = np.array(mkpts['point_src']), np.array(mkpts['point_dst'])
         # Preparing images and preprocessing routines
@@ -121,7 +121,7 @@ def apply_transform_to_coords(
         sts_coords_transformed[..., :2] = apply_transform(in_coords[..., :2], tform_points, check_bounds=False)[..., :2]
     else:
         # Collect tile identifiers
-        tile_codes = np.unique(puck_id.codes)
+        tile_codes = np.unique(tile_id.codes)
 
         for tile_code in tile_codes:
             if f'{tile_code}' not in keypoints.keys():
@@ -129,7 +129,7 @@ def apply_transform_to_coords(
             mkpts = keypoints[f'{tile_code}']
             mkpts_fine0, mkpts_fine1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
 
-            _t_valid_coords = puck_id.codes == tile_code
+            _t_valid_coords = tile_id.codes == tile_code
             tform_points = estimate_transform("similarity", mkpts_fine1, mkpts_fine0)
             sts_coords_transformed[..., :2][_t_valid_coords] = apply_transform(in_coords[..., :2][_t_valid_coords], tform_points, check_bounds=False)[..., :2][..., ::-1]
 
@@ -171,7 +171,7 @@ def _run_manual_pairwise_aligner(args):
     
     _to_load = ["obs/total_counts"]
     if args.fine or args.refine:
-        _to_load += ["obs/puck_id"]
+        _to_load += ["obs/tile_id"]
     
     _spatial_name = "obsm/spatial_pairwise_aligned_coarse"
     _tile_ids = None
@@ -191,7 +191,7 @@ def _run_manual_pairwise_aligner(args):
     logging.info(f"Applying coordinate transformation")
     _coords = sts[_spatial_name]
     if args.fine:
-        _tile_ids = sts["obs/puck_id"]
+        _tile_ids = sts["obs/tile_id"]
     
     _coords_transformed = apply_transform_to_coords(
         _coords,
