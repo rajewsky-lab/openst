@@ -40,7 +40,7 @@ def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
         adata.obs["reads_per_counts"] = adata.obs['n_reads'] / adata.obs['total_counts']
 
 
-def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, labels):
+def reassign_indices_adata(adata, new_ilocs, joined_coordinates, labels):
     original_ilocs = np.arange(new_ilocs.shape[0])
     sorted_ix = np.argsort(new_ilocs)
     new_ilocs = new_ilocs[sorted_ix]
@@ -65,7 +65,6 @@ def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, lab
     )
 
     adata_out.obsm["spatial"] = joined_coordinates
-    adata_out.uns["spatial"] = {"mask": mask_image}
 
     # rename index
     adata_out.obs.index.name = "cell_bc"
