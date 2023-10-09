@@ -50,10 +50,10 @@ def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, lab
 
     change_ix = np.where(new_ilocs[:-1] != new_ilocs[1:])[0] + 1
 
-    ix_array = np.asarray(np.split(np.arange(new_ilocs.shape[0]), change_ix, axis=0), dtype="int")
+    ix_array = np.asarray(np.split(np.arange(new_ilocs.shape[0]), change_ix, axis=0), dtype="object")
 
     joined_C_sumed = vstack(
-        [csr_matrix(joined_C[ix_array[n].astype(int), :].sum(0)) for n in tqdm(range(len(ix_array)))]
+        [csr_matrix(joined_C[ix_array[n].astype(int), :].sum(0)) for n in tqdm(range(len(ix_array)), desc="Summarising expression per segmented cell")]
     )
 
     adata_out = AnnData(
@@ -73,7 +73,7 @@ def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, lab
     def summarise_adata_obs_column(adata, column, summary_fun=sum):
         vals_to_join = adata.obs[column].to_numpy()[original_ilocs]
         vals_joined = np.array(
-            [summary_fun(vals_to_join[ix_array[n].astype(int)]) for n in tqdm(range(len(ix_array)))]
+            [summary_fun(vals_to_join[ix_array[n].astype(int)]) for n in tqdm(range(len(ix_array)), desc=f"Summarising {column}")]
         )
         return vals_joined
 
