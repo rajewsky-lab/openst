@@ -1,8 +1,10 @@
 import argparse
+import h5py
 import logging
 import dask
 import dask_image
 import dask_image.imread
+from anndata import read_h5ad
 from dask_image.ndmeasure._utils._label import (
         connected_components_delayed,
         label_adjacency_graph,
@@ -20,7 +22,7 @@ from skimage.io import imsave
 from ome_zarr.io import parse_url
 from ome_zarr.writer import write_image
 import zarr
-from openst.utils.file import check_directory_exists, check_file_exists
+from openst.utils.file import check_directory_exists, check_file_exists, load_properties_from_adata
 
 
 def get_segment_parser():
@@ -46,6 +48,11 @@ def get_segment_parser():
         type=str,
         required=True,
         help="Path to the output file where the mask will be stored",
+    )
+    parser.add_argument(
+        "--adata",
+        type=str,
+        help="When specified, staining image is loaded from adata (from --image-in), and segmentation is saved there (to --output-mask)",
     )
     parser.add_argument(
         "--model",
@@ -245,6 +252,26 @@ def _segment_chunk(block, block_id, num_blocks, shift, **kwargs):
 
     return labels
 
+def expand_labels(label_image, distance=1):
+    from scipy.ndimage import distance_transform_edt
+    def expand_labels_block(block):
+        distances, nearest_label_coords = distance_transform_edt(
+            block == 0, return_indices=True
+        )
+        labels_out = np.zeros_like(block)
+        dilate_mask = distances <= distance
+        masked_nearest_label_coords = [
+            dimension_indices[dilate_mask]
+            for dimension_indices in nearest_label_coords
+        ]
+        nearest_labels = block[tuple(masked_nearest_label_coords)]
+        labels_out[dilate_mask] = nearest_labels
+        return labels_out
+
+    if isinstance(label_image, da.Array):
+        return da.map_blocks(expand_labels_block, label_image, dtype=np.uint64)
+    else:
+        return expand_labels_block(label_image)
 
 def _run_segment(args):
     """
@@ -265,14 +292,25 @@ def _run_segment(args):
         raise ImportError("'cellpose' could not be found. Please install with 'pip install cellpose'")
 
     # Check input and output data
-    check_file_exists(args.image_in)
+    im = None
+    if args.adata != '':
+        check_file_exists(args.adata)
+        adata = h5py.File(args.adata, 'r+')
+        im = adata[args.image_in]
+        if args.chunked:
+            im = da.from_array(im)
+        else:
+            im = im[:]
 
-    if not check_directory_exists(args.output_mask):
-        raise FileNotFoundError("Parent directory for --output-mask does not exist")
+    else:
+        check_file_exists(args.image_in)
+        if not check_directory_exists(args.output_mask):
+            raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
     
+    _num_workers = 1
     if args.num_workers > 0:
         _num_workers = args.num_workers
 
@@ -286,16 +324,24 @@ def _run_segment(args):
         check_file_exists(args.model)
         model = models.CellposeModel(gpu=args.gpu, pretrained_model=args.model)
 
+    
+
     if args.chunked:
         logging.info("Loading images into chunks")
         # TODO: implement checking of input file (dimensions)
-        im = dask_image.imread.imread(args.image_in)[0] # to have 3 dimensions
+        if im is None:
+            im = dask_image.imread.imread(args.image_in)[0] # to have 3 dimensions
+
         im = im.rechunk({0: args.chunk_size, 1: args.chunk_size})
         shift = int(np.prod(im.numblocks) - 1).bit_length()
+        print(im.numblocks)
+        print(shift)
 
         logging.info("Segmenting relabeling & by chunks")
+        # This dask chunked option is useful for limited GPU memory
         # we need to specify processes scheduler such that CUDA
         # does not throw memory access errors
+        # TODO: implement expand_labels (mask dilation) with chunked processing
         with ProgressBar():
             with dask.config.set(scheduler='single-threaded', num_workers=_num_workers):
                 mask_chunked = da.map_overlap(
@@ -310,16 +356,35 @@ def _run_segment(args):
                 label_groups = label_adjacency_graph(mask_chunked, None, mask_chunked.max())
                 new_labeling = connected_components_delayed(label_groups)
                 mask_complete = relabel_blocks(mask_chunked, new_labeling)
-                
-                # Save large image mask as zarr
-                store = parse_url(args.output_mask, mode="w").store
-                root = zarr.group(store=store)
-                labels_grp = root.create_group('labels')
+                if args.dilate_px > 0:
+                    mask_complete = expand_labels(mask_complete, distance=args.dilate_px)
+
                 # Transpose the image, so the axes are cxy
-                write_image(im.transpose(2, 0, 1), group=root, compute=True, axes=['c', 'x', 'y'])
-                write_image(mask_complete, group=labels_grp, compute=True, axes=['x', 'y'])
+                if args.adata:
+                    if args.output_mask in adata:
+                        logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
+                        del adata[args.output_mask]
+
+                    dset = adata.create_dataset(args.output_mask, shape=mask_complete.shape,
+                                                    dtype=mask_complete.dtype)  
+                    logging.info(f'Saving mask to adata in {args.output_mask}')
+                    da.store(mask_complete, dset)
+
+                    logging.info(f'Relabeling mask in {args.output_mask}')
+                    adata[args.output_mask][...] = measure.label(adata[args.output_mask])
+                    
+                else:
+                    # Save large image mask as zarr
+                    store = parse_url(args.output_mask, mode="w").store
+                    root = zarr.group(store=store)
+                    labels_grp = root.create_group('labels')
+                    logging.info(f'Saving mask to separate file in {args.output_mask}')
+                    write_image(im.transpose(2, 0, 1), group=root, compute=True, axes=['c', 'x', 'y'])
+                    write_image(mask_complete, group=labels_grp, compute=True, axes=['x', 'y'])
     else:
-        im = np.array(Image.open(args.image_in))
+        if im is None:
+            im = np.array(Image.open(args.image_in))
+
         mask_complete = cellpose_segmentation(
             im,
             model,
@@ -341,7 +406,16 @@ def _run_segment(args):
 
         mask_complete = measure.label(mask_complete)
 
-        Image.fromarray(mask_complete.astype(dtype)).save(args.output_mask)
+        if args.adata:
+            if args.output_mask in adata:
+                logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
+                del adata[args.output_mask]
+
+            logging.info(f'Saving mask to adata in {args.output_mask}')
+            adata[args.output_mask] = mask_complete
+        else:
+            logging.info(f'Saving mask to separate file in {args.output_mask}')
+            Image.fromarray(mask_complete.astype(dtype)).save(args.output_mask)
 
 
 if __name__ == "__main__":
