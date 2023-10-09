@@ -27,17 +27,18 @@ def get_transcript_assign_parser():
     )
 
     parser.add_argument(
-        "--mask",
-        type=str,
-        help="path to image mask; must be in same coordinates as the obsm['spatial'] in the AnnData file",
-        required=True,
-    )
-
-    parser.add_argument(
         "--mask-in-adata",
         default=False,
         action="store_true",
         help="When specified, the image mask is loaded from the adata, at the internal path specified by '--mask'",
+    )
+
+    parser.add_argument(
+        "--mask",
+        type=str,
+        help="""path to image mask; must be in same coordinates as the obsm['spatial'] in the AnnData file.
+        If --mask-in-adata, it is a path within the h5ad file""",
+        required=True,
     )
 
     parser.add_argument(
@@ -113,7 +114,7 @@ def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
 
 def subset_adata_to_mask(mask, adata):
     # Subset adata to the valid coordinates from the mask
-    adata = adata[(adata.obsm["spatial"][:, 0] <= mask.shape[0]) & (adata.obsm["spatial"][:, 1] <= mask.shape[1])]
+    adata = adata[(adata.obsm["spatial"][:, 0] <= mask.shape[0]) & (adata.obsm["spatial"][:, 1] <= mask.shape[1])].copy()
 
     # Subset the labels to those in the mask
     labels = mask[adata.obsm["spatial"][:, 0].astype(int), adata.obsm["spatial"][:, 1].astype(int)]
@@ -136,9 +137,10 @@ def _run_transcript_assign(args):
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 
-    logging.info("Loading data")
     check_file_exists(args.adata)
-    check_file_exists(args.mask)
+
+    if not args.mask_in_adata:
+        check_file_exists(args.mask)
 
     if not check_directory_exists(args.output):
         raise FileNotFoundError("Parent directory for --output does not exist")
@@ -146,12 +148,15 @@ def _run_transcript_assign(args):
     if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
-    adata = read_h5ad(args.adata)
-
+    logging.info("Loading image mask")
     if args.mask_in_adata:
-        mask = load_properties_from_adata(adata, args.mask)[args.mask]
+        mask = load_properties_from_adata(args.adata, [args.mask])[args.mask]
     else:
+        # TODO: load with dask if it is too large
         mask = np.array(Image.open(args.mask))
+
+    logging.info("Loading adata")
+    adata = read_h5ad(args.adata)
 
     logging.info("Subsetting adata coordinates to mask")
     adata, props_filter = subset_adata_to_mask(mask, adata)
