@@ -3,6 +3,7 @@ import logging
 import numpy as np
 import pandas as pd
 from anndata import AnnData
+from openst.utils.scanpy.pp import calculate_qc_metrics
 from scipy.sparse import csc_matrix, csr_matrix, dok_matrix, vstack
 from tqdm import tqdm
 
@@ -15,15 +16,7 @@ def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
         | adata.var_names.str.startswith("MT-")
     )
 
-    try:
-        import scanpy as sc
-
-        sc.pp.calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
-    except ImportError:
-        logging.warn(
-            """Could not calculate 'mt' metrics with scanpy, as it could not find the dependency.
-        Please install using pip install scanpy"""
-        )
+    calculate_qc_metrics(adata, qc_vars=["mt"], percent_top=None, log1p=False, inplace=True)
 
     add_reads = False
     if dge_summary_path is not None:
@@ -44,7 +37,7 @@ def calculate_adata_metrics(adata, dge_summary_path=None, n_reads=None):
         add_reads = True
 
     if add_reads:
-        adata.obs["reads_per_counts"] = adata.obs.n_reads / adata.obs.total_counts
+        adata.obs["reads_per_counts"] = adata.obs['n_reads'] / adata.obs['total_counts']
 
 
 def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, labels):
@@ -57,7 +50,7 @@ def reassign_indices_adata(adata, new_ilocs, joined_coordinates, mask_image, lab
 
     change_ix = np.where(new_ilocs[:-1] != new_ilocs[1:])[0] + 1
 
-    ix_array = np.asarray(np.split(np.arange(new_ilocs.shape[0]), change_ix, axis=0), dtype="object")
+    ix_array = np.asarray(np.split(np.arange(new_ilocs.shape[0]), change_ix, axis=0), dtype="int")
 
     joined_C_sumed = vstack(
         [csr_matrix(joined_C[ix_array[n].astype(int), :].sum(0)) for n in tqdm(range(len(ix_array)))]
