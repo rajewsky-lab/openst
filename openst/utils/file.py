@@ -95,8 +95,8 @@ def check_adata_structure(f):
         if "obsm/spatial" not in file:
             raise KeyError("The AnnData file does not have the 'obsm/spatial' property.")
 
-        if "obs/puck_id" not in file:
-            raise KeyError("The AnnData file does not have the 'obs/puck_id' property.")
+        if "obs/tile_id" not in file:
+            raise KeyError("The AnnData file does not have the 'obs/tile_id' property.")
 
         if "obs/total_counts" not in file:
             raise KeyError("The AnnData file does not have the 'obs/total_counts' property.")
