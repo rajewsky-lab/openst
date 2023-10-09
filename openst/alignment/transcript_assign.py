@@ -42,6 +42,14 @@ def get_transcript_assign_parser():
     )
 
     parser.add_argument(
+        "--spatial-key",
+        type=str,
+        help="""obsm dataset for the aligned coordinates, e.g. 'spatial_pairwise_aligned_coarse'  or
+        'spatial_pairwise_aligned_fine' if the data has been aligned with openst pairwise_aligner""",
+        required=True,
+    )
+
+    parser.add_argument(
         "--output",
         type=str,
         help="path and filename for output file that will be generated",
@@ -112,12 +120,12 @@ def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
     return adata_by_cell
 
 
-def subset_adata_to_mask(mask, adata):
+def subset_adata_to_mask(mask, adata, spatial_key: str = 'spatial'):
     # Subset adata to the valid coordinates from the mask
-    adata = adata[(adata.obsm["spatial"][:, 0] <= mask.shape[0]) & (adata.obsm["spatial"][:, 1] <= mask.shape[1])].copy()
+    adata = adata[(adata.obsm[spatial_key][:, 0] <= mask.shape[0]) & (adata.obsm[spatial_key][:, 1] <= mask.shape[1])].copy()
 
     # Subset the labels to those in the mask
-    labels = mask[adata.obsm["spatial"][:, 0].astype(int), adata.obsm["spatial"][:, 1].astype(int)]
+    labels = mask[adata.obsm[spatial_key][:, 0].astype(int), adata.obsm[spatial_key][:, 1].astype(int)]
 
     # Assign label as cell_ID
     adata.obs["cell_ID"] = labels
@@ -132,6 +140,7 @@ def subset_adata_to_mask(mask, adata):
 
 def _run_transcript_assign(args):
     """_run_transcript_assign."""
+    # TODO: load with dask if it is too large
     logging.info("openst spatial transcriptomics stitching; running with parameters:")
     logging.info(args.__dict__)
 
@@ -152,14 +161,16 @@ def _run_transcript_assign(args):
     if args.mask_in_adata:
         mask = load_properties_from_adata(args.adata, [args.mask])[args.mask]
     else:
-        # TODO: load with dask if it is too large
         mask = np.array(Image.open(args.mask))
+
+    # we transpose the mask to have the same coordinates
+    mask = mask.T
 
     logging.info("Loading adata")
     adata = read_h5ad(args.adata)
 
     logging.info("Subsetting adata coordinates to mask")
-    adata, props_filter = subset_adata_to_mask(mask, adata)
+    adata, props_filter = subset_adata_to_mask(mask, adata, args.spatial_key)
 
     logging.info("Assigning transcripts to cells in mask")
     adata_by_cell = transfer_segmentation(adata, mask, props_filter)
