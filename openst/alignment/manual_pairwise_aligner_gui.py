@@ -338,7 +338,8 @@ class ImageRenderer(QThread):
     def run(self):
         try:
             image_pair = self.render_image_pair(
-                self.adata[self.spatial_path][:],
+                # put coordinates into XY (for correct rendering)
+                self.adata[self.spatial_path][:][..., ::-1],
                 self.adata["obs/total_counts"][:],
                 self.adata["obs/tile_id/codes"][:],
                 self.adata[self.img_path],

@@ -520,7 +520,7 @@ def run_registration(
         logging.info(f"Registering tile {tile_code} with {len(_t_valid_coords)} coordinates")
 
         _t_sts_pseudoimage = create_pseudoimage(
-            sts_coords_transformed[:, ::-1],  # we need to flip these coordinates
+            sts_coords_transformed[:, ::-1],  # we flip these coordinates
             args.pseudoimage_size_fine,
             staining_image_rescaled.shape,
             _t_valid_coords,
@@ -534,7 +534,7 @@ def run_registration(
         ][_t_valid_coords]
 
         _t_sts_pseudoimage_counts = create_pseudoimage(
-            sts_coords_transformed[:, ::-1],  # we need to flip these coordinates
+            sts_coords_transformed[:, ::-1],  # we flip these coordinates
             args.pseudoimage_size_fine,
             staining_image_rescaled.shape,
             _t_valid_coords,
@@ -689,7 +689,9 @@ def run_pairwise_aligner(args):
     # Exporting the data
     logging.info(f"Loading {args.h5_in}")
     adata = read_h5ad(args.h5_in)
-    adata.obsm["spatial_pairwise_aligned_coarse"] = sts_aligned_coarse
+
+    # store spatial locations with same coordinates as the image (YX)
+    adata.obsm["spatial_pairwise_aligned_coarse"] = sts_aligned_coarse[..., ::-1]
     if sts_aligned_fine is not None:
         adata.obsm["spatial_pairwise_aligned_fine"] = sts_aligned_fine
 

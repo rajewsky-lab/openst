@@ -86,7 +86,7 @@ def setup_transcript_assign_parser(parent_parser):
     return parser
 
 
-def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
+def transfer_segmentation(adata_transformed_coords, props_filter):
     joined_coordinates = np.array([props_filter["centroid-0"], props_filter["centroid-1"]]).T
     joined_coordinates = np.vstack([np.array([0, 0]), joined_coordinates])
 
@@ -97,7 +97,6 @@ def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
         adata_transformed_coords,
         np.array(adata_transformed_coords.obs["cell_ID"]),
         joined_coordinates,
-        label_image,
         cell_ID_merged,
     )
 
@@ -116,6 +115,12 @@ def transfer_segmentation(adata_transformed_coords, label_image, props_filter):
             spatial_units_obs_names_dict[tile] += [bc]
         else:
             spatial_units_obs_names_dict[tile] = [bc]
+
+    _missing_uns_keys = set(list(adata_by_cell.uns.keys()) + list(adata_transformed_coords.uns.keys()))
+    _missing_uns_keys = set(list(adata_transformed_coords.uns.keys())).intersection(_missing_uns_keys)
+
+    for _missing_key in _missing_uns_keys:
+        adata_by_cell.uns[_missing_key] = adata_transformed_coords.uns[_missing_key]
 
     return adata_by_cell
 
@@ -163,9 +168,6 @@ def _run_transcript_assign(args):
     else:
         mask = np.array(Image.open(args.mask))
 
-    # we transpose the mask to have the same coordinates
-    mask = mask.T
-
     logging.info("Loading adata")
     adata = read_h5ad(args.adata)
 
@@ -173,7 +175,7 @@ def _run_transcript_assign(args):
     adata, props_filter = subset_adata_to_mask(mask, adata, args.spatial_key)
 
     logging.info("Assigning transcripts to cells in mask")
-    adata_by_cell = transfer_segmentation(adata, mask, props_filter)
+    adata_by_cell = transfer_segmentation(adata, props_filter)
 
     logging.info(f"Writing output to {args.output}")
     adata_by_cell.write_h5ad(args.output)

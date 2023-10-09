@@ -72,27 +72,6 @@ def setup_manual_pairwise_aligner_parser(parent_parser):
 
     return parser
 
-
-def coarse_align_coordinates(in_coords, sts_pseudoimage, mkpts0, mkpts1):
-    # Estimate and apply transform
-    tform_points = estimate_transform("similarity", mkpts0, mkpts1)
-    sts_coords_to_transform = sts_pseudoimage["coords_rescaled"] * sts_pseudoimage["rescaling_factor"]
-    sts_coords_transformed = apply_transform(sts_coords_to_transform, tform_points, check_bounds=False)
-    sts_coords_transformed = sts_coords_transformed * args.rescale_factor_coarse
-
-    # Apply transform to all coordinates & retransform back
-    sts_coords_coarse = in_coords.copy()
-    sts_coords_coarse -= sts_pseudoimage["offset_factor"]
-    sts_coords_coarse = (
-        (sts_coords_coarse / sts_pseudoimage["rescale_factor"]) * sts_pseudoimage["scale"]
-    ) * sts_pseudoimage["rescaling_factor"]
-
-    sts_coords_coarse = apply_transform(sts_coords_coarse, tform_points, check_bounds=False)
-    sts_coords_coarse = sts_coords_coarse * args.rescale_factor_coarse
-    sts_coords_coarse = sts_coords_coarse[:, :-1]
-    return sts_coords_coarse, sts_coords_transformed, tform_points
-
-
 def apply_transform_to_coords(
     in_coords: np.ndarray,
     tile_id: np.ndarray,
@@ -189,7 +168,8 @@ def _run_manual_pairwise_aligner(args):
     keypoints = load_keypoints_from_json(args.keypoints_json)
     
     logging.info(f"Applying coordinate transformation")
-    _coords = sts[_spatial_name]
+    # transpose spatial locations to XY coordinates
+    _coords = sts[_spatial_name][:][..., ::-1]
     if args.fine:
         _tile_ids = sts["obs/tile_id"]
     
@@ -217,9 +197,10 @@ def _run_manual_pairwise_aligner(args):
     logging.info(f"Modifying coordinates in {args.h5_out}")
     with h5py.File(args.h5_out, 'r+') as adata:
         if _spatial_output_name in adata:
-            adata[_spatial_output_name][...] = _coords_transformed
+            # reconvert to YX (same axes as the images)
+            adata[_spatial_output_name][...] = _coords_transformed[:][..., ::-1]
         else:
-            adata[_spatial_output_name] = _coords_transformed
+            adata[_spatial_output_name] = _coords_transformed[:][..., ::-1]
 
     logging.info(f"Output {args.h5_out} file was written. Finished!")
 
