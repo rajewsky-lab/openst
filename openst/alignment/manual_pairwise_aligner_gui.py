@@ -17,8 +17,6 @@ from PyQt5.QtWidgets import (
     QSlider,
     QMessageBox,
     QGridLayout,
-    QGraphicsTextItem,
-    QGraphicsWidget,
     QListView,
     QStyledItemDelegate,
     QLabel,
@@ -45,6 +43,7 @@ from PyQt5.QtCore import (
 )
 
 from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntValidator
+from skimage.transform import estimate_transform, warp
 
 from openst.utils.pseudoimage import create_pseudoimage
 
@@ -403,29 +402,6 @@ class ColorImageView(pg.ImageView):
         super().updateImage(autoHistogramRange)
         self.getImageItem().setLookupTable(self.lut)
 
-
-class NumberedPoint(QGraphicsWidget):
-    def __init__(self, x, y, point_size, point_counter):
-        super(NumberedPoint, self).__init__()
-
-        # Create the ellipse representing the point
-        self.ellipse = QGraphicsEllipseItem(-point_size / 2, -point_size / 2, point_size, point_size)
-        self.ellipse.setBrush(QBrush(QColor(0, 0, 255, 128)))
-        self.ellipse.setFlag(QGraphicsEllipseItem.ItemIsMovable)
-        self.ellipse.setParentItem(self)
-
-        # Create the text representing the point number
-        self.number_text = QGraphicsTextItem(str(point_counter), parent=self)
-        self.number_text.setDefaultTextColor(QColor(255, 255, 255))
-        self.number_text.setPos(-point_size / 4, -point_size / 4)
-
-        # Set the position of the point
-        self.setPos(x, y)
-
-    def setPos(self, x, y):
-        super(NumberedPoint, self).setPos(x, y)
-
-
 class ItemDelegate(QStyledItemDelegate):
     def initStyleOption(self, option, index):
         super().initStyleOption(option, index)
@@ -480,6 +456,8 @@ class ImageAlignmentApp(QMainWindow):
         self.adata = None
         self.adata_structure = None
         self.renderer = None
+        self._merged_rgb_layer = None
+        self._merged_pseudoimage_layer = None
 
         # Initialize whole user interface
         self._init_ui()
@@ -606,7 +584,7 @@ class ImageAlignmentApp(QMainWindow):
         self._collapse_box_keypoints = CollapsibleBox("Keypoints properties")
         lay = QVBoxLayout()
         self._sidebar_buttons_loadbutton = QPushButton("Load keypoints", self)
-        self._sidebar_buttons_loadbutton.clicked.connect(self.save_point_pairs)
+        self._sidebar_buttons_loadbutton.clicked.connect(self.load_point_pairs)
         lay.addWidget(self._sidebar_buttons_loadbutton)
 
         self._sidebar_buttons_savebutton = QPushButton("Save keypoints", self)
@@ -628,6 +606,11 @@ class ImageAlignmentApp(QMainWindow):
         self._sidebar_buttons_render = QPushButton("Render", self)
         self._sidebar_buttons_render.clicked.connect(self.render)
         self._sidebar_buttons_groupbox_vbox.addWidget(self._sidebar_buttons_render)
+
+        # Button: align merge
+        self._sidebar_buttons_preview_alignment = QPushButton("Preview alignment", self)
+        self._sidebar_buttons_preview_alignment.clicked.connect(self.preview_alignment)
+        self._sidebar_buttons_groupbox_vbox.addWidget(self._sidebar_buttons_preview_alignment)
 
     def select_image_path(self):
         self.show_path_selection_dialog(self._sidebar_buttons_tree_image)
@@ -707,6 +690,49 @@ class ImageAlignmentApp(QMainWindow):
         self.syncedPlots[0].view.setYLink(self.syncedPlots[1].view)
         self.syncedPlots[1].view.setYLink(self.syncedPlots[2].view)
 
+    def preview_alignment(self):
+        # get keypoints and estimate transformation matrix
+        _current_keypoints = self.points_on_image[self.current_layer]
+        _current_point_pairs = self.point_pairs[self.current_layer]
+
+        if len(_current_keypoints) < 4 or len(_current_keypoints) % 2 != 0:
+            QMessageBox.warning(self, "Warning", "Needs >= 2 keypoints to estimate alignment model")
+            return
+
+        _t_mkpts0 = np.zeros((int(len(_current_keypoints)/2), 2))
+        _t_mkpts1 = np.zeros((int(len(_current_keypoints)/2), 2))
+
+        for i, keypoint_i in enumerate(range(0, len(_current_keypoints), 2)):
+            pointA, pointB = _current_keypoints[keypoint_i], _current_keypoints[keypoint_i + 1]
+    
+            xA_0, yA_0 = _current_point_pairs[keypoint_i]
+            xB_0, yB_0 = _current_point_pairs[keypoint_i + 1]
+
+            xA, yA = pointA.pos().x(), pointA.pos().y()
+            xB, yB = pointB.pos().x(), pointB.pos().y()
+            _t_mkpts0[i] = np.array([xA+xA_0, yA+yA_0])
+            _t_mkpts1[i] = np.array([xB+xB_0, yB+yB_0])
+
+        _t_matrix = estimate_transform("similarity", _t_mkpts1[:, ::-1], _t_mkpts0[:, ::-1])
+
+        # warp the image using the transformation matrix (similarity)
+        _t_image_B = warp(self.imageB, _t_matrix.inverse) # warp from skimage
+
+        # Remove current images from merged viewport (if any)
+        if self._merged_rgb_layer is not None:
+            self.image_view_merged.removeItem(self._merged_rgb_layer)
+            self.image_view_merged.removeItem(self._merged_pseudoimage_layer)
+            self.image_view_merged.clear()
+        
+        # Render merged
+        self._merged_rgb_layer = pg.ImageItem(self.imageA)
+        self._merged_rgb_layer.setOpts(update=True, opacity=self.update_opacity_A_slider.value()/100)
+        self.image_view_merged.addItem(self._merged_rgb_layer)
+        self._merged_pseudoimage_layer = pg.ImageItem(_t_image_B)
+        self._merged_pseudoimage_layer.setOpts(update=True, opacity=self.update_opacity_B_slider.value()/100)
+        self.image_view_merged.addItem(self._merged_pseudoimage_layer)
+
+
     def _update_imagerender_params(self):
         if self.adata is None or self.renderer is None:
             QMessageBox.warning(
@@ -762,7 +788,6 @@ class ImageAlignmentApp(QMainWindow):
             self.overlay_dialog.show()
 
             self.worker_thread = OpenWorkerThread(file_path)
-            #  fine = self.fine, recenter_coarse = self.recenter_coarse, rescale_factor_coarse = self.rescale_factor_coarse, rescale_factor_fine = self.rescale_factor_fine, threshold_counts = self.threshold_counts, pseudoimg_size = self.pseudoimg_size
             self.worker_thread.result_ready.connect(self.data_loaded)
 
             self.worker_thread.update_text.connect(self.overlay_dialog.updateTextLabel)
@@ -817,8 +842,11 @@ class ImageAlignmentApp(QMainWindow):
         self.image_view_b.getView().invertY(True)
         self.image_view_b.getView().setAspectLocked(True)
 
-        # Reset the ImageView for the merged
-        self.image_view_merged.clear()
+        # Remove current images from merged viewport (if any)
+        if self._merged_rgb_layer is not None:
+            self.image_view_merged.removeItem(self._merged_rgb_layer)
+            self.image_view_merged.removeItem(self._merged_pseudoimage_layer)
+            self.image_view_merged.clear()
     
         # Show image merged
         self._merged_rgb_layer = pg.ImageItem(self.imageA)
@@ -838,6 +866,19 @@ class ImageAlignmentApp(QMainWindow):
                 self.image_view_a.getView().removeItem(point)
                 self.image_view_b.getView().removeItem(point)
 
+        # Remove the points added to the ImageView object
+        for _, v in self.points_on_image.items():
+            for o in v:
+                try:
+                    self.image_view_a.removeItem(o)
+                except:
+                    pass
+                
+                try:
+                    self.image_view_b.removeItem(o)
+                except:
+                    pass
+        
         # Add points previously stored in the layer
         if self.current_layer != "":
             _points = self.points_on_image[self.current_layer].copy()
@@ -863,6 +904,34 @@ class ImageAlignmentApp(QMainWindow):
         self._merged_pseudoimage_layer.setOpts(opacity=opacity_value/100)
         self.image_view_merged.update()
 
+    def load_point_pairs(self):
+        options = QFileDialog.Options()
+        filedialog = QFileDialog()
+        filedialog.setDefaultSuffix(".json")
+        filedialog.setNameFilters(["JSON (*.json)"])
+        file_path, _ = filedialog.getOpenFileName(self, "Load File", "", "JSON (*.json)", options=options)
+
+        def load_keypoints_from_json(fname: str):
+            with open(fname) as j:
+                _keypoints_dict = json.load(j)
+
+            return _keypoints_dict
+        
+        self.points_to_load = load_keypoints_from_json(file_path)
+
+        _old_layer = self.current_layer
+
+        for keypoint in self.points_to_load['points']:
+            # set the layer and add the point
+            self.current_layer = keypoint['layer']
+
+            # readjust with the point size (will be added later)
+            _p_sz = (self.point_size_slider.value() / 2)
+            self.add_point((float(keypoint['point_src'][0]) + _p_sz, float(keypoint['point_src'][1]) + _p_sz), which="A")
+            self.add_point((float(keypoint['point_dst'][0]) + _p_sz, float(keypoint['point_dst'][1]) + _p_sz), which="B")
+
+        self.current_layer = _old_layer
+    
     def save_point_pairs(self):
         if all(len(value) == 0 for value in self.points_on_image.values()):
             QMessageBox.warning(self, "Warning", "No points to save.")
@@ -935,6 +1004,10 @@ class ImageAlignmentApp(QMainWindow):
             self.point_counter += 1
 
         self.points_on_image[self.current_layer].append(point)
+
+    def onEllipseMoved(self):
+        print("Ellipse moved!")
+
 
     def add_point(self, pos, which="B"):
         x, y = pos
