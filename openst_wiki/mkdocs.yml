@@ -45,3 +45,8 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/ajitjohnson_n
       name: Twitter
+
+markdown_extensions:
+  - admonition
+  - pymdownx.details
+  - pymdownx.superfences

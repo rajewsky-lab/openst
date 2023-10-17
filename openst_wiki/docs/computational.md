@@ -59,7 +59,8 @@ We'll start with the initial processing of H&E-stained tissue sections, as a pre
 ### 2.1 Stitching (microscope-dependent)
 To begin, stitch together the tile-scan images of your H&E-stained tissue sections using the Grid/Collection stitching plugin included in Fiji 1.53t. This will create a composite image of the entire section.
 
-*Warning: this step depends on the microscope used for imaging. In our protocol, we use the (XXX microscope), and provide code to perform the stitching on any computer. Refer to the documentation or vendor of your microscope for the stitching of tile-scans*
+!!! warning
+     This step depends on the microscope used for imaging. In our implementation, we used a Keyence BZ-X710 inverted fluorescence phase contrast microscope, for which we provide open-source image stitching code - runs in any computer, independent of the software provided by the manufacturer. Refer to the documentation of your microscope for the stitching of tile-scans.
 
 ```bash
 openst image_stitch --microscope='keyence' --imagej-bin=<path_to_fiji_or_imagej> --tiles-dir=<path_to_tiles> --tiles-prefix=<to_read> --tmp-dir=<tmp_dir>
@@ -79,32 +80,33 @@ Next, segment the nuclei in your images using Cellpose 2.2. We provide a model o
 openst segment --input=<path_to_input_image> --model=<path_to_model_or_name> --output=<path_to_output> --dilate=<how_much_to_dilate_the_mask> --diameter=20 --mask-tissue --metadata=<where_to_write_metadata>
 ```
 
-#### Extra: segmentation of very large cells
-If your samples contain very large cells that cannot be segmented with the provided H&E model (e.g., adipocytes), you can perform a second round of segmentation with a cellpose model, adjusting the diameter parameter.
+!!! tip
+     **If your samples contain very large cells** that cannot be segmented with the provided H&E model (e.g., adipocytes), you can perform a second round of segmentation with a cellpose model, adjusting the diameter parameter.
 
-```bash
-openst segment --input=<path_to_input_image> --model=<path_to_model_or_name> --output=<path_to_output> --dilate=<how_much_to_dilate_the_mask> --diameter=50 --metadata=<where_to_write_metadata>
-```
+     ```bash
+     openst segment --input=<path_to_input_image> --model=<path_to_model_or_name> --output=<path_to_output> --dilate=<how_much_to_dilate_the_mask> --diameter=50 --metadata=<where_to_write_metadata>
+     ```
 
-Then, you can combine the segmentation masks of both diameter configurations.
+     Then, you can combine the segmentation masks of both diameter configurations.
 
-```bash
-openst segment_merge --inputs=<path_to_input_images_as_list_more_than_one> --metadata=<where_to_write_metadata>
-```
+     ```bash
+     openst segment_merge --inputs=<path_to_input_images_as_list_more_than_one> --metadata=<where_to_write_metadata>
+     ```
 
-Finally, you can create a report from the segmentation results
+     Finally, you can create a report from the segmentation results
 
-```bash
-openst report --metadata <path_to_metadata> --output=<path_to_html_file>
-```
+     ```bash
+     openst report --metadata <path_to_metadata> --output=<path_to_html_file>
+     ```
 
-This command will apply an "AND" between all images, to only preserve mask of non-overlapping, with the hierarchy provided in the files
+     This command will apply an "AND" between all images, to only preserve mask of non-overlapping, with the hierarchy provided in the files
 
 ## 3. Alignment of imaging and spatial transcriptomics
 In order to assign transcripts to the nuclei segmented from the staining images, the pairwise alignment between the imaging and spatial transcriptomics modality must be performed. For this, we provide software that allows to:
-1. Creation of pseudoimages from the spatial transcriptomics data.
-2. Two-step (coarse, then fine) alignment of H&E images to pseudoimages of ST data.
-3. Manual curation and refinement of the alignment for more precision (~0.5 µm error), by leveraging fiducial markers visible from both modalities.
+
+1. Create pseudoimages from the spatial transcriptomics data.
+2. Align H&E images to pseudoimages of ST data in two steps (coarse, fine).
+3. Manually validate and refine the alignment for more precision, with an interactive user interface.
 
 ### 3.1 Pairwise alignment
 ```bash
