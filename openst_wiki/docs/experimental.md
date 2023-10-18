@@ -4,9 +4,8 @@
 
 ## Materials 
 
-### Reagents 
-??? example
-        |REAGENT|SOURCE|IDENTIFIER|
+??? example "Reagents"
+    |REAGENT|SOURCE|IDENTIFIER|
         |----|----|----|
         | Dra I enzyme|NEB|Cat#R0129|
         |Alkaline Phosphatase Calf Intestinal (CIAP) enzyme|Promega|Cat#M1821|
@@ -43,20 +42,28 @@
         |KAPA Library Quantification DNA Standards (Illumina)|Roche|Cat#7960387001|
         |NovaSeq 6000 S4 reagent kit v1.5 (35 cycles)|Illumina|Cat#20044417|
 
-*Add oligo list*
 
-### Equipment 
+??? note "Oligonucleotides"
+    |OLIGO|SEQUENCE|COMMENT|
+    |----|----|----|
+    |HDMI32-DraI|CAAGCAGAAGACGGCATACGAGATTCTTTCCCTACACGACGCTCTTCCGATCTNNVNBVNNVNNVNNVNNVNNVNNVNNVNNNNNTCTTGTGACTACAGCACCCTCGACTCTCGCTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTAAAGACTTTCACCAGTCCATGATGTGTAGATCTCGGTGGTCGCCGTATCATT||
+    |Randomer|TCAGACGTGTGCTCTTCCGATCTNNNNNNNNN||
+    |Read1-DraI|ATCATGGACTGGTGAAAGTCTTTAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGCGAGAGTCGAGGGTGCTGTAGTCACAAGA||
+    |p5_fwd|AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCT∗T∗C|*denotes phosphorothioated DNA bases|	
+    |p7_rev_indexing|CAAGCAGAAGACGGCATACGAGAT[8-mer index sequence]GTGACTGGAGTTCAGACGTGTGCTCTTCC∗G∗A|*denotes phosphorothioated DNA bases|
 
-- Chemical hood (*for work with toxic chemicals, such as Trizol or methanol*)  
-- Cryostat 
-- Heating block (*Can also use hybridisation oven for pre-warming pepsin.*)
-- Hybridization oven 
-- Brightfield imaging system *add objective requirements, camera*
-- PCR cycler 
-- qPCR machine 
-- Bluepippin or PippinHT (*alternatively, use manual agarose gel setup and DNA extraction*)
-- Automated gel electrophoresis machine (eg. Tapestation or BioAnalyzer)
-- Qubit fluorometer   
+
+??? note "Equipment" 
+    - Chemical hood (*for work with toxic chemicals, such as Trizol or methanol*)  
+    - Cryostat 
+    - Heating block (*Can also use hybridisation oven for pre-warming pepsin.*)
+    - Hybridization oven 
+    - Brightfield imaging system *add objective requirements, camera*
+    - PCR cycler 
+    - qPCR machine 
+    - Bluepippin or PippinHT (*alternatively, use manual agarose gel setup and DNA extraction*)
+    - Automated gel electrophoresis machine (eg. Tapestation or BioAnalyzer)
+    - Qubit fluorometer   
 
 ## 1. Capture area generation
 The following section details the generation of capture areas for the open-ST protocol. By sequencing oligos, which comprise unique 32-nucleotide barcodes, appropriate adapters, and a poly-dT, we register the barcode sequences and their associated coordinates on the flow cell. 
@@ -69,17 +76,11 @@ Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer. 
 
 ### 1.2 Enzymatic processing
 
-!!! Tip 
+!!! Tip "Tips" 
 
-    If bubbles occur, mark these with pen on the flow cell. Repeat reactions if many bubbles occur and ensure bubbles do not form at the same locations. 
-
-!!! Tip 
-
-    Use a P1000 pipette and pipette slowly to avoid the formation of bubbles. 
-
-!!! Tip 
-
-    For removing washes, pipette the liquid out and then blow through air using the P1000 to remove remaining liquid.
+    - If bubbles occur, mark these with pen on the flow cell. Repeat reactions if many bubbles occur and ensure bubbles do not form at the same locations. 
+    - Use a P1000 pipette and pipette slowly to avoid the formation of bubbles. 
+    - For removing washes, pipette the liquid out and then blow through air using the P1000 to remove remaining liquid.
 
 #### 1.2.1 Dra I digestion 
 
@@ -138,17 +139,17 @@ Test for RNA quality of the OCT-embedded tissue before working with a tissue. Ai
 
 ### 3.1 Tissue sectioning
 
-!!! Before starting 
+!!! note "Before starting" 
 
     Place the OCT-mounted fresh frozen tissue in a cryostat for 20 minutes at the selected cutting temperature (adjusted according to tissue). Place the capture areas at room temperature. 
 
-!!! Before starting 
+!!! note "Before starting" 
 
     Pre-cool 100% methanol at -20°C for subsequent fixation step. 
 
-!!! Tip 
+!!! Tip
 
-   Trim the excess OCT surrounding the tissue to prevent folding of OCT under or over the tissue.  
+    Trim the excess OCT surrounding the tissue to prevent folding of OCT under or over the tissue.  
 
 !!! Warning 
 
@@ -175,7 +176,6 @@ Test for RNA quality of the OCT-embedded tissue before working with a tissue. Ai
 |----|----|
 | Eosin Y | 500 |
 | 0.45M Tris-Acetate buffer pH 6.0 | 500 |
-|Total| 1000 |
 
 For incubations, add enough volume to cover the capture area completely. For all washes, wash by dipping in a beaker with Ultrapure water (500 mL). 
 
@@ -212,7 +212,6 @@ Follow the library preparation steps until step 3.9. Earlier amplification corre
 |SSIV 5X rt BUFFER|1x|20|
 |RNase inhibitor (40U/ul)|1U/ul|2.5|
 |Ultrapure water| |77.5|
-|Total| |100|
 
 **Reverse transcription mix** 
 
@@ -225,7 +224,7 @@ Follow the library preparation steps until step 3.9. Earlier amplification corre
 |Superscript IV (200U/ul)|6.67 U/uL|3.33|
 |Ribolock(40U/uL)|1U|2.5|
 |Ultrapure water| |62.33|
-|Total| |100|
+|**Total**| |**100**|
 
 1. Remove the pepsin solution. 
 2. Wash the capture area carefully with 100 μl RT Buffer once.
@@ -313,7 +312,7 @@ Elute the product in 82.5 uL ultrapure water.
 |60°C|1 min| |
 |72°C|1 min| |
 
-*add example profile*
+*add example profile and describe how to derive cycle #*
 
 
 ### 3.10 Library construction 
@@ -331,7 +330,6 @@ Elute the product in 82.5 uL ultrapure water.
 |Ultrapure water| |16|
 |Total| |200|
 
-
 |Temperature|Time|Cycles|
 |:----|:----|:----|
 |95°C |3 min|1|
@@ -347,12 +345,40 @@ Elute the product in 82.5 uL ultrapure water.
 4. Pool the 200 uL PCR product per sample and purify using AmpureXP beads at a 1:1 ratio of beads PCR product, following the manufacturer's instructions.
 5. Elute the PCR product in 20 uL ultrapure water. 
 
+![Library profile after size selection](60_2_BioA_preBP.png)
+
+<figure markdown>
+  <figcaption>Example BioAnalyzer profile before size selection</figcaption>
+</figure>
+
+
 #### 3.10.2 Size selection 
 
 Perform size selection of your sample to obtain fragments 350 - 1100 bp. Use the Bluepippin or PippinHT 1.5% agarose gel and follow the manufacturer's instructions. 
 Measure the concentration of your size-selected product using the Qubit dsDNA quanitification kit. 
 
-## 4. Sequencing
+![Library profile after size selection](60_2_BioA_postBP.png)
+
+<figure markdown>
+  <figcaption>Example BioAnalyzer profile after size selection</figcaption>
+</figure>
+
+
+## 4. Sequencing of open-ST library
+
+We recommend quantifying your libraries for sequencing using the KAPA Library Quantification Kit. 
+The optimal loading concentration depends on the sequencer used. For the Illumina® **NovaSeq 6000** we obtained optimal clustering at a loading concentration of **130 pM**. For the Illumina® **NextSeq 2000** sequencing system we recommend a loading concentration of **650 pM**.   
+Moreover, Illumina suggests a minimum of 1% PhiX into the pool as a qality control for cluster generation, sequencing, and alignment. 
+
+The following read lengths were used : 
+
+|Read|Cycles|
+|----|----|
+|Read 1|28-37|
+|Index 1|8|
+|Index 2|NA|
+|Read2|90+|
+
 
 
 
