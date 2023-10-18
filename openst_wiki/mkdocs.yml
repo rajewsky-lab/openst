@@ -8,19 +8,48 @@ edit_uri: https://github.com/rajewsky-lab/openst/edit/master/openst_wiki
 nav:
   - Home: index.md
   - 1. Experimental: experimental.md
-  - 2. Computational: computational.md
+  - 2. Computational:
+    - Getting started: computational/getting_started.md
+    - Preprocessing of sequencing: computational/preprocessing_sequencing.md
+    - Preprocessing of imaging: computational/preprocessing_imaging.md
+    - Align image to transcriptome: computational/pairwise_alignment.md
+    - Generating a cell-by-gene matrix: computational/generate_expression_matrix.md
+    - 3D reconstruction: computational/threed_reconstruction.md
   - FAQ: faq.md
   - API: api.md
 
 theme:
   name: material
   features:
-    - navigation.instant
+    - navigation.indexes
+    - navigation.sections
+
   features:
+    - announce.dismiss
+    - content.action.edit
+    - content.action.view
+    - content.code.annotate
+    - content.code.copy
+    # - content.code.select
+    # - content.tabs.link
+    - content.tooltips
+    # - header.autohide
+    # - navigation.expand
+    - navigation.footer
+    - navigation.indexes
+    # - navigation.instant
+    # - navigation.instant.prefetch
+    # - navigation.instant.progress
+    # - navigation.prune
+    - navigation.sections
     - navigation.tabs
-    - navigation.tabs.sticky
+    # - navigation.tabs.sticky
     - navigation.top
+    - navigation.tracking
     - search.highlight
+    - search.share
+    - search.suggest
+    - toc.follow
   palette:
     - scheme: default
       primary: teal
@@ -50,3 +79,11 @@ markdown_extensions:
   - admonition
   - pymdownx.details
   - pymdownx.superfences
+
+extra_javascript:
+  - javascripts/katex.js 
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js  
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js
+
+extra_css:
+  - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
