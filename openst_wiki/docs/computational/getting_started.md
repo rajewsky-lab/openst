@@ -1,18 +1,18 @@
 # Getting started
 
-After folowing the experimental protocol, we provide the [`openst`](https://pypi.org/project/openst/)
+After folowing the [experimental protocol](../experimental/getting_started.md), we provide the [`openst`](https://pypi.org/project/openst/)
 python package for transforming the raw sequencing data into objects that can be used for spatial, single-cell
 analysis.
 
 More specifically, our pipeline consists of the following steps:
 
-1. [Preprocessing of sequencing](computational/preprocessing_sequencing.md)
-2. [Preprocessing of imaging](computational/preprocessing_imaging.md)
-3. [Align image to transcriptome](computational/pairwise_alignment.md): the spatial coordinates of transcripts are aligned
+1. [Preprocessing of sequencing](preprocessing_sequencing.md)
+2. [Preprocessing of imaging](preprocessing_imaging.md)
+3. [Align image to transcriptome](pairwise_alignment.md): the spatial coordinates of transcripts are aligned
     to the imaging modality.
-4. [Generating a cell-by-gene matrix](computational/generate_expression_matrix.md): transcripts
+4. [Generating a cell-by-gene matrix](generate_expression_matrix.md): transcripts
     are quantified per cell using the segmentation information.
-5. [3D reconstruction](computational/threed_reconstruction.md) of tissue imaging and transcriptome from serial sections.
+5. [3D reconstruction](threed_reconstruction.md) of tissue imaging and transcriptome from serial sections.
    *We provide tutorials for interactive visualization of 3D data.*
 
 If you're familiar with Python, you can install `openst` with [pip], the Python package manager.
