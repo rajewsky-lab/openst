@@ -1,20 +1,31 @@
 site_name: open-ST wiki
 site_url: https://open.st
-site_author: Daniel Leon-Perinan
+site_author: Daniel León-Periñán, Lena Marie Schott
+site_description: >-
+  open-ST: democratizing spatial transcriptomics 
 
+copyright: Copyright &copy; 2023 open-ST
 
+repo_name: rajewsky-lab/openst
 repo_url: https://github.com/rajewsky-lab/openst
 edit_uri: https://github.com/rajewsky-lab/openst/edit/master/openst_wiki
 nav:
   - Home: index.md
-  - 1. Experimental: experimental.md
-  - 2. Computational:
-    - Getting started: computational/getting_started.md
-    - Preprocessing of sequencing: computational/preprocessing_sequencing.md
-    - Preprocessing of imaging: computational/preprocessing_imaging.md
-    - Align image to transcriptome: computational/pairwise_alignment.md
-    - Generating a cell-by-gene matrix: computational/generate_expression_matrix.md
-    - 3D reconstruction: computational/threed_reconstruction.md
+  - Workflow:
+    - Introduction: introduction.md
+    - Experimental:
+      - Getting started: experimental/getting_started.md
+      - Capture area generation: experimental/capture_area_generation.md
+      - Tissue processing and RNA quality control: experimental/tissue_processing_and_RNA_qc.md
+      - Library preparation: experimental/library_preparation.md
+      - Sequencing of open-ST library: experimental/sequencing_of_openst_library.md
+    - Computational:
+      - Getting started: computational/getting_started.md
+      - Preprocessing of sequencing: computational/preprocessing_sequencing.md
+      - Preprocessing of imaging: computational/preprocessing_imaging.md
+      - Align image to transcriptome: computational/pairwise_alignment.md
+      - Generating a cell-by-gene matrix: computational/generate_expression_matrix.md
+      - 3D reconstruction: computational/threed_reconstruction.md
   - FAQ: faq.md
   - API: api.md
 
@@ -52,15 +63,16 @@ theme:
     - toc.follow
   palette:
     - scheme: default
-      primary: teal
+      primary: indigo
+      accent: indigo
       toggle:
-        primary: teal
-        icon: material/toggle-switch-off-outline
+        icon: material/brightness-7
         name: Switch to dark mode
     - scheme: slate
-      primary: teal
+      primary: black
+      accent: indigo
       toggle:
-        icon: material/toggle-switch
+        icon: material/brightness-4
         name: Switch to light mode
 
 plugins:
@@ -69,16 +81,60 @@ plugins:
 - autorefs
 
 extra:
-  copyright: Copyright &copy; 2020 - 2022 Ajit Johnson Nirmal
+  copyright: Copyright &copy; 2023 open-ST
   social:
     - icon: fontawesome/brands/twitter
-      link: https://twitter.com/ajitjohnson_n
+      link: https://twitter.com/open_sts
       name: Twitter
 
 markdown_extensions:
+  - abbr
   - admonition
+  - attr_list
+  - def_list
+  - footnotes
+  - md_in_html
+  - toc:
+      permalink: true
+  - pymdownx.arithmatex:
+      generic: true
+  - pymdownx.betterem:
+      smart_enable: all
+  - pymdownx.caret
   - pymdownx.details
-  - pymdownx.superfences
+  - pymdownx.emoji:
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+  - pymdownx.highlight:
+      anchor_linenums: true
+      line_spans: __span
+      pygments_lang_class: true
+  - pymdownx.inlinehilite
+  - pymdownx.keys
+  - pymdownx.magiclink:
+      normalize_issue_symbols: true
+      repo_url_shorthand: true
+      user: squidfunk
+      repo: mkdocs-material
+  - pymdownx.mark
+  - pymdownx.smartsymbols
+  - pymdownx.snippets:
+      auto_append:
+        - includes/mkdocs.md
+  - pymdownx.superfences:
+      custom_fences:
+        - name: mermaid
+          class: mermaid
+          format: !!python/name:pymdownx.superfences.fence_code_format
+  - pymdownx.tabbed:
+      alternate_style: true
+      combine_header_slug: true
+      slugify: !!python/object/apply:pymdownx.slugs.slugify
+        kwds:
+          case: lower
+  - pymdownx.tasklist:
+      custom_checkbox: true
+  - pymdownx.tilde
 
 extra_javascript:
   - javascripts/katex.js 
