@@ -1,11 +1,26 @@
 # Capture area generation
-The following section details the generation of capture areas for the open-ST protocol. By sequencing oligos, which comprise unique 32-nucleotide barcodes, appropriate adapters, and a poly-dT, we register the barcode sequences and their associated coordinates on the flow cell. 
-From a NovaSeq6000 S4 flow cells ~360 capture areas sized 3x4 mm can be made.
+The following section details the generation of capture areas for the open-ST protocol. 
+
+By sequencing oligos, which comprise unique 32-nucleotide barcodes, appropriate adapters,
+and a poly-dT, we register the barcode sequences and their associated coordinates on the flow cell.
+
+For instance, you can get ~360 capture areas sized 3x4 mm from a single **Illumina® NovaSeq 6000 S4** flow cell.
 
 ## Sequencing of barcoded library 
 
-When using an Illumina® NovaSeq 6000 S4 flow cell (35 cycles), sequence the HDMI32-DraI library at a loading concentration of 200 pM. 
-Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer. Use a custom sequencing recipe that stops the run immediately after read 1 prior to on-instrument washes. 
+When using an **Illumina® NovaSeq 6000 S4** flow cell (35 cycles), sequence the HDMI32-DraI library
+(see in [Oligonucleotides](getting_started.md)) at a loading concentration of 200 pM. 
+
+Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
+Use a custom sequencing recipe that stops the run immediately after read 1 prior to on-instrument washes. 
+
+### Expected (data) output
+Either when using your own sequencing equipment or relying on a sequencing facility, you will get access
+to (most likely) already [demultiplexed](https://knowledge.illumina.com/software/general/software-general-troubleshooting-list/000005982)
+`fastq` files; otherwise, you can get access to *raw* basecall files in `bcl` [format](https://support.illumina.com/content/dam/illumina-support/help/Illumina_DRAGEN_Bio_IT_Platform_v3_7_1000000141465/Content/SW/Informatics/Dragen/ToolsiBCL_fDG.htm).
+
+Either of these files shall be used as the input for `openst` [later](../computational/preprocessing_sequencing.md#processing-the-sequencing-of-barcoded-library),
+to create a database of barcode sequences and their spatial locations.
 
 ## Enzymatic processing
 
@@ -59,5 +74,20 @@ Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer. 
     Capture areas can be stored dry in the fridge for extended periods of time. We have generated libraries from prepared capture areas stored for x months. 
 
 We have designed a cutting guide that facilitates the breaking of the flow cell into regular capture areas. 
-The 3D printing file can be found here: 
-*link to stl file, video*
+We provide the 3D model of the cutting guide as a printable [stl](../open-ST_cutting_guide_3D_design.stl) file.
+If you don't have a 3D printer, you can check for [3D printing services near you](https://www.google.com/search?q=3d+printing+service+near+me) -
+they will help you in this endeavor 🤗.
+
+
+Once you have the tool, refer to the video below where we explain how to use it:
+
+---
+
+:fontawesome-brands-youtube:{ style="color: #EE0F0F" }
+__[open-ST: breaking the flow cell into capture areas]__ by @danilexn – :octicons-clock-24:
+10m – Learn how to break an Illumina® NovaSeq 6000 S4 flow cell into capture areas 
+using our 3D-printable cutting guide.
+
+  [open-ST: breaking the flow cell into capture areas]: https://www.youtube.com
+
+---
