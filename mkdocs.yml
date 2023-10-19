@@ -27,7 +27,15 @@ nav:
       - Generating a cell-by-gene matrix: computational/generate_expression_matrix.md
       - 3D reconstruction: computational/threed_reconstruction.md
     - FAQ: faq.md
-  - Examples: api.md
+  - Examples:
+    - Getting started: examples/getting_started.md
+    - E13 mouse head:
+      - Introduction: examples/e13_brain/introduction.md
+      - Preprocessing of sequencing: examples/e13_brain/preprocessing_sequencing.md
+      - Preprocessing of imaging: examples/e13_brain/preprocessing_imaging.md
+      - Align image to transcriptome: examples/e13_brain/pairwise_alignment.md
+      - Generating a cell-by-gene matrix: examples/e13_brain/generate_expression_matrix.md
+      - Exploratory analysis (Jupyter): static/examples/notebooks/hypo_adult_eda.ipynb
   - API: api.md
 
 theme:
@@ -80,6 +88,7 @@ plugins:
 - search:
     prebuild_index: true
 - autorefs
+- mknotebooks
 
 extra:
   copyright: Copyright &copy; 2023 open-ST
@@ -122,6 +131,11 @@ markdown_extensions:
         - name: mermaid
           class: mermaid
           format: !!python/name:pymdownx.superfences.fence_code_format
+  - codehilite:
+      guess_lang: false
+      linenums: true
+      noclasses: false
+      use_pygments: true
   - pymdownx.tabbed:
       alternate_style: true
       combine_header_slug: true
