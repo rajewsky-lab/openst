@@ -1,0 +1,83 @@
+[build-system]
+build-backend = "setuptools.build_meta"
+requires = [
+    "setuptools>=42",
+    "wheel"
+]
+
+[project]
+name = "openst"
+description = "Democratizing spatial transcriptomics."
+requires-python = ">=3.8"
+license = {file = "LICENSE"}
+authors = [
+    {name = "Daniel León-Periñán"},
+    {name = "Lena Marie Schott"},
+    {name = "Nikolaos Karaiskos"},
+]
+maintainers = [
+    {name = "Daniel León-Periñán", email = "daniel.leonperinan@mdc-berlin.de"},
+    {name = "Lena Marie Schott", email = "marie.schott@mdc-berlin.de"},
+]
+readme = {file = "README.md", content-type="text/markdown"}
+classifiers = [
+    "License :: OSI Approved :: GPL License",
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Intended Audience :: Developers",
+    "Intended Audience :: Science/Research",
+    "Natural Language :: English",
+    "Operating System :: MacOS :: MacOS X",
+    "Operating System :: Microsoft :: Windows",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.8",
+    "Programming Language :: Python :: 3.9",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Visualization",
+]
+dependencies = [
+    "anndata>=0.7.4",
+    "numpy>=1.17.0",
+    "matplotlib>=3.4",
+    "pandas>=1.0",
+    "scipy>=1.4",
+    "h5py>=3",
+    "tqdm",
+    "scikit-learn>=0.24",
+    "natsort",
+    "joblib",
+    "get-annotations; python_version < '3.10'",
+    "dask[array]",
+    "dask-image>=2023.8.1",
+    "kornia>=0.7.0",
+    # we need to pin this version, otherwise RANSAC does not converge
+    "scikit-image==0.19.3",
+    "opencv-python>=4.8.0.76",
+    "cellpose>=2.2.3",
+    "pyqt5==5.15.9",
+    "pyqt5-qt5==5.15.2",
+    "pyqt5-sip==12.12.2",
+    "ome-zarr>=0.8.2"
+]
+dynamic = ["version"]
+
+[project.urls]
+Documentation = "https://openst.github.io/"
+Source = "https://github.com/rajewsky-lab/openst"
+Home-page = "https://openst.github.io"
+Twitter = "https://twitter.com/open_sts"
+
+[project.scripts]
+openst = "openst.__main__:run_openst"
+
+[project.optional-dependencies]
+doc = [
+    "mkdocs-material",
+    "mkdocs-autorefs"
+]
+
+[tool.setuptools.package-data]
+openst = ['openst/metadata/templates/*.html', '*/templates/*.html', 'openst/preprocessing/imagej_macros/*.ijm', '*/preprocessing/imagej_macros/*.ijm']
