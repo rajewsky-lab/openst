@@ -2,6 +2,7 @@
 [![Downloads](https://pepy.tech/badge/openst)](https://pepy.tech/project/openst)
 [![PyPI Version](https://img.shields.io/pypi/v/openst.svg)](https://pypi.org/project/openst)
 [![PyPI License](https://img.shields.io/pypi/l/openst.svg)](https://pypi.org/project/openst)
+[![Gitter chat](https://badges.gitter.im/openst/community.png)](https://gitter.im/openst/community)
 
 <img
   src="https://raw.githubusercontent.com/rajewsky-lab/openst/main/docs/static/img/openst_workflow.svg"
