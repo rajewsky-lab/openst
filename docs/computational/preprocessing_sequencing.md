@@ -1,5 +1,5 @@
 # Preprocessing sequencing data
-After [sequencing], you will get basecall files in `bcl` format, or raw reads in `fastq`
+After sequencing, you will get basecall files in `bcl` format, or raw reads in `fastq`
 format (see [sequence file formats](https://www.illumina.com/informatics/sequencing-data-analysis/sequence-file-formats.html)
 from Illumina's website). In the open-ST experimental protocol, there are two points at which
 sequencing is performed: (1) for obtaining the [sequences of the barcoded library](experimental.md#1-1-sequencing-of-barcoded-library),

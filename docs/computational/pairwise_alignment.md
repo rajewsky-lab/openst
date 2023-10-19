@@ -1,7 +1,7 @@
 # Align image to transcriptome
 In the previous step, the transcriptomic reads were processed and mapped in tissue space with spacemake.
 Now, in order to assign transcripts to cells from the staining images, we perform a pairwise alignment 
-between the imaging and spatial transcriptomics modality must be performed.
+between the imaging and spatial transcriptomics modality.
 
 `openst` provides tools to automatically or manually carry out this pairwise alignment operation. For this,
 our tool generates *pseudoimages* of the spatial transcriptomics data, such that computer vision algorithms
