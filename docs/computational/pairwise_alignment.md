@@ -17,9 +17,9 @@ The alignment workflow consists of two steps, that can be performed [automatical
 
 ## Required input data
 For automatic and manual alignment, two inputs are required: (1) a stitched tile-scan of 
-the staining image (see [Preprocessing of imaging](computational/preprocessing_imaging.md)), and (2) a
+the staining image (see [Preprocessing of imaging](preprocessing_imaging.md)), and (2) a
 single [h5ad] file containing all the [barcoded tiles] of a sample 
-(see [Preprocessing of sequencing](computational/preprocessing_sequencing.md)). 
+(see [Preprocessing of sequencing](preprocessing_sequencing.md)). 
 
 !!! warning
     Remember that spacemake generates one file per [barcoded tile], 
@@ -44,8 +44,8 @@ The expected input for the spatial transcriptomics modality is a single [h5ad] f
 the [barcoded tiles] of a sample. 
 
 !!! warning
-    Remember that spacemake generates one file per [barcoded tile], and it will be necessary to perform
-    [stitching of tiles] to obtain a single file with all tiles for a sample.
+    Remember that spacemake generates one file per [barcoded tile](preprocessing_sequencing.md#flow-cell-related-terms), and it will be necessary to perform
+    [stitching of tiles](preprocessing_sequencing.md#global-spatial-coordinates-tile-stitching) to obtain a single file with all tiles for a sample.
 
 The structure of this single file must follow the [h5ad] standard. In particular, we expect that there is a
 column under `obs` called `tile_id`, telling which tile a barcode belongs to. Also, we expect a column 
@@ -70,9 +70,9 @@ openst pairwise_aligner \
 ```
 
 Make sure to replace the placeholders (`<...>`). For instance, `<path_image>` in the `--image-in` command 
-with the folder containing the [stitched images](computational/preprocessing_imaging.md) of the current sample, 
+with the folder containing the [stitched images](preprocessing_imaging.md) of the current sample, 
 `<path>` in the `--h5-in` and `--h5-out` arguments  to contain the folder containing the 
-[stitched barcoded tiles](computational/preprocessing_sequencing.md), and `<id>` with the `sample_id` as 
+[stitched barcoded tiles](preprocessing_sequencing.md), and `<id>` with the `sample_id` as 
 defined in the spacemake project. **Importantly**, make sure to specify a path where the metadata output file 
 should be created via `--metadata-out`; this will be useful for a visual assessment of whether
 automated alignment worked or not.
@@ -116,9 +116,9 @@ openst manual_pairwise_aligner \
 ```
 
 Make sure to replace the placeholders (`<...>`). For instance, `<path_image>` in the `--image-in` command 
-with the folder containing the [stitched images](computational/preprocessing_imaging.md) of the current sample, 
+with the folder containing the [stitched images](preprocessing_imaging.md) of the current sample, 
 `<path>` in the `--h5-in` argument to contain the folder containing the 
-[stitched barcoded tiles](computational/preprocessing_sequencing.md), and `<id>` with the `sample_id` as 
+[stitched barcoded tiles](preprocessing_sequencing.md), and `<id>` with the `sample_id` as 
 defined in the spacemake project. 
 
 !!! warning
@@ -181,7 +181,7 @@ or refine an automated (or manual) fine alignment
 
 Make sure to replace the placeholders (`<...>`). For instance,
 `<path_to_keypoints.json>` is the `json` file generated with the GUI, and  in the `--h5-in` argument to contain the folder containing the 
-[stitched barcoded tiles](computational/preprocessing_sequencing.md), and `<path_to_sts.h5ad>` is the path to the h5ad file that was loaded
+[stitched barcoded tiles](preprocessing_sequencing.md), and `<path_to_sts.h5ad>` is the path to the h5ad file that was loaded
 with the GUI. Running the command above will generate a new [obsm] layer containing the transformed spatial transcriptome coordinates
 
 [obsm]: https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.obsm.html

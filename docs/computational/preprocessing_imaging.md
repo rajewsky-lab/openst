@@ -4,7 +4,7 @@ as a result of performing imaging of the stained tissue in a tile-scan fashion. 
 the open=ST pipeline expects to have a single image for the whole tile-scan, rather than individual files
 per tile.
 
-This step depends on the microscope used for imaging. In [our implementation](experimental.md), we used a
+This step depends on the microscope used for imaging. In [our implementation](../experimental/library_preparation.md#he-staining-and-imaging), we used a
 Keyence BZ-X710 inverted fluorescence phase contrast microscope, for which we provide open-source
 image stitching code - runs in any computer, independent of the software provided by the manufacturer.
 

@@ -80,12 +80,12 @@ docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix openst
 Now, you can execute PyQt5-based applications, and the GUI will be displayed on your host machine.
 
 !!! note
-   - Ensure that the X Server on your host allows connections (xhost +) before running the container.
-   - Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.
-   - Remember to close the X Server connections after using the container:
-   ```sh
-   xhost -
-   ```
+    - Ensure that the X Server on your host allows connections (xhost +) before running the container,
+    - Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.
+    - Remember to close the X Server connections after using the container:
+      ```sh
+      xhost -
+      ```
 
     [Docker image]: https://hub.docker.com/r/rajewsky/openst/
 

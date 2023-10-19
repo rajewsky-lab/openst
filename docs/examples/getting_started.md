@@ -17,6 +17,6 @@ human and mouse datasets.
 
 </div>
 
-  [E13 mouse head]: changing-the-language.md
-  [Adult mouse hippocampus]: setting-up-navigation.md
-  [Human metastatic lymph node]: setting-up-the-header.md
+  [E13 mouse head]: e13_brain/introduction.md
+  [Adult mouse hippocampus]: e13_brain/introduction.md
+  [Human metastatic lymph node]: e13_brain/introduction.md

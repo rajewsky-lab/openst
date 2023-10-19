@@ -29,7 +29,7 @@ openst segment \
     --dilate-px 10 # will extend the segmentation 10 micron around
 ```
 Make sure to replace the placeholders (`<...>`). For instance,
-`<path_to_aligned_h5ad>` is the full path to the `h5ad` file [after pairwise alignment](computational/pairwise_alignment.md#expected-output); 
+`<path_to_aligned_h5ad>` is the full path to the `h5ad` file [after pairwise alignment](pairwise_alignment.md#expected-output); 
 `<image_in_path>` is the path to the image - a path to a file, or a location inside the `h5ad` file,
 like `'uns/spatial_pairwise_aligned/staining_image_transformed'` (*our recommendation*).
 `<mask_out_path>` is the location where the segmentation mask will be saved - can be a file or a location in the `h5ad` file,
@@ -99,5 +99,5 @@ so it is possible to visualize it with [squidpy](https://github.com/scverse/squi
 among other tools.
 
 So, this concludes the preprocessing of 2D spatial transcriptomics and imaging data
-of the open-ST computational protocol. Next steps include 3D reconstruction, and
+of the open-ST protocol. Next steps include 3D reconstruction, and
 downstream analysis of nD data.

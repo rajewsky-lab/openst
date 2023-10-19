@@ -2,8 +2,8 @@
 After sequencing, you will get basecall files in `bcl` format, or raw reads in `fastq`
 format (see [sequence file formats](https://www.illumina.com/informatics/sequencing-data-analysis/sequence-file-formats.html)
 from Illumina's website). In the open-ST experimental protocol, there are two points at which
-sequencing is performed: (1) for obtaining the [sequences of the barcoded library](experimental.md#1-1-sequencing-of-barcoded-library),
-and (2) for obtaining the [transcriptomic sequences of open-ST library](experimental.md#4-sequencing-of-open-st-library).
+sequencing is performed: (1) for obtaining the [sequences of the barcoded library](../experimental/capture_area_generation.md#sequencing-of-barcoded-library),
+and (2) for obtaining the [transcriptomic sequences of open-ST library](../experimental/sequencing_of_openst_library.md#sequencing-of-open-st-library).
 
 We have developed computational tools for processing each of these sequencing rounds.
 By processing (1), you will get a *database* of barcodes and their spatial locations.
@@ -175,4 +175,4 @@ is the name (full or relative path) of the file that will be generated.
 After running all the steps of this section, you will end up with two types of file: (1) the spatial coordinates of flow cell
 tiles (you will only need to generate this once per flow cell); and (2) one `h5ad` file per sample, containing the gene expression and
 spatial coordinates of each barcoded spot. In the following sections, we will use the file (2) and the 
-[previously preprocessed images](computational/preprocessing_imaging.md)
+[previously preprocessed images](preprocessing_imaging.md)
