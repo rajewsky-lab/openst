@@ -60,7 +60,8 @@ dependencies = [
     "pyqt5==5.15.9",
     "pyqt5-qt5==5.15.2",
     "pyqt5-sip==12.12.2",
-    "ome-zarr>=0.8.2"
+    "ome-zarr>=0.8.2",
+    "pyqtgraph>=0.13.3",
 ]
 dynamic = ["version"]
 
