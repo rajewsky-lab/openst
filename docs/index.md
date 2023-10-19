@@ -1,9 +1,9 @@
 ---
-title: open-ST
-description: Spatial Single-Cell Analysis Toolkit
+title: Home
+description: The open-source, spatial transcriptomics workflow
 hide:
   - toc
-  - nav       # Hide table of contents
+  - nav
 ---
 
 # Welcome to Open-ST Documentation
@@ -26,12 +26,3 @@ We provide [our custom 3D-printable tool](index.md) for cutting the flow cell in
     docs/
         index.md  # The documentation homepage.
         ...       # Other markdown pages, images and other files.
-
-Welcome to Open-ST Documentation
-
-
-
- 
-
-
-
