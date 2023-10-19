@@ -32,9 +32,9 @@ to make your life easier. So, feel free to suggest changes by opening a
 
 You can build the documentation locally by following these steps:
 1. Clone this repository
-  ```sh
-  git clone https://github.com/rajewsky-lab/openst
-  ```
+   ```sh
+   git clone https://github.com/rajewsky-lab/openst
+   ```
 2. Install the dependencies for building the documentation:
    ```sh
    pip install mkdocs-material mkdocs-autorefs
