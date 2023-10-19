@@ -53,13 +53,41 @@ minutes, as it comes with all dependencies pre-installed. Open up a terminal
 and pull the image with:
 
 ``` sh
-docker pull rajewsky-lab/openst
+docker pull rajewsky/openst
 ```
 
 The `openst` executable is provided as an entry point and `serve` is the
 default command.
 
-    [Docker image]: [https://docker](https://hub.docker.com/r/rajewsky-lab/openst/)
+You can run a terminal for `openst` by running
+```sh
+docker run -it openst
+```
+
+Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the `openst manual_pairwise_aligner_gui` tool).
+Follow these steps:
+
+1. Install X Server on your host machine if not already installed.
+2. Allow connections to your X Server by running the following command on your host:
+```sh
+xhost +
+```
+3. Run the Docker container with the following additional options:
+```sh
+docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix openst
+```
+
+Now, you can execute PyQt5-based applications, and the GUI will be displayed on your host machine.
+
+!!! note
+   - Ensure that the X Server on your host allows connections (xhost +) before running the container.
+   - Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.
+   - Remember to close the X Server connections after using the container:
+   ```sh
+   xhost -
+   ```
+
+    [Docker image]: https://hub.docker.com/r/rajewsky/openst/
 
 ### with git
 
