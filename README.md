@@ -56,5 +56,8 @@ If you're excited to join us, we recommend the following steps:
 In general, you can always refer to the [contribution guidelines](CONTRIBUTING.md) for more details!
 Currently, only [admins](https://github.com/orgs/rajewsky-lab/people) will be merging all accepted changes.
 
+## Code of Conduct
+Everyone interacting in the open-ST project's codebases, issue trackers, and discussion forums is expected to follow the [PSF Code of Conduct](https://www.python.org/psf/conduct/).
+
 ## License
 The software tools of this project are under the GNU License - see the [LICENSE](LICENSE) file for details.
