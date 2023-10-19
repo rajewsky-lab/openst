@@ -1,3 +1,4 @@
+[![docs](https://github.com/danilexn/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/danilexn/openst/actions/workflows/docs.yml)
 [![Downloads](https://pepy.tech/badge/openst)](https://pepy.tech/project/openst)
 [![PyPI Version](https://img.shields.io/pypi/v/openst.svg)](https://pypi.org/project/openst)
 [![PyPI License](https://img.shields.io/pypi/l/openst.svg)](https://pypi.org/project/openst)
@@ -39,7 +40,7 @@ You can build the documentation locally by following these steps:
    ```sh
    pip install mkdocs-material mkdocs-autorefs
    ```
-3. Serve `mkdocs` with the following command:
+3. Serve mkdocs with the following command:
    ```sh
    mkdocs serve -f openst/mkdocs.yml
    ```
