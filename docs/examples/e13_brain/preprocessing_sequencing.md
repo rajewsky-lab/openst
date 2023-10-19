@@ -120,7 +120,7 @@ spacemake projects add_sample \
 You can specify the coordinate system by modifying the `openst` run mode in the `config.yaml` file that is created
 after you run the `spacemake init` command (see above). Modify the following lines from this:
 
-```sh
+```yaml
 openst:
     coordinate_system: puck_id/openst_coordinates.csv
     spot_diameter_um: 0.6
@@ -129,7 +129,7 @@ openst:
 
 into this:
 
-```sh
+```yaml
 openst:
     coordinate_system: puck_id/openst_demo_e13_brain_coordinate_system.csv
     spot_diameter_um: 0.6
