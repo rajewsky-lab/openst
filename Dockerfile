@@ -23,9 +23,6 @@ RUN apt-get update && apt-get install -y \
     libpangocairo-1.0-0 \
     libgtk-3-0
 
-# Install PyQt5
-RUN pip3 install PyQt5
-
 # Install openst
 RUN pip3 install openst
 
