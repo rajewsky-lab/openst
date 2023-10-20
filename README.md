@@ -1,4 +1,4 @@
-[![docs](https://github.com/danilexn/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/danilexn/openst/actions/workflows/docs.yml)
+[![docs](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml)
 [![Downloads](https://pepy.tech/badge/openst)](https://pepy.tech/project/openst)
 [![PyPI Version](https://img.shields.io/pypi/v/openst.svg)](https://pypi.org/project/openst)
 [![PyPI License](https://img.shields.io/pypi/l/openst.svg)](https://pypi.org/project/openst)
