@@ -22,6 +22,5 @@ A clear and concise description of the expected results.
 Specify the actual results or traceback.
 
 ## Environment info
-- `datasets` version:
 - Platform:
 - Python version:
