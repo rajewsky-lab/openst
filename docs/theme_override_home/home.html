@@ -16,7 +16,7 @@
 
     .tx-container {
         padding-top: .0rem;
-        background: linear-gradient(to bottom, var(--md-primary-fg-color), hsla(160deg,47%,55%,1) 99%,#fff 99%)
+        background: var(--md-primary-fg-color);
     }
 
     .tx-hero {
@@ -37,8 +37,10 @@
     }
 
     .tx-hero__image{
-        width:17rem;
-        height:17rem;
+        width: 115%;
+        max-width: 45rem;
+        max-height: 17rem;
+        height: auto;
         order:1;
         padding-right: 2.5rem;
     }
@@ -51,15 +53,15 @@
 
     .tx-hero .md-button--primary {
         background-color: var(--md-primary-bg-color);
-        color: hsla(280deg, 37%, 48%, 1);
+        color: var(--md-primary-fg-color);
         border-color: var(--md-primary-bg-color)
     }
 
     .tx-hero .md-button:focus,
     .tx-hero .md-button:hover {
-        background-color: var(--md-accent-fg-color);
+        background-color: var(--md-primary-fg-color--dark);
         color: var(--md-default-bg-color);
-        border-color: var(--md-accent-fg-color)
+        border-color: var(--md-primary-fg-color--dark)
     }
 
     .feature-item h2 svg {
@@ -222,7 +224,10 @@
     <div class="md-grid md-typeset">
       <div class="tx-hero">
         <div class="tx-hero__image">
-          <img src="static/img/openst-min.gif" draggable="false"> <!-- requires an image ~ 2000x2300 -->
+          <video width="960" height="540" autoplay loop muted>
+            <source src="static/video/openst_intro.mp4" type="video/mp4">
+            Your browser does not support the video tag.
+          </video>
         </div>
         <div class="tx-hero__content">
           <h1> <b>open-ST</b>: democratizing spatial transcriptomics </h1>
@@ -245,6 +250,7 @@
 </section>
 
 <!-- Main site box descriptions -->
+<!--
 <div class="top-hr">
     <div class="feature-item">
         <h2>
@@ -278,7 +284,7 @@
     <div class="hr">
     </div>
 </div>
-
+-->
 
 {% endblock %}
 {% block content %}{% endblock %}

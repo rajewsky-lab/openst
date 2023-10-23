@@ -44,27 +44,19 @@ theme:
   features:
     - navigation.indexes
     - navigation.sections
-
+  logo: static/logos/openst_logo_transparent_completeO.png
   features:
     - announce.dismiss
     - content.action.edit
     - content.action.view
     - content.code.annotate
     - content.code.copy
-    # - content.code.select
-    # - content.tabs.link
     - content.tooltips
-    # - header.autohide
-    # - navigation.expand
     - navigation.footer
     - navigation.indexes
-    # - navigation.instant
-    # - navigation.instant.prefetch
-    # - navigation.instant.progress
-    # - navigation.prune
     - navigation.sections
     - navigation.tabs
-    # - navigation.tabs.sticky
+    - navigation.path
     - navigation.top
     - navigation.tracking
     - search.highlight
@@ -72,18 +64,12 @@ theme:
     - search.suggest
     - toc.follow
   palette:
-    - scheme: default
-      primary: indigo
-      accent: indigo
-      toggle:
-        icon: material/brightness-7
-        name: Switch to dark mode
-    - scheme: slate
-      primary: black
-      accent: indigo
-      toggle:
-        icon: material/brightness-4
-        name: Switch to light mode
+    primary: custom
+    accent: custom
+  icon:
+    repo: fontawesome/brands/github
+  language: en
+  favicon: static/logos/openst_logo_transparent_completeO.png
 
 plugins:
 - search:
@@ -97,6 +83,12 @@ extra:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/open_sts
       name: Twitter
+    - icon: fontawesome/brands/github 
+      link: https://github.com/rajewsky-lab/openst
+      name: GitHub
+    - icon: fontawesome/brands/docker
+      name: Docker
+      link: https://hub.docker.com/u/rajewsky
 
 markdown_extensions:
   - abbr
@@ -154,3 +146,4 @@ extra_javascript:
 
 extra_css:
   - https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css
+  - stylesheets/extra.css
