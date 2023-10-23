@@ -7,7 +7,55 @@ below, ask it on our [discussion board]!
   [discussion board]: https://github.com/rajewsky-lab/openst/discussions/new/chooses
 
 
-## General tissue handling
+## Tissue handling and sectioning
+
+[__What is the recommended freezing and embedding process?__](#recommended-freezing-embedding){ #recommended-freezing-embedding }
+
+Open-ST requires the use of unfixed fresh-frozen tissue, embedded in OCT. An optimal embedding process is required to avoid the formation of freezing artifacts. The best results are achieved when tissue is frozen in a fast and uniform way.
+We recommend following 10X Visium's protocol for simultaneous freezing and embedding in their [Tissue Preparation guide](https://cdn.10xgenomics.com/image/upload/v1695417744/support-documents/CG000240_Demonstrated_Protocol_VisiumSpatialProtocols_TissuePreparationGuide_RevE.pdf)
+
+However, is also possible to embed already snap-frozen tissue in OCT using powdered dry ice, or an isopentane bath in liquid nitrogen or dry ice. In this case, be aware of:
+
+- Once tissue is frozen avoid melting of the tissue when embedding in OCT.
+- Do not immerge the tissue directly into liquid nitrogen (it will burn the edges!).
+- Keep the embedding mold bases fully covered by dry ice or the cold isopentane bath to allow homogeneous freezing.
+
+
+[__What tissue section thickness is recommended?__](#tissue-thickness){ #tissue-thickness }
+
+We section the tissue at a thickness of 10 um. This can be adapted if neccessary, but permeabilization time may change consequently. Thicker sectioning may also increase contamination from the cytoplasm of other cells in the z-plane.
+
+[__What cutting temperature is recommended?__](#cutting-temperature){ #cutting-temperature}
+
+The optimal cutting temperature depends on the tissue being sectioned. As a starting point, page 91 in this [reference](../387928-EP_05 - NX70 Op Guide.pdf) is helpful.
+
+## Sample handling
+
+[__Are technical replicates required?__](#technical-replicates){ #technical-replicates }
+
+As we have observed a high reproducibility across technical replicates (consecutive sections), technical replicates are not essential.
+
+[__How many sections (conditions/sample types) can be processed at once?__](#samples-process-at-once){ #samples-process-at-once }
+	
+Multiple samples can be processed at once with the use of a multiwell chamber hybridization cassette
+(such as this one by [ArrayJet](https://arrayjet.com/consumables/gel-company-arrayslide-16-hybridization-chamber-cassette)). 
+
+This cassette has sixteen 7 x 7 mm wells, each fitting one capture area; thus, allowing 16 samples or conditions to be processed simultaneously.
+We recommend handling a maximum of 15 capture areas per person for protocol steps 3.1 to 3.5 (until reverse transcription overnight incubation).
+
+Moreover, open-ST libraries are indexed on the p7-adapter side, allowing multiplexing of samples within one NGS run. 
+
+[__What are the best practices to avoid cross-contamination?__](#best-practices-x-contamination){ #best-practices-x-contamination }
+
+In order to avoid any RNA contamination is important to wipe down the cryostat and any tools used (brushes, tweezers) before sectioning with 80%-100% ethanol. Additionaly, change the blade and wipe down the cryostat and tools in between sectioning different samples. 
+
+[__What pepsin incubation times should I test?__](#pepsin-incubation){ #pepsin-incubation }
+
+It is important to set the permeabilization condition for each tissue type. 
+We recommend to test at least a minimum range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/uL). 
+
+It is preferable to chose the minimum incubation time/ enzyme concentration that
+gives the maximum RNA capture (see [Permeabilization](experimental/library_preparation.md#permeabilization)).
 
 [__What tissues have already been tested with open-ST?__](#tested-tissues){ #tested-tissues }
 
@@ -32,50 +80,6 @@ Here, we list the tested tissues with the permeabilization condition used:
     | Mouse head (embryo E13)| 30 min, 0.7 U/uL|
     | Mouse brain| 30 min, 0.7 U/uL|
     | Breast cancer model Stage 1-4 | 30 min - 45 min, 0.7 U/uL @Marie|
-
-
-[__What tissue section thickness is recommended?__](#tissue-thickness){ #tissue-thickness }
-
-We section the tissue at a thickness of 10 um. This can be adapted if neccessary, but permeabilization time may change consequently. Thicker sectioning may also increase contamination from the cytoplasm of other cells in the z-plane.
-
-[__Are technical replicates required?__](#technical-replicates){ #technical-replicates }
-
-As we have observed a high reproducibility across technical replicates (consecutive sections), technical replicates are not essential.
-
-## Sample preparation
-
-[__What is the recommended freezing and embedding process?__](#recommended-freezing-embedding){ #recommended-freezing-embedding }
-
-Open-ST requires the use of unfixed fresh-frozen tissue, embedded in OCT. An optimal embedding process is required to avoid the formation of freezing artifacts. The best results are achieved when tissue is frozen in a fast and uniform way.
-We recommend following 10X Visium's protocol for simultaneous freezing and embedding in their [Tissue Preparation guide](https://cdn.10xgenomics.com/image/upload/v1695417744/support-documents/CG000240_Demonstrated_Protocol_VisiumSpatialProtocols_TissuePreparationGuide_RevE.pdf)
-
-However, is also possible to embed already snap-frozen tissue in OCT using powdered dry ice, or an isopentane bath in liquid nitrogen or dry ice. In this case, be aware of:
-
-- Once tissue is frozen avoid melting of the tissue when embedding in OCT.
-- Do not immerge the tissue directly into liquid nitrogen (it will burn the edges!).
-- Keep the embedding mold bases fully covered by dry ice or the cold isopentane bath to allow homogeneous freezing.
-
-[__How many sections (conditions/sample types) can be processed at once?__](#samples-process-at-once){ #samples-process-at-once }
-	
-Multiple samples can be processed at once with the use of a multiwell chamber hybridization cassette
-(such as this one by [ArrayJet](https://arrayjet.com/consumables/gel-company-arrayslide-16-hybridization-chamber-cassette)). 
-
-This cassette has sixteen 7 x 7 mm wells, each fitting one capture area; thus, allowing 16 samples or conditions to be processed simultaneously.
-We recommend handling a maximum of 15 capture areas per person for protocol steps 3.1 to 3.5 (until reverse transcription overnight incubation).
-
-Moreover, open-ST libraries are indexed on the p7-adapter side, allowing multiplexing of samples within one NGS run. 
-
-[__What are the best practices to avoid cross-contamination?__](#best-practices-x-contamination){ #best-practices-x-contamination }
-
-In order to avoid any RNA contamination is important to wipe down the cryostat and any tools used (brushes, tweezers) before sectioning with 80%-100% ethanol. Additionaly, change the blade and wipe down the cryostat and tools in between sectioning different samples. 
-
-[__What pepsin incubation times should I test?__](#pepsin-incubation){ #pepsin-incubation }
-
-It is important to set the permeabilization condition for each tissue type. 
-We recommend to test at least a minimum range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/uL). 
-
-It is preferable to chose the minimum incubation time/ enzyme concentration that
-gives the maximum RNA capture (see [Permeabilization](experimental/library_preparation.md#permeabilization)).
 
 ## Capture area
 [__Can you store capture area pieces?__](#store-capture-areas){ #store-capture-areas }
@@ -121,7 +125,7 @@ protocol to retrieve tissue morphology (i.e. Phalloidin and Dapi).
 
 However, a color camera is required for H&E protocol - if feasible with good resolution, scanning and balancing functionality.
 
-## Library and sequencing
+## Library preparation and sequencing
 [__How does a good library profile look like before and after size selection?__](#what-good-profile){ #what-good-profile }
 		
 A good library profile is smooth without any short fragment peaks or evident peaks inside the library range.
