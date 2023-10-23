@@ -55,8 +55,9 @@
     - Heating block (*Can also use hybridisation oven for pre-warming pepsin.*)
     - Hybridization oven 
     - Brightfield imaging system *add objective requirements, camera*
-    - PCR cycler 
+    - Thermocycler 
     - qPCR machine 
     - Bluepippin or PippinHT (*alternatively, use manual agarose gel setup and DNA extraction*)
     - Automated gel electrophoresis machine (eg. Tapestation or BioAnalyzer)
     - Qubit fluorometer   
+    - 3D printer (If you don't have a 3D printer, you can check for [3D printing services near you](https://www.google.com/search?q=3d+printing+service+near+me)) 
