@@ -6,7 +6,7 @@ We recommend quantifying your libraries for sequencing using the KAPA Library Qu
 ## Loading and sequencing
 The optimal loading concentration depends on the sequencer used. For the Illumina® **NovaSeq 6000** we obtained optimal clustering at a loading concentration of **130 pM**. For the Illumina® **NextSeq 2000** sequencing system we recommend a loading concentration of **650 pM**.   
 
-Moreover, Illumina [suggests a minimum of 1% PhiX](https://support.illumina.com/content/dam/illumina-support/documents/documentation/system_documentation/novaseq/novaseq-6000-denature-dilute-libraries-guide-1000000106351-03.pdf) into the pool as a quality control for cluster generation, sequencing, and alignment. 
+Moreover, Illumina [suggests a minimum spike-in of 1% PhiX](https://support.illumina.com/content/dam/illumina-support/documents/documentation/system_documentation/novaseq/novaseq-6000-denature-dilute-libraries-guide-1000000106351-03.pdf) into the pool as a quality control for cluster generation, sequencing, and alignment. 
 
 In our setup, the following read lengths were used:
 

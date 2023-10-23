@@ -12,7 +12,7 @@ When using an **Illumina® NovaSeq 6000 S4** flow cell (35 cycles), sequence the
 (see in [Oligonucleotides](getting_started.md)) at a loading concentration of 200 pM. 
 
 Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
-Use a custom sequencing recipe that stops the run immediately after read 1 prior to on-instrument washes. 
+Use a custom sequencing [recipe](../static/metadata_files/NovaSeq6000_S4_barcoding_seq_recipe.xml) that stops the run immediately after read 1 prior to on-instrument washes. 
 
 ### Expected (data) output
 Either when using your own sequencing equipment or relying on a sequencing facility, you will get access
