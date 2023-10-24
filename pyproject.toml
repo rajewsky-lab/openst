@@ -7,17 +7,21 @@ requires = [
 
 [project]
 name = "openst"
+dynamic = ['version']
 description = "Democratizing spatial transcriptomics."
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
 authors = [
     {name = "Daniel León-Periñán"},
     {name = "Lena Marie Schott"},
+    {name = "Elena Splendiani"},
     {name = "Nikolaos Karaiskos"},
 ]
 maintainers = [
     {name = "Daniel León-Periñán", email = "daniel.leonperinan@mdc-berlin.de"},
     {name = "Lena Marie Schott", email = "marie.schott@mdc-berlin.de"},
+    {name = "Elena Splendiani", email = "elena.splendiani@uniroma1.it"},
+    {name = "Nikolaos Karaiskos", email = "nikolaos.karaiskos@mdc-berlin.de"},
 ]
 readme = {file = "README.md", content-type="text/markdown"}
 classifiers = [
@@ -63,7 +67,9 @@ dependencies = [
     "ome-zarr>=0.8.2",
     "pyqtgraph>=0.13.3",
 ]
-dynamic = ["version"]
+
+[tool.setuptools-git-versioning]
+enabled = true
 
 [project.urls]
 Documentation = "https://openst.github.io/"
@@ -82,3 +88,8 @@ doc = [
 
 [tool.setuptools.package-data]
 openst = ['openst/metadata/templates/*.html', '*/templates/*.html', 'openst/preprocessing/imagej_macros/*.ijm', '*/preprocessing/imagej_macros/*.ijm']
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["openst"]  # alternatively: `exclude = ["additional*"]`
+namespaces = false
