@@ -53,9 +53,8 @@ dependencies = [
     "scikit-learn>=0.24",
     "natsort",
     "joblib",
-    "get-annotations; python_version < '3.10'",
     "dask[array]",
-    "dask-image>=2023.8.1",
+    "dask-image",
     "kornia>=0.7.0",
     # we need to pin this version, otherwise RANSAC does not converge
     "scikit-image==0.19.3",
