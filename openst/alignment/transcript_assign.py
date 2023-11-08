@@ -93,6 +93,14 @@ def setup_transcript_assign_parser(parent_parser):
     return parser
 
 
+def assert_valid_mask(im):
+    if len(im.shape) < 2:
+        raise ValueError("The specified image mask is not two-dimensional")
+    elif len(im.shape) > 2:
+        if im.shape[:-1] != 1:
+            raise ValueError("A 3D image should be XYC, where C=1 for a segmentation mask")
+
+
 def transfer_segmentation(adata_transformed_coords, props_filter):
     joined_coordinates = np.array([props_filter["centroid-0"], props_filter["centroid-1"]]).T
     joined_coordinates = np.vstack([np.array([0, 0]), joined_coordinates])
@@ -182,6 +190,8 @@ def _run_transcript_assign(args):
         mask = load_properties_from_adata(args.adata, [args.mask])[args.mask]
     else:
         mask = np.array(Image.open(args.mask))
+
+    assert_valid_mask(mask)
 
     logging.info("Loading adata")
     adata = read_h5ad(args.adata)
