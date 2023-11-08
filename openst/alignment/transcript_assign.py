@@ -34,6 +34,13 @@ def get_transcript_assign_parser():
     )
 
     parser.add_argument(
+        "--shuffle-umi",
+        default=False,
+        action="store_true",
+        help="When specified, UMI locations will be shuffled. This can be used as a baseline for feature selection.",
+    )
+
+    parser.add_argument(
         "--mask",
         type=str,
         help="""path to image mask; must be in same coordinates as the obsm['spatial'] in the AnnData file.
@@ -143,6 +150,27 @@ def subset_adata_to_mask(mask, adata, spatial_key: str = 'spatial'):
     return adata, props_filter
 
 
+def shuffle_umi(adata, spatial_key='spatial'):
+    from scipy.sparse import csr_array, csc_matrix
+    import anndata as ad
+
+    X_0_repeat = np.repeat(adata.X.nonzero()[0], adata.X.data.astype(int))
+    X_1_repeat = np.repeat(adata.X.nonzero()[1], adata.X.data.astype(int))
+    loc_random = np.random.randint(0, len(adata.obsm[spatial_key]), len(X_1_repeat))
+    # obsm_spatial_expanded = tiles_transformed_coords_refined_concatenated[loc_random]
+    obsm_spatial_expanded = adata.obsm[spatial_key][loc_random]
+    X_repeat = csc_matrix(csr_array((np.ones_like(X_0_repeat), (np.arange(len(X_0_repeat)), X_1_repeat))))
+    adata_shuffled = ad.AnnData(X=X_repeat)
+    adata_shuffled.obsm[spatial_key] = obsm_spatial_expanded
+
+    for col in adata.obs.columns:
+        adata_shuffled.obs[col] = 1
+
+    adata_shuffled.var_names = adata.var_names
+
+    return adata_shuffled
+
+
 def _run_transcript_assign(args):
     """_run_transcript_assign."""
     # TODO: load with dask if it is too large
@@ -170,6 +198,10 @@ def _run_transcript_assign(args):
 
     logging.info("Loading adata")
     adata = read_h5ad(args.adata)
+
+    if args.shuffle_umi:
+        logging.info("Spatially shuffling UMIs")
+        adata = shuffle_umi(adata, spatial_key=args.spatial_key)
 
     logging.info("Subsetting adata coordinates to mask")
     adata, props_filter = subset_adata_to_mask(mask, adata, args.spatial_key)
