@@ -618,7 +618,7 @@ def run_registration(
         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed[:, :-1] + np.array([[y_min, x_min]])
         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed * args.rescale_factor_fine
 
-        out_coords_output_fine[_t_tile_id] = _t_sts_coords_fine_transformed
+        out_coords_output_fine[_t_tile_id] = _t_sts_coords_fine_transformed[:, ::-1]
 
         # Saving alignment results here (only when passed)
         # TODO: check order of keypoints (in all functions throughout package)
