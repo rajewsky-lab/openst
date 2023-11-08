@@ -12,6 +12,7 @@ from openst.preprocessing.barcode_preprocessing import \
 from openst.preprocessing.image_stitch import setup_image_stitch_parser
 from openst.preprocessing.spatial_stitch import setup_spatial_stitch_parser
 from openst.segmentation.segment import setup_segment_parser
+from openst.segmentation.segment_merge import setup_segment_merge_parser
 from openst.threed.from_3d_registration import \
     setup_from_3d_registration_parser
 from openst.threed.to_3d_registration import setup_to_3d_registration_parser
@@ -35,6 +36,8 @@ def cmdline_args():
     setup_report_parser(parent_parser_subparsers)
     # create the parser for the "segment" command
     setup_segment_parser(parent_parser_subparsers)
+    # create the parser for the "segment_merge" command
+    setup_segment_merge_parser(parent_parser_subparsers)
     # create the parser for the "spatial_stitch" command
     setup_spatial_stitch_parser(parent_parser_subparsers)
     # create the parser for the "image_stitch" command
