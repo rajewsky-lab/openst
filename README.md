@@ -39,7 +39,7 @@ You can build the documentation locally by following these steps:
    ```
 2. Install the dependencies for building the documentation:
    ```sh
-   pip install mkdocs-material mkdocs-autorefs
+   pip install mkdocs-material mkdocs-autorefs mknotebooks
    ```
 3. Serve mkdocs with the following command:
    ```sh
