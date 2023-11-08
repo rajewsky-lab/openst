@@ -66,7 +66,8 @@ openst pairwise_aligner \
     --h5-in <path>/<id>_stitched_spots.h5ad \
     --h5-out <path>/<id>_stitched_spots_aligned.h5ad \
     --metadata-out <path>/<id>_alignment_metadata.json \
-    --save-image-in-h5
+    --save-image-in-h5 \
+    --n-threads <cores>
 ```
 
 Make sure to replace the placeholders (`<...>`). For instance, `<path_image>` in the `--image-in` command 
@@ -75,7 +76,7 @@ with the folder containing the [stitched images](preprocessing_imaging.md) of th
 [stitched barcoded tiles](preprocessing_sequencing.md), and `<id>` with the `sample_id` as 
 defined in the spacemake project. **Importantly**, make sure to specify a path where the metadata output file 
 should be created via `--metadata-out`; this will be useful for a visual assessment of whether
-automated alignment worked or not.
+automated alignment worked or not. You can set `<cores>` depending on your machine (it defaults to 1).
 
 If you want to run only the coarse phase of the pairwise alignment (i.e., to run the fine
 alignment [yourself](#manual-workflow)), you can specify the argument `--only-coarse`. If you have a CUDA-compatible
