@@ -4,7 +4,6 @@ import logging
 import dask
 import dask_image
 import dask_image.imread
-from anndata import read_h5ad
 from dask_image.ndmeasure._utils._label import (
         connected_components_delayed,
         label_adjacency_graph,
@@ -16,13 +15,15 @@ from dask.diagnostics import ProgressBar
 import numpy as np
 from PIL import Image
 from skimage import measure
-from skimage.segmentation import expand_labels
 from skimage.io import imsave
 
 from ome_zarr.io import parse_url
 from ome_zarr.writer import write_image
 import zarr
-from openst.utils.file import check_directory_exists, check_file_exists, load_properties_from_adata
+from openst.utils.file import check_directory_exists, check_file_exists
+from skimage.segmentation import find_boundaries
+
+# TODO: implement gray_dilation
 
 
 def get_segment_parser():
@@ -104,6 +105,13 @@ def get_segment_parser():
         "--dilate-px",
         type=int,
         help="Pixels the outlines of the segmentation mask will be extended",
+        required=False,
+        default=0,
+    )
+    parser.add_argument(
+        "--outline-px",
+        type=int,
+        help="Objects will be represented as px-width outlines (only if >0)",
         required=False,
         default=0,
     )
@@ -273,6 +281,7 @@ def expand_labels(label_image, distance=1):
     else:
         return expand_labels_block(label_image)
 
+
 def _run_segment(args):
     """
     Wrapper for whole or tiled segmentation with cellpose.
@@ -358,6 +367,10 @@ def _run_segment(args):
                 mask_complete = relabel_blocks(mask_chunked, new_labeling)
                 if args.dilate_px > 0:
                     mask_complete = expand_labels(mask_complete, distance=args.dilate_px)
+                
+                if args.outline_px > 0:
+                    mask_complete = find_boundaries(mask_complete, connectivity=1, mode='inner', background=0)
+                    mask_complete = da.where(mask_complete, mask_complete, 0)
 
                 # Transpose the image, so the axes are cxy
                 if args.adata:
@@ -403,6 +416,11 @@ def _run_segment(args):
 
         if args.dilate_px > 0:
             mask_complete = expand_labels(mask_complete, distance=args.dilate_px)
+
+        if args.outline_px > 0:
+            mask_complete_bdy = find_boundaries(mask_complete, connectivity=1, mode='inner', background=0)
+            mask_complete_bdy = expand_labels(mask_complete_bdy, distance=args.outline_px)
+            mask_complete = np.where(mask_complete_bdy, mask_complete, 0)
 
         mask_complete = measure.label(mask_complete)
 
