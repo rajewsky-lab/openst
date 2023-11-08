@@ -107,22 +107,6 @@ def transfer_segmentation(adata_transformed_coords, props_filter):
         cell_ID_merged,
     )
 
-    spatial_units_obs_names_dict = {}
-
-    for sn in adata_by_cell.uns["spatial_units_obs_names"]:
-        bc, tile = sn.split(":")
-        if tile in spatial_units_obs_names_dict.keys():
-            spatial_units_obs_names_dict[tile] += [bc]
-        else:
-            spatial_units_obs_names_dict[tile] = [bc]
-
-    for sn in adata_by_cell.uns["spatial_units_obs_names"]:
-        bc, tile = sn.split(":")
-        if tile in spatial_units_obs_names_dict.keys():
-            spatial_units_obs_names_dict[tile] += [bc]
-        else:
-            spatial_units_obs_names_dict[tile] = [bc]
-
     _missing_uns_keys = set(list(adata_by_cell.uns.keys()) + list(adata_transformed_coords.uns.keys()))
     _missing_uns_keys = set(list(adata_transformed_coords.uns.keys())).intersection(_missing_uns_keys)
 
@@ -156,11 +140,13 @@ def shuffle_umi(adata, spatial_key='spatial'):
 
     X_0_repeat = np.repeat(adata.X.nonzero()[0], adata.X.data.astype(int))
     X_1_repeat = np.repeat(adata.X.nonzero()[1], adata.X.data.astype(int))
+    tile_id = np.repeat(adata.obs['tile_id'], adata.X.data.astype(int))
     loc_random = np.random.randint(0, len(adata.obsm[spatial_key]), len(X_1_repeat))
     # obsm_spatial_expanded = tiles_transformed_coords_refined_concatenated[loc_random]
     obsm_spatial_expanded = adata.obsm[spatial_key][loc_random]
     X_repeat = csc_matrix(csr_array((np.ones_like(X_0_repeat), (np.arange(len(X_0_repeat)), X_1_repeat))))
     adata_shuffled = ad.AnnData(X=X_repeat)
+    adata_shuffled.obs_names
     adata_shuffled.obsm[spatial_key] = obsm_spatial_expanded
 
     for col in adata.obs.columns:
