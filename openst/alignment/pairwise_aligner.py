@@ -501,7 +501,7 @@ def run_registration(
             tile_code,
         )
 
-        logging.info(f"Registering tile {tile_code} with {len(_t_valid_coords)} coordinates")
+        logging.info(f"Registering tile {tile_code} with {_t_valid_coords.sum()} coordinates")
 
         _t_sts_pseudoimage = create_pseudoimage(
             sts_coords_transformed[:, ::-1],  # we flip these coordinates
