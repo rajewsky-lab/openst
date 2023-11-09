@@ -109,7 +109,6 @@ refine an automatic alignment). Alternatively, you can start from the [same file
 and merge them with the command:
 
 ```sh
-openst manual_pairwise_aligner 
 openst manual_pairwise_aligner \
     --prepare-data \
     --h5-in <path>/<id>_stitched_spots_aligned.h5ad \
