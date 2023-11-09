@@ -92,11 +92,11 @@ For this, make sure that you specified a file name in the `--metadata-out`; then
 the following command:
 
 ```sh
-openst report --metadata=<metadata_file> --output=<path_to_html_file>
+openst report --metadata=<metadata_file> --html-out=<path_to_html_file>
 ```
 
 Make sure to replace the placeholders (`<...>`) with the path to the metadata file (under `--metadata` argument), and
-the desired path and filename of the HTML report that will be generated (under `--output` argument). Running this command
+the desired path and filename of the HTML report that will be generated (under `--html-out` argument). Running this command
 will create a HTML report containing images of the STS and staining image before and after alignment (coarse and/or fine,
 depending on the configuration).
 
