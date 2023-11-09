@@ -21,6 +21,7 @@ from ome_zarr.io import parse_url
 from ome_zarr.writer import write_image
 import zarr
 from openst.utils.file import check_directory_exists, check_file_exists
+from openst.utils.pimage import mask_tissue
 from skimage.segmentation import find_boundaries
 
 # TODO: implement gray_dilation
@@ -114,6 +115,22 @@ def get_segment_parser():
         help="Objects will be represented as px-width outlines (only if >0)",
         required=False,
         default=0,
+    )
+    parser.add_argument(
+        "--mask-tissue",
+        action="store_true",
+        help="Tissue (imaging modality) is masked from the background before segmentation",
+    )
+    parser.add_argument(
+        "--tissue-masking-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the staining image",
+    )
+    parser.add_argument(
+        "--keep-black-background",
+        action="store_true",
+        help="Whether to set the background of the imaging modalities to white after tissue masking",
     )
     parser.add_argument(
         "--num-workers",
@@ -333,7 +350,6 @@ def _run_segment(args):
         check_file_exists(args.model)
         model = models.CellposeModel(gpu=args.gpu, pretrained_model=args.model)
 
-    
 
     if args.chunked:
         logging.info("Loading images into chunks")
@@ -343,16 +359,25 @@ def _run_segment(args):
 
         im = im.rechunk({0: args.chunk_size, 1: args.chunk_size})
         shift = int(np.prod(im.numblocks) - 1).bit_length()
-        print(im.numblocks)
-        print(shift)
 
-        logging.info("Segmenting relabeling & by chunks")
+        
         # This dask chunked option is useful for limited GPU memory
         # we need to specify processes scheduler such that CUDA
         # does not throw memory access errors
         # TODO: implement expand_labels (mask dilation) with chunked processing
+        def _mask_tissue_wrapper(im):
+            return mask_tissue(im, 
+                        keep_black_background=args.keep_black_background, 
+                        mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
+                        return_hsv=False)
+            
         with ProgressBar():
             with dask.config.set(scheduler='single-threaded', num_workers=_num_workers):
+                if args.mask_tissue:
+                    logging.info("Masking whole tissue from background")
+                    im.map_blocks(_mask_tissue_wrapper, meta=np.array((), dtype=np.int32))
+                
+                logging.info("Segmenting & relabeling by chunks")
                 mask_chunked = da.map_overlap(
                     _segment_chunk,
                     im,
@@ -398,6 +423,14 @@ def _run_segment(args):
         if im is None:
             im = np.array(Image.open(args.image_in))
 
+        if args.mask_tissue:
+            logging.info("Masking whole tissue from background")
+            im = mask_tissue(im, 
+                            keep_black_background=args.keep_black_background, 
+                            mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
+                            return_hsv=False)
+
+        logging.info("Segmenting & relabeling whole image")
         mask_complete = cellpose_segmentation(
             im,
             model,
