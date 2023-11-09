@@ -40,6 +40,7 @@ from openst.metadata.classes.pairwise_alignment import (
     AlignmentResult, PairwiseAlignmentMetadata)
 from openst.utils.file import (check_adata_structure, check_directory_exists,
                                check_file_exists, load_properties_from_adata)
+from openst.utils.pimage import mask_tissue
 from openst.utils.pseudoimage import create_pseudoimage
 
 
@@ -322,27 +323,10 @@ def prepare_image_for_feature_matching(
     hsv_image = rgb2hsv(image)
 
     if mask_tissue:
-        s_image_gaussian = gaussian(hsv_image[..., 1], sigma=mask_gaussian_blur)
-        thresh = threshold_otsu(s_image_gaussian)
-        s_image_gaussian_binary = s_image_gaussian > thresh
-        s_image_gaussian_binary = ndimage.binary_fill_holes(s_image_gaussian_binary).astype(int)
-        image_out = image * s_image_gaussian_binary[..., np.newaxis]
-        hsv_image_out = hsv_image * s_image_gaussian_binary[..., np.newaxis]
-
-        image_out = ((image_out / image_out.max()) * 255).astype(int)
-        hsv_image_out = ((hsv_image_out / hsv_image_out.max()) * 255).astype(int)
-
-        if not keep_black_background:
-            image_out = np.where(
-                image_out == np.array([[0, 0, 0]]),
-                np.array([[255, 255, 255]]),
-                image_out,
-            )
-            hsv_image_out = np.where(
-                hsv_image_out == np.array([[0, 0, 0]]),
-                np.array([[255, 255, 255]]),
-                hsv_image_out,
-            )
+        image_out, hsv_image_out = mask_tissue(image, hsv_image,
+                                               keep_black_background,
+                                               mask_gaussian_blur,
+                                               return_hsv=True)
     else:
         image_out = image
         hsv_image_out = hsv_image
