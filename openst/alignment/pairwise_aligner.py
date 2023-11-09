@@ -260,7 +260,7 @@ def transform_image(im, flip: list = None, crop: list = None, rotation: int = No
     if flip is not None:
         _im = _im[:: flip[0], :: flip[1]]
     if rotation is not None:
-        _im = rotate(_im, rotation, clip=True, preserve_range=True)
+        _im = rotate(_im, rotation, clip=True, preserve_range=True, resize=True)
     if crop is not None:
         _im = _im[crop[0] : crop[1], crop[2] : crop[3]]
 
@@ -443,7 +443,7 @@ def run_registration(
         & (sts_coords_transformed[:, 1] > 0)
         & (sts_coords_transformed[:, 1] < staining_image.shape[0])
     )
-    sts_coords_transformed = sts_coords_transformed[_i_sts_coords_coarse_within_image_bounds][:, :-1]
+    sts_coords_transformed = sts_coords_transformed[_i_sts_coords_coarse_within_image_bounds][:, [0, 1]]
 
     # Apply transform to all coordinates & retransform back
     sts_coords_coarse = in_coords.copy()
@@ -454,7 +454,7 @@ def run_registration(
 
     sts_coords_coarse = apply_transform(sts_coords_coarse, tform_points, check_bounds=False)
     sts_coords_coarse = sts_coords_coarse * args.rescale_factor_coarse
-    sts_coords_coarse = sts_coords_coarse[:, :-1]
+    sts_coords_coarse = sts_coords_coarse[:, [0, 1]]
     out_coords_output_coarse = sts_coords_coarse.copy()
 
     # Saving alignment results here
