@@ -27,7 +27,7 @@ We section the tissue at a thickness of 10 um. This can be adapted if neccessary
 
 [__What cutting temperature is recommended?__](#cutting-temperature){ #cutting-temperature}
 
-The optimal cutting temperature depends on the tissue being sectioned. As a starting point, page 91 in this [reference](../387928-EP_05 - NX70 Op Guide.pdf) is helpful.
+The optimal cutting temperature depends on the tissue being sectioned. As a starting point, page 91 in this [reference](../387928-EP_05 - NX70 Op Guide.pdf) by Epredia is helpful.
 
 ## Sample handling
 
@@ -38,21 +38,21 @@ As we have observed a high reproducibility across technical replicates (consecut
 [__How many sections (conditions/sample types) can be processed at once?__](#samples-process-at-once){ #samples-process-at-once }
 	
 Multiple samples can be processed at once with the use of a multiwell chamber hybridization cassette
-(such as this one by [ArrayJet](https://arrayjet.com/consumables/gel-company-arrayslide-16-hybridization-chamber-cassette)). 
+(such as this one by [ArrayJet](https://arrayjet.com/consumables/proplate-multi-well-chambers-16-well-slide-module) (product code: 206862)) (ArrayJet, accessed 13.11.2023). 
 
 This cassette has sixteen 7 x 7 mm wells, each fitting one capture area; thus, allowing 16 samples or conditions to be processed simultaneously.
-We recommend handling a maximum of 15 capture areas per person for protocol steps 3.1 to 3.5 (until reverse transcription overnight incubation).
+We recommend handling a maximum of 15 capture areas per person for protocol steps 3.1 to 3.5 (until overnight incubation for reverse transcription).
 
 Moreover, open-ST libraries are indexed on the p7-adapter side, allowing multiplexing of samples within one NGS run. 
 
 [__What are the best practices to avoid cross-contamination?__](#best-practices-x-contamination){ #best-practices-x-contamination }
 
-In order to avoid any RNA contamination is important to wipe down the cryostat and any tools used (brushes, tweezers) before sectioning with 80%-100% ethanol. Additionaly, change the blade and wipe down the cryostat and tools in between sectioning different samples. 
+In order to avoid any RNA contamination is important to wipe down the cryostat and any tools used (brushes, tweezers) with 80%-100% ethanol before sectioning. Additionaly, change the blade and wipe down the cryostat and tools in between sectioning different samples. 
 
 [__What pepsin incubation times should I test?__](#pepsin-incubation){ #pepsin-incubation }
 
 It is important to set the permeabilization condition for each tissue type. 
-We recommend to test at least a minimum range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/uL). 
+We recommend to test at least a range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/uL). 
 
 It is preferable to chose the minimum incubation time/ enzyme concentration that
 gives the maximum RNA capture (see [Permeabilization](experimental/library_preparation.md#permeabilization)).
@@ -61,7 +61,6 @@ gives the maximum RNA capture (see [Permeabilization](experimental/library_prepa
 
 Several tissues have been tested using open-ST, including *in-vitro* 3D-cultures.
 Here, we list the tested tissues with the permeabilization condition used:
-**should we give details for other tissues (collaborations)?**
 
 === "Human"
 
@@ -69,8 +68,7 @@ Here, we list the tested tissues with the permeabilization condition used:
     | ----------- | ----------- | 
     | Metastatic lymph node     | 45 min, 1.4 U/uL| 
     | Healthy  lymph node | 45 min, 1.4 U/uL|
-    | Head and neck squamous cell carcinoma| | 
-    | Non-small cell lung cancer  | X  min, 0.7 U/uL @Marie|
+    | Head and neck squamous cell carcinoma| 45 min, 1.4 U/uL | 
     | iPSC-derived Brain Organoids | 15 - 30 min, 0.7 U/uL|
 
 === "Mouse"
@@ -79,12 +77,11 @@ Here, we list the tested tissues with the permeabilization condition used:
     | ----------- | ----------- | 
     | Mouse head (embryo E13)| 30 min, 0.7 U/uL|
     | Mouse brain| 30 min, 0.7 U/uL|
-    | Breast cancer model Stage 1-4 | 30 min - 45 min, 0.7 U/uL @Marie|
 
 ## Capture area
 [__Can you store capture area pieces?__](#store-capture-areas){ #store-capture-areas }
 
-Yes. We store them dry at -80°C with silica beads for up to 6 months (?@Marie)
+Yes. We have successfully generated libraries from capture areas stored >12 months. We recommend storage at -20°C or -80°C with silica beads. 
 
 [__Can tissue sections be placed on a capture area and stored before library preparation?__](#place-store-capture-areas){ #place-store-capture-areas }
 
@@ -94,7 +91,7 @@ preparation and have not observed an effect mRNA capture (qPCR).
 Sections on capture areas were stored before methanol fixation. Once the tissue was placed on the capture area,
 care was taken to keep it frozen until library preparation.
 
-Longer storage is possible, but has not been systematically tested. 
+Longer storage may be possible, but has not been systematically tested. 
 
 ## General protocol
 [__What instruments/equipment is required to perform the open-ST protocol?__](#instruments-required){ #instruments-required }
@@ -110,34 +107,25 @@ Open-ST was developed with the idea to make it accessible to any laboratory. It 
 ## Imaging
 [__Are immunohistochemical (IHC) or immunofluorescence (IF) stainings compatible with open-ST?__](#imaging-ihc-if){ #imaging-ihc-if }
 
-IHC/IF staining may reduce the quality of the resulting open-ST library. 
+IHC/IF staining may reduce the quality of the resulting open-ST library, since staining occurs before RNA capture and may lead to RNA degradation.  
 
-not been  Perform a proper IHC staining or Immunofluorescence because it required several steps (including an overnight incubation) that could degraded RNA. 
-So it will be challenging to implement those protocol on open-ST workflow.
+We have successfully applied hematoxilin and eosin (H&E) staining, as well as fluorescent cytoskeletal (Phalloidin) and nuclei (DAPI) staining, as part of the open-ST workflow.
 
-However, we have been testing staining that required only few steps such as Hematoxylin and Eosin to
-retrieve tissue morphology or a fluorescent based staining to define cell membrane (Phalloidin) and nuclei (DAPI/Hoechst) staining.
-
-[__Can a monochrome camera be used?__](#monochrome-camera){ #monochrome-camera }
-
-A monochrome camera can be used only on fluorescent microscopy if it is used the immunofluorescent
-protocol to retrieve tissue morphology (i.e. Phalloidin and Dapi).
-
-However, a color camera is required for H&E protocol - if feasible with good resolution, scanning and balancing functionality.
 
 ## Library preparation and sequencing
 [__How does a good library profile look like before and after size selection?__](#what-good-profile){ #what-good-profile }
 		
 A good library profile is smooth without any short fragment peaks or evident peaks inside the library range.
-If small length peaks remain after library size selection, it is important to remove with an additional size selection (agarose gel or beads). 
+If small length peaks remain after library size selection, they should be removed with an additional size selection (agarose gel or beads). 
 
 Evident peaks inside the library range could be due to over-amplification of a low complexity library.
 If possible, we recommend checking previous protocol steps, including RNA quality control, permeabilization condition, amplification cycling number.
 
 [__What is the recommended sequencing depth?__](#what-sequencing-depth){ #what-sequencing-depth }
 
--	https://kb.10xgenomics.com/hc/en-us/articles/360036045332-What-are-the-minimum-recommended-sequencing-specifications-for-Visium-for-fresh-frozen-libraries- 
--	QC through shallow seq? What QC metrics are valid at low seq depth? https://kb.10xgenomics.com/hc/en-us/articles/12769731844621-Can-I-perform-shallow-sequencing-to-assess-the-quality-of-Visium-Spatial-Gene-Expression-for-Fresh-Frozen-libraries- 
+Sequencing depth requirements vary with tissue section size, coverage of capture area and experimental goals.
+For reference, for a 3x4 mm section we obtain a median of around 900 UMIs per cell when investing 500 million sequencing reads.  
+Shallow sequencing can always be performed first to assess general library quality (%spatial mapping, % uniquely mapping to genome, % rRNA, % mt-encoded). 
 
 
 ## Image processing

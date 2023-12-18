@@ -26,6 +26,7 @@ to create a database of barcode sequences and their spatial locations.
 
 !!! Tip "Tips" 
 
+    - Prepare mixes in excess. ~300 uL per lane is required for the S4 flow cell.
     - If bubbles occur, mark these with pen on the flow cell. Repeat reactions if many bubbles occur and ensure bubbles do not form at the same locations. 
     - Use a P1000 pipette and pipette slowly to avoid the formation of bubbles. 
     - For removing washes, pipette the liquid out and then blow through air using the P1000 to remove remaining liquid.
@@ -71,7 +72,7 @@ to create a database of barcode sequences and their spatial locations.
 
 !!! Note
  
-    Capture areas can be stored dry in the fridge for extended periods of time. We have generated libraries from prepared capture areas stored for x months. 
+    Capture areas can be stored dry at -20°C for extended periods of time. We have generated libraries from prepared capture areas stored for 12 months. 
 
 We have designed a cutting guide that facilitates the breaking of the flow cell into regular capture areas. 
 We provide the 3D model of the cutting guide as a printable [stl](../open-ST_cutting_guide_3D_design.stl) file.
