@@ -262,13 +262,18 @@ class ImageRenderer(QThread):
         _i_counts_above_threshold = total_counts > self.threshold_counts
         sts_coords = in_coords[_i_counts_above_threshold]
 
-        _i_sts_coords_coarse_within_image_bounds = np.where(
-            (sts_coords[:, 0] > 0)
-            & (sts_coords[:, 0] < staining_image.shape[1])
-            & (sts_coords[:, 1] > 0)
-            & (sts_coords[:, 1] < staining_image.shape[0])
-        )
-        sts_coords = sts_coords[_i_sts_coords_coarse_within_image_bounds]
+        if not self.recenter_coarse:
+            _i_sts_coords_coarse_within_image_bounds = np.where(
+                (sts_coords[:, 0] > 0)
+                & (sts_coords[:, 0] < staining_image.shape[1])
+                & (sts_coords[:, 1] > 0)
+                & (sts_coords[:, 1] < staining_image.shape[0])
+            )
+            sts_coords = sts_coords[_i_sts_coords_coarse_within_image_bounds]
+
+        # if sts_coords.max(axis=0).max() > 10 * staining_image.shape.max():
+        #     raise ValueError("""The spatial coordinates are too large for the selected image\n
+        #                         Please choose a different rescaling factor!""")
 
         if self.layer == "all_tiles_coarse":
             staining_image_rescaled = staining_image[:: self.rescale_factor_coarse, :: self.rescale_factor_coarse]
@@ -281,10 +286,14 @@ class ImageRenderer(QThread):
                 resize_method="cv2",
             )
 
+            min_lim, max_lim = sts_coords.min(axis=0).astype(int), sts_coords.max(axis=0).astype(int)
+            x_min, y_min = min_lim
+            x_max, y_max = max_lim
+
             image_pair = {
                 "imageA": staining_image_rescaled,
                 "imageB": sts_pseudoimage["pseudoimage"],
-                "lims": [0, None, 0, None],
+                "lims": [x_min, x_max, y_min, y_max],
                 "factor_rescale": self.rescale_factor_coarse,
                 "offset_factor": sts_pseudoimage["offset_factor"],
             }
@@ -303,7 +312,6 @@ class ImageRenderer(QThread):
                 staining_image_rescaled.shape,
                 _t_valid_coords,
                 recenter=False,
-                rescale=True,
                 values=None,
                 resize_method="cv2",
             )

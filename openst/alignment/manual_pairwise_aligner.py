@@ -44,19 +44,21 @@ def get_manual_pairwise_aligner_parser():
         If not indicated, data is written in place at --h5-in""",
     )
     parser.add_argument(
-        "--coarse",
+        "--per-tile",
         action="store_true",
-        help="If selected, manual coarse alignment will be performed",
+        help="If selected, individual transformations per tile are estimated from they keypoints",
     )
     parser.add_argument(
-        "--fine",
-        action="store_true",
-        help="If selected, fine (per tile) coarse alignment will be performed",
+        "--spatial-key-in",
+        type=str,
+        default="spatial_pairwise_aligned_coarse",
+        help="""The name of the `obsm` variable where the transformed coordinates will be read from""",
     )
     parser.add_argument(
-        "--refine",
-        action="store_true",
-        help="If selected, refine (per tile) fine alignment will be performed",
+        "--spatial-key-out",
+        type=str,
+        default="spatial_pairwise_aligned_fine",
+        help="""The name of the `obsm` variable where the transformed coordinates will be written""",
     )
     return parser
 
@@ -94,10 +96,10 @@ def apply_transform_to_coords(
     sts_coords_transformed = in_coords.copy()
     if tile_id is None:
         mkpts = keypoints['all_tiles_coarse']
-        mkpts_coarse0, mkpts_coarse1 = np.array(mkpts['point_src']), np.array(mkpts['point_dst'])
+        mkpts_coarse0, mkpts_coarse1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
         # Preparing images and preprocessing routines
-        tform_points = estimate_transform("similarity", mkpts_coarse0, mkpts_coarse1)
-        sts_coords_transformed[..., :2] = apply_transform(in_coords[..., :2], tform_points, check_bounds=False)[..., :2]
+        tform_points = estimate_transform("similarity", mkpts_coarse1, mkpts_coarse0)
+        sts_coords_transformed[..., :2] = apply_transform(in_coords[..., :2], tform_points, check_bounds=False)[..., :2][..., ::-1]
     else:
         # Collect tile identifiers
         tile_codes = np.unique(tile_id.codes)
@@ -142,24 +144,12 @@ def _run_manual_pairwise_aligner(args):
     if args.h5_out == "":
         args.h5_out = args.h5_in
 
-    if args.refine == args.fine and args.fine == args.coarse:
-        raise ValueError("Please specify only one mode, either --coarse or --fine or --refine")
-    if args.refine:
-        args.fine = True
-
-    
     _to_load = ["obs/total_counts"]
-    if args.fine or args.refine:
+    if args.per_tile:
         _to_load += ["obs/tile_id"]
-    
-    _spatial_name = "obsm/spatial_pairwise_aligned_coarse"
-    _tile_ids = None
-    if args.coarse:
-        _spatial_name = "obsm/spatial"
-    if args.refine:
-        _spatial_name = "obsm/spatial_pairwise_aligned_fine"
+    _to_load += [f"obsm/{args.spatial_key_in}"]
 
-    _to_load += [_spatial_name]
+    _tile_ids = None
 
     logging.info(f"Loading properties from {args.h5_in}")
     sts = load_properties_from_adata(args.h5_in, properties=_to_load)
@@ -169,8 +159,9 @@ def _run_manual_pairwise_aligner(args):
     
     logging.info(f"Applying coordinate transformation")
     # transpose spatial locations to XY coordinates
-    _coords = sts[_spatial_name][:][..., ::-1]
-    if args.fine:
+    _coords = sts[f"obsm/{args.spatial_key_in}"][:][..., ::-1]
+
+    if args.per_tile:
         _tile_ids = sts["obs/tile_id"]
     
     _coords_transformed = apply_transform_to_coords(
@@ -178,15 +169,6 @@ def _run_manual_pairwise_aligner(args):
         _tile_ids,
         keypoints
     )
-
-    if args.coarse:
-        _spatial_output_name = "obsm/spatial_pairwise_aligned_coarse"
-    
-    if args.fine:
-        _spatial_output_name = "obsm/spatial_pairwise_aligned_fine"
-
-    if args.refine:
-        _spatial_output_name = "obsm/spatial_pairwise_aligned_refine"
 
     if check_file_exists(args.h5_out, exception = False):
         logging.info(f"The output file exists at {args.h5_out}")  
@@ -196,11 +178,11 @@ def _run_manual_pairwise_aligner(args):
 
     logging.info(f"Modifying coordinates in {args.h5_out}")
     with h5py.File(args.h5_out, 'r+') as adata:
-        if _spatial_output_name in adata:
+        if f"obsm/{args.spatial_key_out}" in adata:
             # reconvert to YX (same axes as the images)
-            adata[_spatial_output_name][...] = _coords_transformed[:][..., ::-1]
+            adata[f"obsm/{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
         else:
-            adata[_spatial_output_name] = _coords_transformed[:][..., ::-1]
+            adata[f"obsm/{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
 
     logging.info(f"Output {args.h5_out} file was written. Finished!")
 

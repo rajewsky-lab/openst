@@ -24,6 +24,7 @@ import argparse
 import logging
 from itertools import product
 
+import cv2
 import numpy as np
 from anndata import read_h5ad
 from PIL import Image
@@ -398,11 +399,18 @@ def run_registration(
     logging.info(f"Coarse registration, {len(in_coords)} coordinates")
 
     # Preparing images and preprocessing routines
-    # src = cv2.resize(cv2.GaussianBlur(staining_image,(blur_antialias, blur_antialias),0), (0,0), fx=1/args.rescale_factor_coarse, fy=1/args.rescale_factor_coarse, interpolation=cv2.INTER_NEAREST)
-    staining_image_rescaled = rescale(
-        staining_image, 1 / args.rescale_factor_coarse, preserve_range=True, anti_aliasing=True, channel_axis=-1
-    ).astype(np.uint8)
-    src = staining_image_rescaled
+    
+    logging.info(f"Rescaling input image for coarse registration")
+    # rescaling image
+    factors = np.array([args.rescale_factor_coarse, args.rescale_factor_coarse])
+    _ker = np.maximum(0, (factors - 1) / 2).astype(int)
+    src = cv2.resize(cv2.blur(staining_image, _ker),
+                     (np.array(staining_image.shape)[[0, 1]]/args.rescale_factor_coarse).astype(int)[::-1],
+                     interpolation=cv2.INTER_NEAREST)
+    # staining_image_rescaled = rescale(
+    #     staining_image, 1 / args.rescale_factor_coarse, preserve_range=True, anti_aliasing=True, channel_axis=-1
+    # ).astype(np.uint8)
+    # src = staining_image_rescaled
 
     def src_augmenter(x, flip, rotation):
         return prepare_image_for_feature_matching(
@@ -415,7 +423,7 @@ def run_registration(
         )
 
     sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
-    sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, staining_image_rescaled.shape)
+    sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, src.shape, resize_method='cv2')
     dst = prepare_pseudoimage_for_feature_matching(sts_pseudoimage["pseudoimage"])
 
     # Feature matching
