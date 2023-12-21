@@ -88,7 +88,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |10mM dNTP mix|1mM|10|
 |Superscript IV (200U/ul)|6.67 U/uL|3.33|
 |Ribolock(40U/uL)|1U|2.5|
-|Ultrapure water| |62.33|
+|Ultrapure water| |58.24|
 |**Total**| |**100**|
 
 1. Remove the pepsin solution. 
