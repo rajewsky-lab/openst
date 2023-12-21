@@ -9,6 +9,7 @@ from openst.alignment.transcript_assign import setup_transcript_assign_parser
 from openst.metadata.report import setup_report_parser
 from openst.preprocessing.barcode_preprocessing import \
     setup_barcode_preprocessing_parser
+from openst.preprocessing.image_preprocess import setup_image_preprocess_parser
 from openst.preprocessing.image_stitch import setup_image_stitch_parser
 from openst.preprocessing.spatial_stitch import setup_spatial_stitch_parser
 from openst.segmentation.segment import setup_segment_parser
@@ -40,6 +41,8 @@ def cmdline_args():
     setup_segment_merge_parser(parent_parser_subparsers)
     # create the parser for the "spatial_stitch" command
     setup_spatial_stitch_parser(parent_parser_subparsers)
+    # create the parser for the "image_preprocess" command
+    setup_image_preprocess_parser(parent_parser_subparsers)
     # create the parser for the "image_stitch" command
     setup_image_stitch_parser(parent_parser_subparsers)
     # create the parser for the "transcript_assign" command
