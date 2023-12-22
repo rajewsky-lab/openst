@@ -36,7 +36,6 @@ nav:
       - Align image to transcriptome: examples/e13_brain/pairwise_alignment.md
       - Generating a cell-by-gene matrix: examples/e13_brain/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/hypo_adult_eda.ipynb
-  - API: api.md
 
 theme:
   name: material
