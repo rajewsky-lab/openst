@@ -6,12 +6,12 @@
 [![ci](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml)
 
 <img
-  src="https://github.com/rajewsky-lab/openst/blob/5617df9d35341778487d4c623eaac53b61000006/docs/static/img/openst_logo_color.png"
+  src="https://raw.githubusercontent.com/rajewsky-lab/openst/5617df9d35341778487d4c623eaac53b61000006/docs/static/img/openst_logo_color.png"
   class="dark-light" align="right" width="350" alt="image"
 />
 
 # Open-ST: democratizing spatial transcriptomics
-Open-ST is n open-source [spatial transcriptomics](https://en.wikipedia.org/wiki/Spatial_transcriptomics) method 
+Open-ST is an open-source [spatial transcriptomics](https://en.wikipedia.org/wiki/Spatial_transcriptomics) method 
 with efficient whole-transcriptome capture at sub-cellular resolution (0.5 µm) at low cost 
 (<150 Euro library preparation per 12 mm^2).
 
