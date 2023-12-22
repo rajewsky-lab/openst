@@ -1,6 +1,6 @@
 # FAQs 
 
-Do you have questions about the experimental or computational aspects of open-ST?
+Do you have questions about the experimental or computational aspects of Open-ST?
 We do our best to answer all of your questions on this page. If you can't find your question 
 below, ask it on our [discussion board]!
 
@@ -43,7 +43,7 @@ Multiple samples can be processed at once with the use of a multiwell chamber hy
 This cassette has sixteen 7 x 7 mm wells, each fitting one capture area; thus, allowing 16 samples or conditions to be processed simultaneously.
 We recommend handling a maximum of 15 capture areas per person for protocol steps 3.1 to 3.5 (until overnight incubation for reverse transcription).
 
-Moreover, open-ST libraries are indexed on the p7-adapter side, allowing multiplexing of samples within one NGS run. 
+Moreover, Open-ST libraries are indexed on the p7-adapter side, allowing multiplexing of samples within one NGS run. 
 
 [__What are the best practices to avoid cross-contamination?__](#best-practices-x-contamination){ #best-practices-x-contamination }
 
@@ -57,9 +57,9 @@ We recommend to test at least a range including 15 min, 30 min, and 60 min with 
 It is preferable to chose the minimum incubation time/ enzyme concentration that
 gives the maximum RNA capture (see [Permeabilization](experimental/library_preparation.md#permeabilization)).
 
-[__What tissues have already been tested with open-ST?__](#tested-tissues){ #tested-tissues }
+[__What tissues have already been tested with Open-ST?__](#tested-tissues){ #tested-tissues }
 
-Several tissues have been tested using open-ST, including *in-vitro* 3D-cultures.
+Several tissues have been tested using Open-ST, including *in-vitro* 3D-cultures.
 Here, we list the tested tissues with the permeabilization condition used:
 
 === "Human"
@@ -94,7 +94,7 @@ care was taken to keep it frozen until library preparation.
 Longer storage may be possible, but has not been systematically tested. 
 
 ## General protocol
-[__What instruments/equipment is required to perform the open-ST protocol?__](#instruments-required){ #instruments-required }
+[__What instruments/equipment is required to perform the Open-ST protocol?__](#instruments-required){ #instruments-required }
 
 Open-ST was developed with the idea to make it accessible to any laboratory. It requires [standard lab equipment](experimental/getting_started.md): 
 
@@ -105,11 +105,11 @@ Open-ST was developed with the idea to make it accessible to any laboratory. It 
 - 	***Sequencing***: various sequencers can be used, as long as a minimum of 100 cylces can be sequenced (ex., Illumina® NextSeq500/550, NextSeq2000, NovaSeq6000, NovaSeqX(plus))
 
 ## Imaging
-[__Are immunohistochemical (IHC) or immunofluorescence (IF) stainings compatible with open-ST?__](#imaging-ihc-if){ #imaging-ihc-if }
+[__Are immunohistochemical (IHC) or immunofluorescence (IF) stainings compatible with Open-ST?__](#imaging-ihc-if){ #imaging-ihc-if }
 
-IHC/IF staining may reduce the quality of the resulting open-ST library, since staining occurs before RNA capture and may lead to RNA degradation.  
+IHC/IF staining may reduce the quality of the resulting Open-ST library, since staining occurs before RNA capture and may lead to RNA degradation.  
 
-We have successfully applied hematoxilin and eosin (H&E) staining, as well as fluorescent cytoskeletal (Phalloidin) and nuclei (DAPI) staining, as part of the open-ST workflow.
+We have successfully applied hematoxilin and eosin (H&E) staining, as well as fluorescent cytoskeletal (Phalloidin) and nuclei (DAPI) staining, as part of the Open-ST workflow.
 
 
 ## Library preparation and sequencing
@@ -128,13 +128,19 @@ For reference, for a 3x4 mm section we obtain a median of around 900 UMIs per ce
 Shallow sequencing can always be performed first to assess general library quality (%spatial mapping, % uniquely mapping to genome, % rRNA, % mt-encoded). 
 
 
-## Image processing
-[__Alignment of H&E and spatial (visibility of alignment marks, how to ensure, how many necessary?)__](#fiducial-alignment){ #fiducial-alignment }
+## Pairwise alignment
+[__The fiducial marks cannot be detected/are not visible)__](#fiducial-alignment){ #fiducial-alignment }
+Sometimes, fiducial marks might not be visible when imaging thick tissue (we have noticed this with > 10 µm thickness) or under areas with high cellular density. Thus, automatic coarse alignment will work, but the fine alignment might fail, as the model cannot find these markers in the image. 
 
-TODO: @Daniel
+We recommend using the GUI to automatically select keypoints between the two modalities. If more than 2 are visible per tile, we recommend selecting the fiducial markers manually. If these are not visible, you can select alternative keypoints (i.e., morphological features that look similar between the ST and staining image modalities). 
 
-## Sequencing processing
-[__Perhaps smth on index hopping__](#index-hopping){ #index-hopping }
+In the latter case, we cannot ensure that the alignment accuracy will lead to subcellular resolution, which is diagnosed with the distance from fiducials across modalities.
 
-TODO: @Daniel
-https://www.10xgenomics.com/blog/answering-your-questions-about-the-visium-spatial-gene-expression-solution 
+[__In manual alignment mode, how many fiducials/features should I select per tile?__](#n-features-fiducial){ #n-features-fiducial }
+
+Given that a rgiid transformation model is estimated from the selected pairs of keypoints, we recommend at least 2 points. The more corresponding points are selected, the better.
+
+[__The segmentation did not perform well__](#segmentation-model){ #segmentation-model }
+We provide an interface to the default, pre-trained cellpose models, as well as our fine-tuned openst_he model. We have tested this on a wide diversity of tissues, but it is possible that different microscopy setups and imaged tissues deliver different segmentation performance. 
+
+Especially, tissues with higher cellular densities and lower contrast between background/nuclei (or cells) might perform worse. Thus, we recommend referring to the [cellpose tutorial](TODO_link) on how to train your own model.
