@@ -75,7 +75,7 @@ to create a database of barcode sequences and their spatial locations.
     Capture areas can be stored dry at -20°C for extended periods of time. We have generated libraries from prepared capture areas stored for 12 months. 
 
 We have designed a cutting guide that facilitates the breaking of the flow cell into regular capture areas. 
-We provide the 3D model of the cutting guide as a printable [stl](../openst_cutting_guide_3D_design.stl) file.
+We provide the 3D model of the cutting guide as a printable [stl](../static/resources/openst_cutting_guide_3D_design.stl) file.
 If you don't have a 3D printer, you can check for [3D printing services near you](https://www.google.com/search?q=3d+printing+service+near+me) -
 they will help you in this endeavor 🤗.
 

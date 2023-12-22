@@ -27,7 +27,7 @@ We section the tissue at a thickness of 10 um. This can be adapted if neccessary
 
 [__What cutting temperature is recommended?__](#cutting-temperature){ #cutting-temperature}
 
-The optimal cutting temperature depends on the tissue being sectioned. As a starting point, page 91 in this [reference](../387928-EP_05 - NX70 Op Guide.pdf) by Epredia is helpful.
+The optimal cutting temperature depends on the tissue being sectioned. As a starting point, page 91 in this [reference](static/docs/cryotome_guide.pdf) by Epredia is helpful.
 
 ## Sample handling
 

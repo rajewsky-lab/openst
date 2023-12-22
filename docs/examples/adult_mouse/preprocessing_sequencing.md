@@ -6,7 +6,7 @@ transcriptomic information mapped to the mouse genome, in space.
 ## Demultiplexing
 We got basecall files in `bcl` format from our sequencing facility.
 
-We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/e13_brain/sample_sheet.csv).
+We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/adult_mouse/sample_sheet.csv).
 We used the conda environment where we installed `spacemake` (see [instructions
 on how to install spacemake](https://spacemake.readthedocs.io/en/latest/install.html)), and ran the following commands:
 
