@@ -30,11 +30,11 @@ nav:
   - Examples:
     - Getting started: examples/getting_started.md
     - E13 mouse head:
-      - Introduction: examples/e13_brain/introduction.md
-      - Preprocessing of sequencing: examples/e13_brain/preprocessing_sequencing.md
-      - Preprocessing of imaging: examples/e13_brain/preprocessing_imaging.md
-      - Align image to transcriptome: examples/e13_brain/pairwise_alignment.md
-      - Generating a cell-by-gene matrix: examples/e13_brain/generate_expression_matrix.md
+      - Introduction: examples/adult_mouse/introduction.md
+      - Preprocessing of sequencing: examples/adult_mouse/preprocessing_sequencing.md
+      - Preprocessing of imaging: examples/adult_mouse/preprocessing_imaging.md
+      - Align image to transcriptome: examples/adult_mouse/pairwise_alignment.md
+      - Generating a cell-by-gene matrix: examples/adult_mouse/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/hypo_adult_eda.ipynb
 
 theme:

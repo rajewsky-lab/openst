@@ -1,7 +1,9 @@
 # Examples
 
-Here you will find several datasets generated in the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky)
-leveraging the **Open-ST** workflow (experimental and computational).
+Here you will find datasets generated in the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky)
+leveraging the **Open-ST** workflow (experimental and computational). 
+
+_We will add all (clean) notebooks from the preprint soon!_
 
 ## Datasets
 
@@ -11,12 +13,8 @@ human and mouse datasets.
 
 <div class="grid cards" markdown>
 
-- :fontawesome-solid-brain: __[E13 mouse head]__ – (describe dataset)
-- :fontawesome-solid-brain: __[Adult mouse hippocampus]__ – (describe dataset)
-- :fontawesome-solid-disease: __[Human metastatic lymph node]__ – (describe dataset)
+- :fontawesome-solid-brain: __[Adult mouse hippocampus]__
 
 </div>
 
-  [E13 mouse head]: e13_brain/introduction.md
-  [Adult mouse hippocampus]: e13_brain/introduction.md
-  [Human metastatic lymph node]: e13_brain/introduction.md
+  [Adult mouse hippocampus]: adult_mouse/introduction.md
