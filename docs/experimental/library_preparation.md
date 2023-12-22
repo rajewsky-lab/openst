@@ -224,7 +224,7 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 4. Pool the 200 μL PCR product per sample and purify using AmpureXP beads at a 1:1 ratio of beads PCR product, following the manufacturer's instructions.
 5. Elute the PCR product in 20 μL ultrapure water. 
 
-![Library profile after size selection](../60_2_BioA_preBP.png){ loading=lazy }
+![Library profile after size selection](../static/img/60_2_BioA_preBP.png){ loading=lazy }
 
 <figure markdown>
   <figcaption>Example BioAnalyzer profile before size selection</figcaption>
@@ -236,7 +236,7 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 Perform size selection of your sample to obtain fragments 350 - 1100 bp. Use the Bluepippin or PippinHT 1.5% agarose gel and follow the manufacturer's instructions. 
 Measure the concentration of your size-selected product using the Qubit dsDNA quanitification kit. 
 
-![Library profile after size selection](../60_2_BioA_postBP.png){ loading=lazy }
+![Library profile after size selection](../static/img/60_2_BioA_postBP.png){ loading=lazy }
 
 <figure markdown>
   <figcaption>Example BioAnalyzer profile after size selection</figcaption>
