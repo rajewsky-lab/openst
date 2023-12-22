@@ -130,6 +130,7 @@ Shallow sequencing can always be performed first to assess general library quali
 
 ## Pairwise alignment
 [__The fiducial marks cannot be detected/are not visible)__](#fiducial-alignment){ #fiducial-alignment }
+
 Sometimes, fiducial marks might not be visible when imaging thick tissue (we have noticed this with > 10 µm thickness) or under areas with high cellular density. Thus, automatic coarse alignment will work, but the fine alignment might fail, as the model cannot find these markers in the image. 
 
 We recommend using the GUI to automatically select keypoints between the two modalities. If more than 2 are visible per tile, we recommend selecting the fiducial markers manually. If these are not visible, you can select alternative keypoints (i.e., morphological features that look similar between the ST and staining image modalities). 
@@ -140,7 +141,10 @@ In the latter case, we cannot ensure that the alignment accuracy will lead to su
 
 Given that a rgiid transformation model is estimated from the selected pairs of keypoints, we recommend at least 2 points. The more corresponding points are selected, the better.
 
+## Image segmentation
+
 [__The segmentation did not perform well__](#segmentation-model){ #segmentation-model }
+
 We provide an interface to the default, pre-trained cellpose models, as well as our fine-tuned openst_he model. We have tested this on a wide diversity of tissues, but it is possible that different microscopy setups and imaged tissues deliver different segmentation performance. 
 
 Especially, tissues with higher cellular densities and lower contrast between background/nuclei (or cells) might perform worse. Thus, we recommend referring to the [cellpose tutorial](https://cellpose.readthedocs.io/en/latest/gui.html#training-your-own-cellpose-model) on how to train your own model.
