@@ -81,6 +81,7 @@ openst = "openst.__main__:run_openst"
 
 [project.optional-dependencies]
 doc = [
+    "mkdocs",
     "mkdocs-material",
     "mkdocs-autorefs"
 ]
