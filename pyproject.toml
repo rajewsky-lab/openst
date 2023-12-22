@@ -7,20 +7,16 @@ requires = [
 
 [project]
 name = "openst"
-dynamic = ['version']
-description = "Democratizing spatial transcriptomics."
+version = "0.0.2"
+description = "The computational pipeline for the Open-ST method."
 requires-python = ">=3.8"
 license = {file = "LICENSE"}
 authors = [
     {name = "Daniel León-Periñán"},
-    {name = "Lena Marie Schott"},
-    {name = "Elena Splendiani"},
     {name = "Nikolaos Karaiskos"},
 ]
 maintainers = [
     {name = "Daniel León-Periñán", email = "daniel.leonperinan@mdc-berlin.de"},
-    {name = "Lena Marie Schott", email = "marie.schott@mdc-berlin.de"},
-    {name = "Elena Splendiani", email = "elena.splendiani@uniroma1.it"},
     {name = "Nikolaos Karaiskos", email = "nikolaos.karaiskos@mdc-berlin.de"},
 ]
 readme = {file = "README.md", content-type="text/markdown"}
