@@ -143,4 +143,4 @@ Given that a rgiid transformation model is estimated from the selected pairs of 
 [__The segmentation did not perform well__](#segmentation-model){ #segmentation-model }
 We provide an interface to the default, pre-trained cellpose models, as well as our fine-tuned openst_he model. We have tested this on a wide diversity of tissues, but it is possible that different microscopy setups and imaged tissues deliver different segmentation performance. 
 
-Especially, tissues with higher cellular densities and lower contrast between background/nuclei (or cells) might perform worse. Thus, we recommend referring to the [cellpose tutorial](TODO_link) on how to train your own model.
+Especially, tissues with higher cellular densities and lower contrast between background/nuclei (or cells) might perform worse. Thus, we recommend referring to the [cellpose tutorial](https://cellpose.readthedocs.io/en/latest/gui.html#training-your-own-cellpose-model) on how to train your own model.
