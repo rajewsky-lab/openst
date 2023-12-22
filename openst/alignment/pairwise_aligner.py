@@ -1,5 +1,5 @@
 """
-Automatic Pairwise Alignment of Spatial Transcriptomics and Imaging Data (open-ST)
+Automatic Pairwise Alignment of Spatial Transcriptomics and Imaging Data (Open-ST)
 
 Author: Daniel León-Periñán @ N.Rajewsky Lab (BIMSB)
 Date: August 30, 2023
@@ -635,7 +635,7 @@ def run_registration(
 
 
 def run_pairwise_aligner(args):
-    logging.info("open-ST pairwise alignment; running with parameters:")
+    logging.info("Open-ST pairwise alignment; running with parameters:")
     logging.info(args.__dict__)
 
     # Check input and output data

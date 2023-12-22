@@ -24,7 +24,7 @@ def get_segment_merge_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="segmentation of open-ST imaging data with cellpose",
+        description="segmentation of Open-ST imaging data with cellpose",
         allow_abbrev=False,
         add_help=False,
     )
@@ -78,7 +78,7 @@ def setup_segment_merge_parser(parent_parser):
     """setup_segment_merge_parser"""
     parser = parent_parser.add_parser(
         "segment_merge",
-        help="merge segmentations from open-ST data",
+        help="merge segmentations from Open-ST data",
         parents=[get_segment_merge_parser()],
     )
     parser.set_defaults(func=_run_segment_merge)

@@ -1067,7 +1067,7 @@ class ImageAlignmentApp(QMainWindow):
 def _run_manual_pairwise_aligner_gui(*args, **kwargs):
     app = QApplication(sys.argv)
     window = ImageAlignmentApp()
-    window.setWindowTitle("Manual Pairwise Alignment (open-ST)")
+    window.setWindowTitle("Manual Pairwise Alignment (Open-ST)")
     window.setGeometry(100, 100, 1000, 1000)
     window.show()
 

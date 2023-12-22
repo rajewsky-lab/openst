@@ -15,7 +15,7 @@ def get_image_preprocess_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="preprocess imaging data with CUT model (as in open-ST paper)",
+        description="preprocess imaging data with CUT model (as in Open-ST paper)",
         allow_abbrev=False,
         add_help=False,
     )

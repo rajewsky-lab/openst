@@ -1,9 +1,9 @@
 # Preprocessing sequencing data
 After sequencing, you will get basecall files in `bcl` format, or raw reads in `fastq`
 format (see [sequence file formats](https://www.illumina.com/informatics/sequencing-data-analysis/sequence-file-formats.html)
-from Illumina's website). In the open-ST experimental protocol, there are two points at which
+from Illumina's website). In the Open-ST experimental protocol, there are two points at which
 sequencing is performed: (1) for obtaining the [sequences of the barcoded library](../experimental/capture_area_generation.md#sequencing-of-barcoded-library),
-and (2) for obtaining the [transcriptomic sequences of open-ST library](../experimental/sequencing_of_openst_library.md#sequencing-of-open-st-library).
+and (2) for obtaining the [transcriptomic sequences of Open-ST library](../experimental/sequencing_of_openst_library.md#sequencing-of-Open-ST-library).
 
 We have developed computational tools for processing each of these sequencing rounds.
 By processing (1), you will get a *database* of barcodes and their spatial locations.
@@ -118,14 +118,14 @@ Again, make sure to replace the placeholders (`<...>`). Now, `<bcl_in>` and `<bc
 basecall files are contained and where the converted output `fastq` files will be saved; The rest of
 arguments have the same meaning as above.
 
-## Processing of the open-ST library
+## Processing of the Open-ST library
 The transformation of raw sequencing data into spatially-mapped expression matrices was carried out utilizing 
 [spacemake](https://spacemake.readthedocs.io/en/latest/) (see also in [GitHub](https://github.com/rajewsky-lab/spacemake)), 
 an automated pipeline designed for the preprocessing, alignment, and quantification of single-cell and spatial transcriptomics data.
 
 We refer to the [official documentation](https://spacemake.readthedocs.io/en/latest/) for a complete tutorial on how to install and
 run spacemake. In summary, the user needs to specify a configuration file (by default, we included run modes that are compatible
-with open-ST), and a project configuration, containing the locations to the `fastq` files, to the **spatial barcode coordinate files**
+with Open-ST), and a project configuration, containing the locations to the `fastq` files, to the **spatial barcode coordinate files**
 (generated in the [previous step](#processing-the-sequencing-of-barcoded-library)),
 and other metadata. Then, spacemake automatically processes these data into [h5ad](https://anndata.readthedocs.io/en/latest/fileformat-prose.html)
 files, which basically contain a matrix of barcodes (rows) and genes (columns), with associated metadata and spatial coordinates. 
@@ -138,7 +138,7 @@ The `x_pos` and `y_pos` coordinates from the [table above](#processing-the-seque
 whole extension of the flow cell - which consists of many *tiles* arranged in *lanes* and *swaths*, see above. 
 This manner, we provide code in `openst` and `spacemake` that allows to compute the global coordinates in the 
 case of having a sample whose placement has cover more than one tile
-during the open-ST library preparation. 
+during the Open-ST library preparation. 
 
 When specifying a `run_mode` without meshing and with a `puck_collection`
 (see [spacemake documentation](https://spacemake.readthedocs.io/en/latest/config.html),

@@ -131,7 +131,7 @@ def load_keypoints_from_json(fname: str):
     return keypoints_by_key
 
 def _run_manual_pairwise_aligner(args):
-    logging.info("open-ST pairwise alignment; running with parameters:")
+    logging.info("Open-ST pairwise alignment; running with parameters:")
     logging.info(args.__dict__)
 
     # Check input and output data

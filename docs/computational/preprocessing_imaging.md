@@ -10,7 +10,7 @@ image stitching code - runs in any computer, independent of the software provide
 
 !!! warning
      If you use a different microscope, please refer to the documentation of your microscope
-     for how to stitch tile-scans into a single image. The open-ST pipeline expects one single file in either
+     for how to stitch tile-scans into a single image. The Open-ST pipeline expects one single file in either
      `tiff`, `jpeg` or `png` formats.
 
 ## Stitching with the script

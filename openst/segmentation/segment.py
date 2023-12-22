@@ -35,7 +35,7 @@ def get_segment_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="segmentation of open-ST imaging data with cellpose",
+        description="segmentation of Open-ST imaging data with cellpose",
         allow_abbrev=False,
         add_help=False,
     )
@@ -154,7 +154,7 @@ def setup_segment_parser(parent_parser):
     """setup_segment_parser"""
     parser = parent_parser.add_parser(
         "segment",
-        help="segmentation of open-ST imaging data with cellpose",
+        help="segmentation of Open-ST imaging data with cellpose",
         parents=[get_segment_parser()],
     )
     parser.set_defaults(func=_run_segment)

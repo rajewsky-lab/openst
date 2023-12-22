@@ -1,7 +1,7 @@
 # Examples
 
 Here you will find several datasets generated in the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky)
-leveraging the **open-ST** workflow (experimental and computational).
+leveraging the **Open-ST** workflow (experimental and computational).
 
 ## Datasets
 

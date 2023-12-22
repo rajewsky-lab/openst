@@ -1,6 +1,6 @@
 ---
 name: Wiki Issue/Improvement
-about: Report issues or propose improvements for the open-ST wiki
+about: Report issues or propose improvements for the Open-ST wiki
 title: ''
 labels: documentation
 assignees: ''

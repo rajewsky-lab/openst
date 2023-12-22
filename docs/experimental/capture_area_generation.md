@@ -1,5 +1,5 @@
 # Capture area generation
-The following section details the generation of capture areas for the open-ST protocol. 
+The following section details the generation of capture areas for the Open-ST protocol. 
 
 By sequencing oligos, which comprise unique 32-nucleotide barcodes, appropriate adapters,
 and a poly-dT, we register the barcode sequences and their associated coordinates on the flow cell.
@@ -75,7 +75,7 @@ to create a database of barcode sequences and their spatial locations.
     Capture areas can be stored dry at -20°C for extended periods of time. We have generated libraries from prepared capture areas stored for 12 months. 
 
 We have designed a cutting guide that facilitates the breaking of the flow cell into regular capture areas. 
-We provide the 3D model of the cutting guide as a printable [stl](../open-ST_cutting_guide_3D_design.stl) file.
+We provide the 3D model of the cutting guide as a printable [stl](../openst_cutting_guide_3D_design.stl) file.
 If you don't have a 3D printer, you can check for [3D printing services near you](https://www.google.com/search?q=3d+printing+service+near+me) -
 they will help you in this endeavor 🤗.
 
@@ -1143,10 +1143,10 @@ Once you have the tool, refer to the video where we explain how to use it:
 ---
 
 :fontawesome-brands-youtube:{ style="color: #EE0F0F" }
-__[open-ST: breaking the flow cell into capture areas]__ by @danilexn – :octicons-clock-24:
+__[Open-ST: breaking the flow cell into capture areas]__ by @danilexn – :octicons-clock-24:
 10m – Learn how to break an Illumina® NovaSeq 6000 S4 flow cell into capture areas 
 using our 3D-printable cutting guide.
 
-  [open-ST: breaking the flow cell into capture areas]: https://www.youtube.com
+  [Open-ST: breaking the flow cell into capture areas]: https://www.youtube.com
 
 ---

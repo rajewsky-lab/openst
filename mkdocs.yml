@@ -1,10 +1,10 @@
-site_name: open-ST
+site_name: Open-ST
 site_url: https://open.st
 site_author: Daniel León-Periñán, Lena Marie Schott
 site_description: >-
-  open-ST: democratizing spatial transcriptomics 
+  Open-ST: democratizing spatial transcriptomics 
 
-copyright: Copyright &copy; 2023 open-ST
+copyright: Copyright &copy; 2023 Open-ST
 
 repo_name: rajewsky-lab/openst
 repo_url: https://github.com/rajewsky-lab/openst
@@ -18,7 +18,7 @@ nav:
       - Capture area generation: experimental/capture_area_generation.md
       - Tissue processing and RNA quality control: experimental/tissue_processing_and_RNA_qc.md
       - Library preparation: experimental/library_preparation.md
-      - Sequencing of open-ST library: experimental/sequencing_of_openst_library.md
+      - Sequencing of Open-ST library: experimental/sequencing_of_openst_library.md
     - Computational:
       - Getting started: computational/getting_started.md
       - Preprocessing of sequencing: computational/preprocessing_sequencing.md
@@ -78,7 +78,7 @@ plugins:
 - mknotebooks
 
 extra:
-  copyright: Copyright &copy; 2023 open-ST
+  copyright: Copyright &copy; 2023 Open-ST
   social:
     - icon: fontawesome/brands/twitter
       link: https://twitter.com/open_sts

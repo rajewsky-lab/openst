@@ -22,7 +22,7 @@ and includes open-source software for seamless data processing and analysis.
 - Install via `pip install openst`.
 
 ## Tutorials and examples
-We provide [various open-ST datasets](https://openst.github.io/examples) collected by the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky), from various tissues/organisms.
+We provide [various Open-ST datasets](https://openst.github.io/examples) collected by the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky), from various tissues/organisms.
 There, links to raw and processed data are available, as well as step-by-step guides for (pre)processing and downstream analysis. 
 
 ## Documentation
@@ -59,7 +59,7 @@ In general, you can always refer to the [contribution guidelines](CONTRIBUTING.m
 Currently, only [admins](https://github.com/orgs/rajewsky-lab/people) will be merging all accepted changes.
 
 ## Code of Conduct
-Everyone interacting in the open-ST project's codebases, issue trackers, and discussion forums is expected to follow the [PSF Code of Conduct](https://www.python.org/psf/conduct/).
+Everyone interacting in the Open-ST project's codebases, issue trackers, and discussion forums is expected to follow the [PSF Code of Conduct](https://www.python.org/psf/conduct/).
 
 ## License
 The software tools of this project are under the GNU License - see the [LICENSE](LICENSE) file for details.

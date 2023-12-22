@@ -99,5 +99,5 @@ so it is possible to visualize it with [squidpy](https://github.com/scverse/squi
 among other tools.
 
 So, this concludes the preprocessing of 2D spatial transcriptomics and imaging data
-of the open-ST protocol. Next steps include 3D reconstruction, and
+of the Open-ST protocol. Next steps include 3D reconstruction, and
 downstream analysis of nD data.

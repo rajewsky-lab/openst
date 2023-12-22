@@ -22,7 +22,7 @@ from openst.threed.to_3d_registration import setup_to_3d_registration_parser
 def cmdline_args():
     parent_parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="openst: computational tools of open-ST",
+        description="openst: computational tools of Open-ST",
     )
     parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
 

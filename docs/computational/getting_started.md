@@ -25,7 +25,7 @@ If not, we recommend using [docker].
 
 ### with pip <small>recommended</small>
 
-The computational tools of the open-ST workflow are published as a [Python package]
+The computational tools of the Open-ST workflow are published as a [Python package]
 and can be installed with `pip`, ideally by using a [virtual environment].
 Open up a terminal and install `openst` with:
 
