@@ -1,25 +1,21 @@
 [build-system]
-build-backend = "setuptools.build_meta"
-requires = [
-    "setuptools>=42",
-    "wheel"
-]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
 
-[project]
+[tool.poetry]
 name = "openst"
 version = "0.0.2"
 description = "The computational pipeline for the Open-ST method."
-requires-python = ">=3.8"
-license = {file = "LICENSE"}
+license = "GPL-2.0"
 authors = [
-    {name = "Daniel León-Periñán"},
-    {name = "Nikolaos Karaiskos"},
+    "Daniel León-Periñán <daniel.leonperinan@mdc-berlin.de>",
+    "Nikolaos Karaiskos <nikolaos.karaiskos@mdc-berlin.de>",
 ]
 maintainers = [
-    {name = "Daniel León-Periñán", email = "daniel.leonperinan@mdc-berlin.de"},
-    {name = "Nikolaos Karaiskos", email = "nikolaos.karaiskos@mdc-berlin.de"},
+    "Daniel León-Periñán <daniel.leonperinan@mdc-berlin.de>",
+    "Nikolaos Karaiskos <nikolaos.karaiskos@mdc-berlin.de>",
 ]
-readme = {file = "README.md", content-type="text/markdown"}
+readme = "README.md"
 classifiers = [
     "License :: OSI Approved :: GPL License",
     "Development Status :: 5 - Production/Stable",
@@ -38,54 +34,36 @@ classifiers = [
     "Topic :: Scientific/Engineering :: Bio-Informatics",
     "Topic :: Scientific/Engineering :: Visualization",
 ]
-dependencies = [
-    "anndata>=0.7.4",
-    "numpy>=1.17.0",
-    "matplotlib>=3.4",
-    "pandas>=1.0",
-    "scipy>=1.4",
-    "h5py>=3",
-    "tqdm",
-    "scikit-learn>=0.24",
-    "natsort",
-    "joblib",
-    "dask[array]",
-    "dask-image",
-    "kornia>=0.7.0",
-    # we need to pin this version, otherwise RANSAC does not converge
-    "scikit-image==0.19.3",
-    "opencv-python>=4.8.0.76",
-    "cellpose>=2.2.3",
-    "pyqt5==5.15.9",
-    "pyqt5-qt5==5.15.2",
-    "pyqt5-sip==12.12.2",
-    "ome-zarr>=0.8.2",
-    "pyqtgraph>=0.13.3",
-]
 
-[tool.setuptools-git-versioning]
-enabled = true
 
-[project.urls]
-Documentation = "https://openst.github.io/"
-Source = "https://github.com/rajewsky-lab/openst"
-Home-page = "https://openst.github.io"
-Twitter = "https://twitter.com/open_sts"
+[tool.poetry.dependencies]
+anndata = ">=0.7.4"
+numpy = ">=1.17.0"
+matplotlib = ">=3.4"
+pandas = ">=1.0"
+scipy = ">=1.4"
+h5py = ">=3"
+tqdm = "*"
+scikit-learn = ">=0.24"
+natsort = "*"
+joblib = "*"
+dask = { version = "*", extras = ["array"] }
+dask-image = "*"
+kornia = ">=0.7.0"
+scikit-image = "==0.19.3"
+opencv-python = ">=4.8.0.76"
+cellpose = ">=2.2.3"
+pyqt5 = "==5.15.9"
+pyqt5-qt5 = "==5.15.2"
+pyqt5-sip = "==12.12.2"
+ome-zarr = ">=0.8.2"
+pyqtgraph = ">=0.13.3"
 
-[project.scripts]
-openst = "openst.__main__:run_openst"
+[tool.poetry.urls]
+"Documentation" = "https://rajewsky-lab.github.io/openst/"
+"Source" = "https://github.com/rajewsky-lab/openst"
+"Home-page" = "https://rajewsky-lab.github.io/openst"
+"Twitter" = "https://twitter.com/open_sts"
 
-[project.optional-dependencies]
-doc = [
-    "mkdocs",
-    "mkdocs-material",
-    "mkdocs-autorefs"
-]
-
-[tool.setuptools.package-data]
-openst = ['openst/metadata/templates/*.html', '*/templates/*.html', 'openst/preprocessing/imagej_macros/*.ijm', '*/preprocessing/imagej_macros/*.ijm']
-
-[tool.setuptools.packages.find]
-where = ["."]
-include = ["openst"]  # alternatively: `exclude = ["additional*"]`
-namespaces = false
+[tool.poetry.scripts]
+openst = 'openst.__main__:run_openst'
