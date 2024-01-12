@@ -1147,6 +1147,6 @@ __[Open-ST: breaking the flow cell into capture areas]__ by Marie Schott – :oc
 3m – Learn how to break an Illumina® NovaSeq 6000 S4 flow cell into capture areas 
 using our 3D-printable cutting guide.
 
-  [Open-ST: breaking the flow cell into capture areas]: https://www.youtube.com/watch?v=wFGJvLMgxP4
+  [Open-ST: breaking the flow cell into capture areas]: https://www.youtube.com/watch?v=HUiQs4zLjfk
 
 ---
