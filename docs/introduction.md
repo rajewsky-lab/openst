@@ -5,7 +5,7 @@ Our method is cost-efficient, straightforward to employ, and includes open-sourc
 
 Here, you can find detailed step-by-step descriptions of the experimental and the computational workflows. In a FAQ section we address commonly asked questions. Via our [discussion board] and our [chat], you can submit your own questions, and we will do our best to provide answers. 
 
- [discussion board]: https://github.com/rajewsky-lab/openst/discussions/new/chooses
+ [discussion board]: https://github.com/rajewsky-lab/openst/discussions
  [chat]: https://gitter.im/openst/community
 
 Also on this website, we showcase example datasets. 
