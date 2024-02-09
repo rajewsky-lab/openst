@@ -63,10 +63,16 @@ to create a database of barcode sequences and their spatial locations.
 !!! Note 
 
     The NovaSeq6000 S4 flow cell images the top and bottom glass. Thus, keep both and take care not to break them.  
+    
+!!! Note 
+    Check out our video linked at the end of this page to see a demonstration of the opening of the flow cell. 
 
 1. Remove the flow cell from its plastic encasing. 
 2. Carefully score along the sides of the flow cell using a scalpell. The blade should be in one plane with the flow cell.
-3. Once all sides detach, carefully seperate the two flow cell glasses. 
+3. Once all sides detach, carefully seperate the two flow cell glasses.
+4. Denature the second strand by washing the opened flow cell surfaces in a beaker of 0.1N NaOH, incubating for 5 min.
+5. After the denaturation, wash the surfaces 3x with 0.1M Tris-HCl (pH 7.5) and then 3x with Ultrapure water.
+6. Let the flow cell surfaces air dry before proceeding with the scoring and breaking of the flow cell surfaces into smaller capture areas. 
  
 ## Breaking the flow cells into capture areas 
 
