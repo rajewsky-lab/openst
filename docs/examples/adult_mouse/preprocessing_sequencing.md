@@ -18,7 +18,7 @@ on how to install spacemake](https://spacemake.readthedocs.io/en/latest/install.
     --sample-sheet /openst/data/0_sample_sheets/230616_NR_FC_ST_72_76_AT_01.csv
 ```
 
-We obtained `fastq` files that will be used for the rest of the pipeline, that you can download from [here](https://zenodo).
+We obtained `fastq` files that will be used for the rest of the pipeline (a link will be available soon). 
 Once you download these files, you can move them anywhere in your filesystem. We assume that you have opened a terminal,
 and you have browsed to your home directory. From there, create a folder `openst_e13_demo`; browse inside, and create
 another folder `data`. Then, copy the folder with the `fastq` files in here. You should have a structure like:
@@ -94,8 +94,8 @@ spacemake config add_species \
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
 generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
 
-For simplicity, we provide in this [link](https://zenodo) the tile barcode files that are related to this sample, as well as the
-[coordinate system](https://zenodo) for the Illumina flow cell that was used to generate the capture area of this experiment.
+For simplicity, we provide the tile barcode files that are related to this sample, as well as the coordinate system 
+for the Illumina flow cell that was used to generate the capture area of this experiment (a link will be available soon).
 
 When downloading the tile barcode files, create a folder under `openst_e13_demo/data` called `tiles`. Move the files of the tile barcode files
 into this folder. Also, move the coordinate file to the `puck_data` folder in the `spacemake` directory.

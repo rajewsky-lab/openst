@@ -53,8 +53,7 @@ openst transcript_assign \
 
 ## Expected output
 That's it! After running the steps above, you will have that single `alignment/openst_demo_e13_mouse_by_cell.h5ad` file,
-which contains the transcriptomic information per segmented cell (nucleus). You can also find [here](https://zenodo),
-our output to the one you just generated. 
+which contains the transcriptomic information per segmented cell (nucleus).
 
 !!! warning
     Do not expect the files to be exactly the same, as there are several

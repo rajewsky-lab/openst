@@ -1,7 +1,7 @@
 # Preprocessing of imaging data
 
-For this dataset, we provide the [stitched tile-scan image](https://zenodo). This single image was 
-generated from multiple, independently imaged tiles, by leveraging `openst image_stitch`. So, 
+For this dataset, we archived the stitched tile-scan image (a link will be available soon). 
+This single image was generated from multiple, independently imaged tiles, by leveraging `openst image_stitch`. So, 
 you don't need to use this command, since we already provide the stitched image. Anyway, let us know
 if you want access to this tile images, in case you want to try.
 
