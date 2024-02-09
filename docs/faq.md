@@ -4,7 +4,7 @@ Do you have questions about the experimental or computational aspects of Open-ST
 We do our best to answer all of your questions on this page. If you can't find your question 
 below, ask it on our [discussion board]!
 
-  [discussion board]: https://github.com/rajewsky-lab/openst/discussions/new/chooses
+  [discussion board]: https://github.com/rajewsky-lab/openst/discussions
 
 
 ## Tissue handling and sectioning

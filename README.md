@@ -19,15 +19,15 @@ Open-ST requires standard lab equipment
 and includes open-source software for seamless data processing and analysis.
 
 - Discuss development on [GitHub](https://github.com/rajewsky-lab/openst).
-- Read the [step-by-step protocol](https://openst.github.io).
+- Read the [step-by-step protocol](https://rajewsky-lab.github.io/openst/introduction/).
 - Install via `pip install openst`.
 
 ## Tutorials and examples
-We provide [various Open-ST datasets](https://openst.github.io/examples) collected by the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky), from various tissues/organisms.
+We provide [various Open-ST datasets](https://rajewsky-lab.github.io/openst/examples/getting_started/) collected by the [Rajewsky lab @ MDC Berlin](https://www.mdc-berlin.de/n-rajewsky), from various tissues/organisms.
 There, links to raw and processed data are available, as well as step-by-step guides for (pre)processing and downstream analysis. 
 
 ## Documentation
-All the detail to the experimental and computational aspects of our method are available in [our website](https://openst.github.io).
+All the detail to the experimental and computational aspects of our method are available in [our website](https://rajewsky-lab.github.io/openst/).
 
 We love to have an open approach to documentation. We decided to use [mkdocs](https://github.com/mkdocs/mkdocs) as our documentation backend 
 to make your life easier. So, feel free to suggest changes by opening a 

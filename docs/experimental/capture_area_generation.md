@@ -1143,10 +1143,10 @@ Once you have the tool, refer to the video where we explain how to use it:
 ---
 
 :fontawesome-brands-youtube:{ style="color: #EE0F0F" }
-__[Open-ST: breaking the flow cell into capture areas]__ by @danilexn – :octicons-clock-24:
-10m – Learn how to break an Illumina® NovaSeq 6000 S4 flow cell into capture areas 
+__[Open-ST: breaking the flow cell into capture areas]__ by Marie Schott – :octicons-clock-24:
+3m – Learn how to break an Illumina® NovaSeq 6000 S4 flow cell into capture areas 
 using our 3D-printable cutting guide.
 
-  [Open-ST: breaking the flow cell into capture areas]: https://www.youtube.com
+  [Open-ST: breaking the flow cell into capture areas]: https://www.youtube.com/watch?v=HUiQs4zLjfk
 
 ---
