@@ -3,7 +3,7 @@ After pairwise alignment, the same coordinate system is shared between the spati
 staining images. 
 
 However, analysis (e.g., clustering, pseudotime, DGE...) is performed on single cells, not on individual capture areas 
-(0.5 μm in the current version of the protocol).
+(0.6 μm in the current version of the protocol).
 
 Here we show how to aggregate the barcoded spots-by-gene matrix
 into a cell-by-genes matrix, where cells are defined from the segmentation mask.

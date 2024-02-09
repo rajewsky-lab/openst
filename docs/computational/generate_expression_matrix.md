@@ -3,7 +3,7 @@ After pairwise alignment, the same coordinate system is shared between the spati
 staining images. 
 
 However, analysis (e.g., clustering, pseudotime, DGE...) is performed on single cells, not on individual capture areas 
-(0.5 μm in the current version of the protocol).
+(0.6 μm in the current version of the protocol).
 
 So, we show how to aggregate the $N\times G$ matrix ($N$ spots; $G$ genes)
 into a $M\times G$ matrix ($M$ segmented cells; $G$ genes), where $N$ maps to $M$ via the segmentation mask.
