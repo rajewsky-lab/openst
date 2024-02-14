@@ -12,7 +12,7 @@ In our setup, the following read lengths were used:
 
 |Read|Cycles|
 |----|----|
-|Read 1|28-37|
+|Read 1|28-32|
 |Index 1|8|
 |Index 2|NA|
 |Read2|90+|
