@@ -12,6 +12,12 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
+      - name: Set short git commit SHA
+        id: vars
+        run: |
+          calculatedSha=$(git rev-parse --short ${{ github.sha }})
+          echo "::set-output name=short_sha::$calculatedSha"
+
       - uses: actions/checkout@v4
       - name: Configure Git Credentials
         run: |
@@ -27,5 +33,5 @@ jobs:
           path: .cache
           restore-keys: |
             mkdocs-material-
-      - run: pip install mkdocs-material mkdocs-autorefs mknotebooks
-      - run: mkdocs gh-deploy --force
+      - run: pip install mkdocs-material mkdocs-autorefs mknotebooks mike
+      - run: mike deploy --push --update-aliases ${{ steps.vars.outputs.short_sha }} latest
