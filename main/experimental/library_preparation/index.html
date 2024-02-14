@@ -1,0 +1,2056 @@
+<!-- Elements added to main will be displayed on all pages -->
+
+<!doctype html>
+<html lang="en" class="no-js">
+  <head>
+    
+      <meta charset="utf-8">
+      <meta name="viewport" content="width=device-width,initial-scale=1">
+      
+        <meta name="description" content="Open-ST: democratizing spatial transcriptomics ">
+      
+      
+        <meta name="author" content="Daniel León-Periñán, Lena Marie Schott">
+      
+      
+        <link rel="canonical" href="https://open.st/main/experimental/library_preparation/">
+      
+      
+        <link rel="prev" href="../tissue_processing_and_RNA_qc/">
+      
+      
+        <link rel="next" href="../sequencing_of_openst_library/">
+      
+      
+      <link rel="icon" href="../../static/logos/openst_logo_transparent_completeO.png">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+    
+    
+      
+        <title>Library preparation - Open-ST</title>
+      
+    
+    
+      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
+      
+        
+        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+      
+      
+
+
+    
+    
+      
+    
+    
+      
+        
+        
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,300i,400,400i,700,700i%7CRoboto+Mono:400,400i,700,700i&display=fallback">
+        <style>:root{--md-text-font:"Roboto";--md-code-font:"Roboto Mono"}</style>
+      
+    
+    
+      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
+    
+      <link rel="stylesheet" href="../../stylesheets/extra.css">
+    
+      <link rel="stylesheet" href="../../css/ansi-colours.css">
+    
+      <link rel="stylesheet" href="../../css/jupyter-cells.css">
+    
+      <link rel="stylesheet" href="../../css/pandas-dataframe.css">
+    
+    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    
+      
+
+    
+    
+    
+  </head>
+  
+  
+    
+    
+    
+    
+    
+    <body dir="ltr" data-md-color-scheme="default" data-md-color-primary="custom" data-md-color-accent="custom">
+  
+    
+    <input class="md-toggle" data-md-toggle="drawer" type="checkbox" id="__drawer" autocomplete="off">
+    <input class="md-toggle" data-md-toggle="search" type="checkbox" id="__search" autocomplete="off">
+    <label class="md-overlay" for="__drawer"></label>
+    <div data-md-component="skip">
+      
+        
+        <a href="#library-preparation" class="md-skip">
+          Skip to content
+        </a>
+      
+    </div>
+    <div data-md-component="announce">
+      
+        <aside class="md-banner">
+          <div class="md-banner__inner md-grid md-typeset">
+            
+              <button class="md-banner__button md-icon" aria-label="Don't show this again">
+                
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+              </button>
+            
+            
+  <style>.md-announce a,.md-announce a:focus,.md-announce a:hover{color:currentColor}.md-announce strong{white-space:nowrap}.md-announce .twitter{margin-left:.2em;color:#00acee}</style>
+    <strong>This documentation is in beta phase</strong>
+
+          </div>
+          
+            <script>var content,el=document.querySelector("[data-md-component=announce]");el&&(content=el.querySelector(".md-typeset"),__md_hash(content.innerHTML)===__md_get("__announce")&&(el.hidden=!0))</script>
+          
+        </aside>
+      
+    </div>
+    
+      <div data-md-color-scheme="default" data-md-component="outdated" hidden>
+        
+      </div>
+    
+    
+      
+
+<header class="md-header" data-md-component="header">
+  <nav class="md-header__inner md-grid" aria-label="Header">
+    <a href="../.." title="Open-ST" class="md-header__button md-logo" aria-label="Open-ST" data-md-component="logo">
+      
+  <img src="../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
+
+    </a>
+    <label class="md-header__button md-icon" for="__drawer">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M3 6h18v2H3V6m0 5h18v2H3v-2m0 5h18v2H3v-2Z"/></svg>
+    </label>
+    <div class="md-header__title" data-md-component="header-title">
+      <div class="md-header__ellipsis">
+        <div class="md-header__topic">
+          <span class="md-ellipsis">
+            Open-ST
+          </span>
+        </div>
+        <div class="md-header__topic" data-md-component="header-topic">
+          <span class="md-ellipsis">
+            
+              Library preparation
+            
+          </span>
+        </div>
+      </div>
+    </div>
+    
+      
+    
+    
+    
+    
+      <label class="md-header__button md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+      </label>
+      <div class="md-search" data-md-component="search" role="dialog">
+  <label class="md-search__overlay" for="__search"></label>
+  <div class="md-search__inner" role="search">
+    <form class="md-search__form" name="search">
+      <input type="text" class="md-search__input" name="query" aria-label="Search" placeholder="Search" autocapitalize="off" autocorrect="off" autocomplete="off" spellcheck="false" data-md-component="search-query" required>
+      <label class="md-search__icon md-icon" for="__search">
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M9.5 3A6.5 6.5 0 0 1 16 9.5c0 1.61-.59 3.09-1.56 4.23l.27.27h.79l5 5-1.5 1.5-5-5v-.79l-.27-.27A6.516 6.516 0 0 1 9.5 16 6.5 6.5 0 0 1 3 9.5 6.5 6.5 0 0 1 9.5 3m0 2C7 5 5 7 5 9.5S7 14 9.5 14 14 12 14 9.5 12 5 9.5 5Z"/></svg>
+        
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+      </label>
+      <nav class="md-search__options" aria-label="Search">
+        
+          <a href="javascript:void(0)" class="md-search__icon md-icon" title="Share" aria-label="Share" data-clipboard data-clipboard-text="" data-md-component="search-share" tabindex="-1">
+            
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M18 16.08c-.76 0-1.44.3-1.96.77L8.91 12.7c.05-.23.09-.46.09-.7 0-.24-.04-.47-.09-.7l7.05-4.11c.54.5 1.25.81 2.04.81a3 3 0 0 0 3-3 3 3 0 0 0-3-3 3 3 0 0 0-3 3c0 .24.04.47.09.7L8.04 9.81C7.5 9.31 6.79 9 6 9a3 3 0 0 0-3 3 3 3 0 0 0 3 3c.79 0 1.5-.31 2.04-.81l7.12 4.15c-.05.21-.08.43-.08.66 0 1.61 1.31 2.91 2.92 2.91 1.61 0 2.92-1.3 2.92-2.91A2.92 2.92 0 0 0 18 16.08Z"/></svg>
+          </a>
+        
+        <button type="reset" class="md-search__icon md-icon" title="Clear" aria-label="Clear" tabindex="-1">
+          
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M19 6.41 17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41Z"/></svg>
+        </button>
+      </nav>
+      
+        <div class="md-search__suggest" data-md-component="search-suggest"></div>
+      
+    </form>
+    <div class="md-search__output">
+      <div class="md-search__scrollwrap" data-md-scrollfix>
+        <div class="md-search-result" data-md-component="search-result">
+          <div class="md-search-result__meta">
+            Initializing search
+          </div>
+          <ol class="md-search-result__list" role="presentation"></ol>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+    
+    
+      <div class="md-header__source">
+        <a href="https://github.com/rajewsky-lab/openst" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rajewsky-lab/openst
+  </div>
+</a>
+      </div>
+    
+  </nav>
+  
+</header>
+    
+    <div class="md-container" data-md-component="container">
+      
+      
+        
+          
+            
+<nav class="md-tabs" aria-label="Tabs" data-md-component="tabs">
+  <div class="md-grid">
+    <ul class="md-tabs__list">
+      
+        
+  
+  
+  
+    <li class="md-tabs__item">
+      <a href="../.." class="md-tabs__link">
+        
+  
+    
+  
+  Home
+
+      </a>
+    </li>
+  
+
+      
+        
+  
+  
+    
+  
+  
+    
+    
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../introduction/" class="md-tabs__link">
+          
+  
+    
+  
+  Step-by-step
+
+        </a>
+      </li>
+    
+  
+
+      
+        
+  
+  
+  
+    
+    
+      <li class="md-tabs__item">
+        <a href="../../examples/getting_started/" class="md-tabs__link">
+          
+  
+    
+  
+  Examples
+
+        </a>
+      </li>
+    
+  
+
+      
+    </ul>
+  </div>
+</nav>
+          
+        
+      
+      <main class="md-main" data-md-component="main">
+        <div class="md-main__inner md-grid">
+          
+            
+              
+              <div class="md-sidebar md-sidebar--primary" data-md-component="sidebar" data-md-type="navigation" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+
+  
+
+
+<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  <label class="md-nav__title" for="__drawer">
+    <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
+      
+  <img src="../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
+
+    </a>
+    Open-ST
+  </label>
+  
+    <div class="md-nav__source">
+      <a href="https://github.com/rajewsky-lab/openst" title="Go to repository" class="md-source" data-md-component="source">
+  <div class="md-source__icon md-icon">
+    
+    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+  </div>
+  <div class="md-source__repository">
+    rajewsky-lab/openst
+  </div>
+</a>
+    </div>
+  
+  <ul class="md-nav__list" data-md-scrollfix>
+    
+      
+      
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../.." class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Home
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Step-by-step
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2">
+            <span class="md-nav__icon md-icon"></span>
+            Step-by-step
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Experimental
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_2_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_2_2">
+            <span class="md-nav__icon md-icon"></span>
+            Experimental
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../capture_area_generation/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Capture area generation
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../tissue_processing_and_RNA_qc/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Tissue processing and RNA quality control
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+    
+  
+  
+  
+    <li class="md-nav__item md-nav__item--active">
+      
+      <input class="md-nav__toggle md-toggle" type="checkbox" id="__toc">
+      
+      
+        
+      
+      
+        <label class="md-nav__link md-nav__link--active" for="__toc">
+          
+  
+  <span class="md-ellipsis">
+    Library preparation
+  </span>
+  
+
+          <span class="md-nav__icon md-icon"></span>
+        </label>
+      
+      <a href="./" class="md-nav__link md-nav__link--active">
+        
+  
+  <span class="md-ellipsis">
+    Library preparation
+  </span>
+  
+
+      </a>
+      
+        
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tissue-sectioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tissue sectioning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hematoxilin-and-eosin-he-staining-and-imaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hematoxilin and eosin (H&amp;E) staining and imaging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permeabilization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permeabilization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-transcription" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reverse transcription
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exo-i-digestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exo I digestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tissue-removal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tissue removal
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#second-strand-synthesis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Second strand synthesis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qpcr-for-cycle-number-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      qPCR for cycle number assessment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library construction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library construction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#library-amplification-and-purification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library amplification and purification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Size selection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../sequencing_of_openst_library/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Sequencing of Open-ST library
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Computational
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Computational
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../computational/threed_reconstruction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3D reconstruction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    E13 mouse head
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            E13 mouse head
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adult_mouse/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adult_mouse/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adult_mouse/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../examples/adult_mouse/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../static/examples/notebooks/hypo_adult_eda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Exploratory analysis (Jupyter)
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+  </ul>
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+            
+              
+              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
+                <div class="md-sidebar__scrollwrap">
+                  <div class="md-sidebar__inner">
+                    
+
+<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
+  
+  
+  
+    
+  
+  
+    <label class="md-nav__title" for="__toc">
+      <span class="md-nav__icon md-icon"></span>
+      Table of contents
+    </label>
+    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
+      
+        <li class="md-nav__item">
+  <a href="#tissue-sectioning" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tissue sectioning
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fixation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fixation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#hematoxilin-and-eosin-he-staining-and-imaging" class="md-nav__link">
+    <span class="md-ellipsis">
+      Hematoxilin and eosin (H&amp;E) staining and imaging
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#permeabilization" class="md-nav__link">
+    <span class="md-ellipsis">
+      Permeabilization
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#reverse-transcription" class="md-nav__link">
+    <span class="md-ellipsis">
+      Reverse transcription
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#exo-i-digestion" class="md-nav__link">
+    <span class="md-ellipsis">
+      Exo I digestion
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#tissue-removal" class="md-nav__link">
+    <span class="md-ellipsis">
+      Tissue removal
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#second-strand-synthesis" class="md-nav__link">
+    <span class="md-ellipsis">
+      Second strand synthesis
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#qpcr-for-cycle-number-assessment" class="md-nav__link">
+    <span class="md-ellipsis">
+      qPCR for cycle number assessment
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#library-construction" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library construction
+    </span>
+  </a>
+  
+    <nav class="md-nav" aria-label="Library construction">
+      <ul class="md-nav__list">
+        
+          <li class="md-nav__item">
+  <a href="#library-amplification-and-purification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Library amplification and purification
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#size-selection" class="md-nav__link">
+    <span class="md-ellipsis">
+      Size selection
+    </span>
+  </a>
+  
+</li>
+        
+      </ul>
+    </nav>
+  
+</li>
+      
+    </ul>
+  
+</nav>
+                  </div>
+                </div>
+              </div>
+            
+          
+          
+            <div class="md-content" data-md-component="content">
+              <article class="md-content__inner md-typeset">
+                
+                  
+
+  
+    <a href="https://github.com/rajewsky-lab/openst/edit/master/openst_wiki/experimental/library_preparation.md" title="Edit this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
+    </a>
+  
+  
+    
+      
+    
+    <a href="https://github.com/rajewsky-lab/openst/raw/master/openst_wiki/experimental/library_preparation.md" title="View source of this page" class="md-content__button md-icon">
+      
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.15 8.15 0 0 1-1.23-2Z"/></svg>
+    </a>
+  
+
+
+<h1 id="library-preparation">Library preparation<a class="headerlink" href="#library-preparation" title="Permanent link">&para;</a></h1>
+<h2 id="tissue-sectioning">Tissue sectioning<a class="headerlink" href="#tissue-sectioning" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Before starting</p>
+<p>Before sectioning, place the OCT-mounted fresh frozen tissue in a cryostat for 20 minutes at the selected cutting temperature (adjusted according to tissue). Place the capture areas at room temperature. </p>
+</div>
+<div class="admonition note">
+<p class="admonition-title">Before starting</p>
+<p>Pre-cool 100% methanol at -20°C for subsequent fixation step. </p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Trim the excess OCT surrounding the tissue to prevent folding of OCT under or over the tissue.  </p>
+</div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Remove the capture area from the stage, as soon as the transfer occured, to avoid re-freezing of the tissue onto the stage. </p>
+</div>
+<ol>
+<li>Slice the tissue at the selected temperature at 10 μm thickness.</li>
+<li>Place the capture area (<em>room temperature</em>) on the tissue section on the cutting stage. The tissue will melt onto the capture area.</li>
+<li>Store the capture area with tissue-side up in the cryostat until fixation. </li>
+</ol>
+<h2 id="fixation">Fixation<a class="headerlink" href="#fixation" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Transport samples on dry ice until placed in -20°C methanol. </p>
+</div>
+<ol>
+<li>Fix the tissue by placing the capture area with the tissue section in a tube containing 1 mL of 100% Methanol (pre-cooled to -20°C). </li>
+<li>Incubate at -20°C for 30 min.</li>
+</ol>
+<h2 id="hematoxilin-and-eosin-he-staining-and-imaging">Hematoxilin and eosin (H&amp;E) staining and imaging<a class="headerlink" href="#hematoxilin-and-eosin-he-staining-and-imaging" title="Permanent link">&para;</a></h2>
+<p><strong>Buffered Eosin (make fresh)</strong></p>
+<table>
+<thead>
+<tr>
+<th>Reagent</th>
+<th>Volume (μL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Eosin Y</td>
+<td>500</td>
+</tr>
+<tr>
+<td>0.45M Tris-Acetate buffer pH 6.0</td>
+<td>500</td>
+</tr>
+</tbody>
+</table>
+<p>For incubations, add enough volume to cover the capture area completely. For all washes, wash by dipping in a beaker with Ultrapure water (500 mL). </p>
+<ol>
+<li>Add isopropanol to the tissues on the capture area and incubate for 1 min, then remove the solution and dry the tissues. </li>
+<li>Add hematoxylin, and incubate for 5 min.</li>
+<li>Wash the capture area with Ultrapure water until the hematoxylin dye is completely removed (10-15x). </li>
+<li>Add bluing buffer, and incubate for 2 min. </li>
+<li>Wash the capture area with Ultrapure water, dipping 5 times. </li>
+<li>Add buffered eosin onto tissue section for 1 min.</li>
+<li>Wash the capture area with Ultrapure water, dipping 10-15x. </li>
+<li>Let the capture area air-dry at room temperature for 10 min. Dry the tissues completely with no residual water. </li>
+<li>Put the capture area face-down on a coverslip (#1.5, 24x50mm) and image on brightfield with the 20x objective.</li>
+</ol>
+<p>After imaging, place the capture areas with the tissue section face up into a multi-well gasket, such as the 16-Well ProChamber Microarray System (Grace Bio-Labs, Cat#645508). We use 100 μL reaction volume throughout the protocol whilst using the gasket. </p>
+<h2 id="permeabilization">Permeabilization<a class="headerlink" href="#permeabilization" title="Permanent link">&para;</a></h2>
+<p>We recommend performing a pilot experiment in which you compare different permeabilization conditions using a qPCR assay. We suggest comparing different pepsin incubation times (for example, 0, 15, 30, 45, and 60 min) at 37°C.  <br />
+Follow the library preparation steps until <em>qPCR for cycle number assessment</em>. Earlier amplification corresponds to a higher concentration of starting material, ie. more efficient mRNA capture. If conditions amplify together, chose the shorter time or lower pepsin concentration for permeabilization of your sample.  </p>
+<ol>
+<li>Weigh and dissolve the pepsin to have a solution with 7 U/ul pepsin in 2xSSC pH 2.5. </li>
+<li>Dilute 1:10 with 2xSSC pH 2.5 to get the final concentration of 0.7 U/μl.</li>
+<li>Prewarm permeabilization mix at 37℃ several minutes before use. </li>
+<li>Incubate at 37°C for X min (ex. 15 min - 30 min - 60 min) according to the tissue used.  </li>
+</ol>
+<h2 id="reverse-transcription">Reverse transcription<a class="headerlink" href="#reverse-transcription" title="Permanent link">&para;</a></h2>
+<p><strong>Reverse transcription (RT) buffer</strong> </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Reagent</th>
+<th style="text-align: left;">Final concentration</th>
+<th style="text-align: left;">Volume (μl)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">SSIV 5X rt BUFFER</td>
+<td style="text-align: left;">1x</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr>
+<td style="text-align: left;">RNase inhibitor (40U/ul)</td>
+<td style="text-align: left;">1U/ul</td>
+<td style="text-align: left;">2.5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ultrapure water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">77.5</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<p><strong>Reverse transcription mix</strong> </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Reagent</th>
+<th style="text-align: left;">Final concentration</th>
+<th style="text-align: left;">Volume (μl)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">SSIV 5X rt BUFFER</td>
+<td style="text-align: left;">1x</td>
+<td style="text-align: left;">20</td>
+</tr>
+<tr>
+<td style="text-align: left;">0.1M DTT</td>
+<td style="text-align: left;">5mM</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr>
+<td style="text-align: left;">BSA (20mg/ml)</td>
+<td style="text-align: left;">0.187mg/ml</td>
+<td style="text-align: left;">0.93</td>
+</tr>
+<tr>
+<td style="text-align: left;">10mM dNTP mix</td>
+<td style="text-align: left;">1mM</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Superscript IV (200U/ul)</td>
+<td style="text-align: left;">6.67 U/uL</td>
+<td style="text-align: left;">3.33</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ribolock(40U/uL)</td>
+<td style="text-align: left;">1U</td>
+<td style="text-align: left;">2.5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ultrapure water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">58.24</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Remove the pepsin solution. </li>
+<li>Wash the capture area carefully with 100 μl RT Buffer once.</li>
+<li>Add 100 μL RT mix per capture area. Incubate overnight at 42°C. </li>
+</ol>
+<h2 id="exo-i-digestion">Exo I digestion<a class="headerlink" href="#exo-i-digestion" title="Permanent link">&para;</a></h2>
+<p><strong>Exonuclease I mix</strong> </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Reagent</th>
+<th style="text-align: left;">Final concentration</th>
+<th style="text-align: left;">Volume (μl)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">10 x Exo I buffer</td>
+<td style="text-align: left;">1x</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Exo I</td>
+<td style="text-align: left;">1U/ul</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ultrapure water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">85</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Remove the RT solution. </li>
+<li>Add 100 μL Exonuclease I mix per capture area to eliminate DNA that did not hybridize with mRNA.  </li>
+<li>Incubate 45 min at 37℃. </li>
+</ol>
+<h2 id="tissue-removal">Tissue removal<a class="headerlink" href="#tissue-removal" title="Permanent link">&para;</a></h2>
+<p><strong>Tissue removal mix</strong>  </p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Reagent</th>
+<th style="text-align: left;">Final concentration</th>
+<th style="text-align: left;">Volume (μL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">Tris-Cl pH 8.0</td>
+<td style="text-align: left;">100 mM</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">2M NaCl</td>
+<td style="text-align: left;">200 mM</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">20% SDS</td>
+<td style="text-align: left;">2%</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">0.1M EDTA</td>
+<td style="text-align: left;">5 mM</td>
+<td style="text-align: left;">5</td>
+</tr>
+<tr>
+<td style="text-align: left;">Proteinase K ( 800 mU/uL)</td>
+<td style="text-align: left;">16 mU/uL</td>
+<td style="text-align: left;">2</td>
+</tr>
+<tr>
+<td style="text-align: left;">Nuclease -free water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">63</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Remove the Exonuclease I mix. </li>
+<li>Add 100 μl of 1x tissue removal mix per capture area and incubate for 40 minutes at 37℃.</li>
+<li>Wash as follows: <ol>
+<li>Wash the capture area with ultrapure water three times. </li>
+<li>Wash the capture area  with 100 μl of freshly prepared 0.1N NaOH three times* (*each with 5 min incubation at room temperature). </li>
+<li>Wash the capture area  with 100 μl of 0.1M Tris (pH7.5) three times. </li>
+<li>Wash the capture area with 100 μl of Ultrapure water three times. </li>
+</ol>
+</li>
+</ol>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Visually confirm that tissue removal is complete after washes have been completed. </p>
+</div>
+<h2 id="second-strand-synthesis">Second strand synthesis<a class="headerlink" href="#second-strand-synthesis" title="Permanent link">&para;</a></h2>
+<p><strong>Second strand synthesis mix</strong></p>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Reagent</th>
+<th style="text-align: left;">Final concentration</th>
+<th style="text-align: left;">Volume (μL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">NEBuffer-2</td>
+<td style="text-align: left;">1x</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">100 uM randomer</td>
+<td style="text-align: left;">10 uM</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">10 mM dNTPs</td>
+<td style="text-align: left;">1 mM</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Klenow exo (-) Fragment (5 U/uL)</td>
+<td style="text-align: left;">0.5 U/uL</td>
+<td style="text-align: left;">10</td>
+</tr>
+<tr>
+<td style="text-align: left;">Ultrapure water</td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;">60</td>
+</tr>
+<tr>
+<td style="text-align: left;"><strong>Total</strong></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"><strong>100</strong></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Add 100 μL second strand synthesis mix per capture area. Incubate at 37°C for 2 h. </li>
+<li>Wash with 100 μL ultrapure water 3 times. </li>
+<li>Elute the second strand product by incubating the capture areas in 100 μl of freshly prepared 0.1 N NaOH twice for 5 min each. Recover the elutions and pool the second strand product together per sample.</li>
+<li>Mix 200 μl of second strand product with 28.6 μl of 1M Tris-HCl pH 7.5. Proceed directly to next step.</li>
+</ol>
+<p>Purify the 228.6 μL elution using AmpureXP beads at a ratio of 1.8 beads to 1x second strand product, following the manufacturer's instructions.
+Elute the product in 82.5 μL ultrapure water.  </p>
+<h2 id="qpcr-for-cycle-number-assessment">qPCR for cycle number assessment<a class="headerlink" href="#qpcr-for-cycle-number-assessment" title="Permanent link">&para;</a></h2>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>Use of a passive reference dye depends on the qPCR cycler used. We usually use the StepOne™ Real-Time PCR System (Applied Biosystems).  </p>
+</div>
+<p>Pipette and run a qPCR to determine the appropriate cycle number to amplify your eluted second strands. </p>
+<p><strong>qPCR mix</strong></p>
+<table>
+<thead>
+<tr>
+<th>Reagent</th>
+<th>Final concentration</th>
+<th>Volume (μl)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2x Blue S'Green qPCR mix + ROX</td>
+<td>1x</td>
+<td>10</td>
+</tr>
+<tr>
+<td>10 uM Fw primer</td>
+<td>1 uM</td>
+<td>2</td>
+</tr>
+<tr>
+<td>10 uM Rw primer</td>
+<td>1 uM</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Second strand product</td>
+<td></td>
+<td>2.5</td>
+</tr>
+<tr>
+<td>Ultrapure water</td>
+<td></td>
+<td>3.5</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>20</strong></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th style="text-align: left;">Temperature</th>
+<th style="text-align: left;">Time</th>
+<th style="text-align: left;">Cycles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td style="text-align: left;">95°C</td>
+<td style="text-align: left;">3 min</td>
+<td style="text-align: left;">1</td>
+</tr>
+<tr>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+<td style="text-align: left;"></td>
+</tr>
+<tr>
+<td style="text-align: left;">95°C</td>
+<td style="text-align: left;">30 sec</td>
+<td style="text-align: left;">(40)</td>
+</tr>
+<tr>
+<td style="text-align: left;">60°C</td>
+<td style="text-align: left;">1 min</td>
+<td style="text-align: left;">(40)</td>
+</tr>
+<tr>
+<td style="text-align: left;">72°C</td>
+<td style="text-align: left;">1 min</td>
+<td style="text-align: left;">(40)</td>
+</tr>
+</tbody>
+</table>
+<p>Derive the PCR cycle number required for the amplification of your sample as follows: </p>
+<p>Set a threshold at 50% of the peak ΔRn. For each sample determine the cycle number at the intersection of the threshold and amplification curve. 
+Subtract 5 cycles to account fo the qPCR input (3%). This number is your recommended PCR cycle number. We expect a cycling number between 11 and 14. </p>
+<h2 id="library-construction">Library construction<a class="headerlink" href="#library-construction" title="Permanent link">&para;</a></h2>
+<h3 id="library-amplification-and-purification">Library amplification and purification<a class="headerlink" href="#library-amplification-and-purification" title="Permanent link">&para;</a></h3>
+<p><strong>Library amplification mix</strong></p>
+<table>
+<thead>
+<tr>
+<th>Reagent</th>
+<th>Final concentration</th>
+<th>Volume (μL)</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>2x KAPA HiFi Hotstart Readymix</td>
+<td>1x</td>
+<td>100</td>
+</tr>
+<tr>
+<td>100 uM WTA1*F primer</td>
+<td>1 uM</td>
+<td>2</td>
+</tr>
+<tr>
+<td>100 uM WTA1*R primer</td>
+<td>1 uM</td>
+<td>2</td>
+</tr>
+<tr>
+<td>Purified 2<sup>nd</sup> strand</td>
+<td></td>
+<td>80</td>
+</tr>
+<tr>
+<td>Ultrapure water</td>
+<td></td>
+<td>16</td>
+</tr>
+<tr>
+<td><strong>Total</strong></td>
+<td></td>
+<td><strong>200</strong></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th>Temperature</th>
+<th>Time</th>
+<th>Cycles</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>95°C</td>
+<td>3 min</td>
+<td>1</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>95°C</td>
+<td>30 sec</td>
+<td>(To be determined)</td>
+</tr>
+<tr>
+<td>60°C</td>
+<td>1 min</td>
+<td>(To be determined)</td>
+</tr>
+<tr>
+<td>72°C</td>
+<td>1 min</td>
+<td>(To be determined)</td>
+</tr>
+<tr>
+<td></td>
+<td></td>
+<td></td>
+</tr>
+<tr>
+<td>72°C</td>
+<td>2 min</td>
+<td>1</td>
+</tr>
+<tr>
+<td>4°C</td>
+<td>hold</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<ol>
+<li>Prepare the library amplification mix per sample. </li>
+<li>Split each sample mix into four PCR tubes, each with 50 uL volume. </li>
+<li>Run the PCR with the cycle number determined previously (3.9). </li>
+<li>Pool the 200 μL PCR product per sample and purify using AmpureXP beads at a 1:1 ratio of beads PCR product, following the manufacturer's instructions.</li>
+<li>Elute the PCR product in 20 μL ultrapure water. </li>
+</ol>
+<p><img alt="Library profile after size selection" loading="lazy" src="../../static/img/60_2_BioA_preBP.png" /></p>
+<figure>
+<figcaption>Example BioAnalyzer profile before size selection</figcaption>
+</figure>
+<h3 id="size-selection">Size selection<a class="headerlink" href="#size-selection" title="Permanent link">&para;</a></h3>
+<p>Perform size selection of your sample to obtain fragments 350 - 1100 bp. Use the Bluepippin or PippinHT 1.5% agarose gel and follow the manufacturer's instructions. 
+Measure the concentration of your size-selected product using the Qubit dsDNA quanitification kit. </p>
+<p><img alt="Library profile after size selection" loading="lazy" src="../../static/img/60_2_BioA_postBP.png" /></p>
+<figure>
+<figcaption>Example BioAnalyzer profile after size selection</figcaption>
+</figure>
+
+
+
+
+
+
+
+
+
+
+
+
+                
+              </article>
+            </div>
+          
+          
+<script>var target=document.getElementById(location.hash.slice(1));target&&target.name&&(target.checked=target.name.startsWith("__tabbed_"))</script>
+        </div>
+        
+          <button type="button" class="md-top md-icon" data-md-component="top" hidden>
+  
+  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M13 20h-2V8l-5.5 5.5-1.42-1.42L12 4.16l7.92 7.92-1.42 1.42L13 8v12Z"/></svg>
+  Back to top
+</button>
+        
+      </main>
+      
+        <footer class="md-footer">
+  
+    
+      
+      <nav class="md-footer__inner md-grid" aria-label="Footer" >
+        
+          
+          <a href="../tissue_processing_and_RNA_qc/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Tissue processing and RNA quality control">
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
+            </div>
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Previous
+              </span>
+              <div class="md-ellipsis">
+                Tissue processing and RNA quality control
+              </div>
+            </div>
+          </a>
+        
+        
+          
+          <a href="../sequencing_of_openst_library/" class="md-footer__link md-footer__link--next" aria-label="Next: Sequencing of Open-ST library">
+            <div class="md-footer__title">
+              <span class="md-footer__direction">
+                Next
+              </span>
+              <div class="md-ellipsis">
+                Sequencing of Open-ST library
+              </div>
+            </div>
+            <div class="md-footer__button md-icon">
+              
+              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
+            </div>
+          </a>
+        
+      </nav>
+    
+  
+  <div class="md-footer-meta md-typeset">
+    <div class="md-footer-meta__inner md-grid">
+      <div class="md-copyright">
+  
+    <div class="md-copyright__highlight">
+      Copyright &copy; 2023 Open-ST
+    </div>
+  
+  
+    Made with
+    <a href="https://squidfunk.github.io/mkdocs-material/" target="_blank" rel="noopener">
+      Material for MkDocs
+    </a>
+  
+</div>
+      
+        <div class="md-social">
+  
+    
+    
+    
+    
+    <a href="https://twitter.com/open_sts" target="_blank" rel="noopener" title="Twitter" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M459.37 151.716c.325 4.548.325 9.097.325 13.645 0 138.72-105.583 298.558-298.558 298.558-59.452 0-114.68-17.219-161.137-47.106 8.447.974 16.568 1.299 25.34 1.299 49.055 0 94.213-16.568 130.274-44.832-46.132-.975-84.792-31.188-98.112-72.772 6.498.974 12.995 1.624 19.818 1.624 9.421 0 18.843-1.3 27.614-3.573-48.081-9.747-84.143-51.98-84.143-102.985v-1.299c13.969 7.797 30.214 12.67 47.431 13.319-28.264-18.843-46.781-51.005-46.781-87.391 0-19.492 5.197-37.36 14.294-52.954 51.655 63.675 129.3 105.258 216.365 109.807-1.624-7.797-2.599-15.918-2.599-24.04 0-57.828 46.782-104.934 104.934-104.934 30.213 0 57.502 12.67 76.67 33.137 23.715-4.548 46.456-13.32 66.599-25.34-7.798 24.366-24.366 44.833-46.132 57.827 21.117-2.273 41.584-8.122 60.426-16.243-14.292 20.791-32.161 39.308-52.628 54.253z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://github.com/rajewsky-lab/openst" target="_blank" rel="noopener" title="GitHub" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 496 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M165.9 397.4c0 2-2.3 3.6-5.2 3.6-3.3.3-5.6-1.3-5.6-3.6 0-2 2.3-3.6 5.2-3.6 3-.3 5.6 1.3 5.6 3.6zm-31.1-4.5c-.7 2 1.3 4.3 4.3 4.9 2.6 1 5.6 0 6.2-2s-1.3-4.3-4.3-5.2c-2.6-.7-5.5.3-6.2 2.3zm44.2-1.7c-2.9.7-4.9 2.6-4.6 4.9.3 2 2.9 3.3 5.9 2.6 2.9-.7 4.9-2.6 4.6-4.6-.3-1.9-3-3.2-5.9-2.9zM244.8 8C106.1 8 0 113.3 0 252c0 110.9 69.8 205.8 169.5 239.2 12.8 2.3 17.3-5.6 17.3-12.1 0-6.2-.3-40.4-.3-61.4 0 0-70 15-84.7-29.8 0 0-11.4-29.1-27.8-36.6 0 0-22.9-15.7 1.6-15.4 0 0 24.9 2 38.6 25.8 21.9 38.6 58.6 27.5 72.9 20.9 2.3-16 8.8-27.1 16-33.7-55.9-6.2-112.3-14.3-112.3-110.5 0-27.5 7.6-41.3 23.6-58.9-2.6-6.5-11.1-33.3 2.6-67.9 20.9-6.5 69 27 69 27 20-5.6 41.5-8.5 62.8-8.5s42.8 2.9 62.8 8.5c0 0 48.1-33.6 69-27 13.7 34.7 5.2 61.4 2.6 67.9 16 17.7 25.8 31.5 25.8 58.9 0 96.5-58.9 104.2-114.8 110.5 9.2 7.9 17 22.9 17 46.4 0 33.7-.3 75.4-.3 83.6 0 6.5 4.6 14.4 17.3 12.1C428.2 457.8 496 362.9 496 252 496 113.3 383.5 8 244.8 8zM97.2 352.9c-1.3 1-1 3.3.7 5.2 1.6 1.6 3.9 2.3 5.2 1 1.3-1 1-3.3-.7-5.2-1.6-1.6-3.9-2.3-5.2-1zm-10.8-8.1c-.7 1.3.3 2.9 2.3 3.9 1.6 1 3.6.7 4.3-.7.7-1.3-.3-2.9-2.3-3.9-2-.6-3.6-.3-4.3.7zm32.4 35.6c-1.6 1.3-1 4.3 1.3 6.2 2.3 2.3 5.2 2.6 6.5 1 1.3-1.3.7-4.3-1.3-6.2-2.2-2.3-5.2-2.6-6.5-1zm-11.4-14.7c-1.6 1-1.6 3.6 0 5.9 1.6 2.3 4.3 3.3 5.6 2.3 1.6-1.3 1.6-3.9 0-6.2-1.4-2.3-4-3.3-5.6-2z"/></svg>
+    </a>
+  
+    
+    
+    
+    
+    <a href="https://hub.docker.com/u/rajewsky" target="_blank" rel="noopener" title="Docker" class="md-social__link">
+      <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 640 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M349.9 236.3h-66.1v-59.4h66.1v59.4zm0-204.3h-66.1v60.7h66.1V32zm78.2 144.8H362v59.4h66.1v-59.4zm-156.3-72.1h-66.1v60.1h66.1v-60.1zm78.1 0h-66.1v60.1h66.1v-60.1zm276.8 100c-14.4-9.7-47.6-13.2-73.1-8.4-3.3-24-16.7-44.9-41.1-63.7l-14-9.3-9.3 14c-18.4 27.8-23.4 73.6-3.7 103.8-8.7 4.7-25.8 11.1-48.4 10.7H2.4c-8.7 50.8 5.8 116.8 44 162.1 37.1 43.9 92.7 66.2 165.4 66.2 157.4 0 273.9-72.5 328.4-204.2 21.4.4 67.6.1 91.3-45.2 1.5-2.5 6.6-13.2 8.5-17.1l-13.3-8.9zm-511.1-27.9h-66v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm78.1 0h-66.1v59.4h66.1v-59.4zm-78.1-72.1h-66.1v60.1h66.1v-60.1z"/></svg>
+    </a>
+  
+</div>
+      
+    </div>
+  </div>
+</footer>
+      
+    </div>
+    <div class="md-dialog" data-md-component="dialog">
+      <div class="md-dialog__inner md-typeset"></div>
+    </div>
+    
+    
+    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    
+    
+      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      
+        <script src="../../javascripts/katex.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/contrib/auto-render.min.js"></script>
+      
+    
+  </body>
+</html>

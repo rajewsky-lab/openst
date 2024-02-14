@@ -1,0 +1,13 @@
+:root {
+  --md-primary-fg-color:        #00ac8c;
+  --md-primary-fg-color--light: #9bd7d2;
+  --md-primary-fg-color--dark:  #005055;
+  --md-accent-fg-color:        #00ac8c;
+  --md-accent-fg-color--light: #9bd7d2;
+  --md-accent-fg-color--dark:  #005055;
+}
+
+.md-header__topic {
+    /* Adjust the margin-left value as needed */
+    margin-left: -20px;
+}
