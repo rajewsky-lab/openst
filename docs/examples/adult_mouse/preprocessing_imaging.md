@@ -11,17 +11,17 @@ as visual inspection of the images did not reveal any strong illumination or foc
 *(provide a screenshot of the image here)*
 
 Therefore, feel free to download the data from the link above, and continue to the next section.
-Then, browse back to the `openst_e13_demo` folder, create a folder `alignment`, and save the
-`e13_brain_staining.tif` file inside the `alignment` folder. You will have the following file structure:
+Then, browse back to the `openst_adult_demo` folder, create a folder `alignment`, and save the
+`adult_brain_staining.tif` file inside the `alignment` folder. You will have the following file structure:
 
 ```sh
 /home/user
-|-- openst_e13_demo
+|-- openst_adult_demo
 |   |-- data
 |   |   `-- fastq
 |   |-- spacemake
 |   |   `-- ...
 |   |-- bins
 |   `-- alignment
-|       `-- e13_brain_staining.tif
+|       `-- adult_brain_staining.tif
 ```
