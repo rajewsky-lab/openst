@@ -88,6 +88,9 @@ extra:
     - icon: fontawesome/brands/docker
       name: Docker
       link: https://hub.docker.com/u/rajewsky
+  version:
+    provider: mike
+    default: latest
 
 markdown_extensions:
   - abbr
