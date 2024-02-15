@@ -8,8 +8,12 @@ For instance, you can get ~360 capture areas sized 3x4 mm from a single **Illumi
 
 ## Sequencing of barcoded library 
 
+!!! Note 
+    Using 200 pM library, loaded according to the KAPA qPCR value, we obtained the following quality metrics for the barcoded fc_1 used in our bioarchive preprint: Q30 >= 86; PF > 78%; occupied = 97%
+    
 When using an **Illumina® NovaSeq 6000 S4** flow cell (35 cycles), sequence the HDMI32-DraI library
 (see in [Oligonucleotides](getting_started.md)) at a loading concentration of 200 pM. 
+Using 200 pM library, loaded according to the KAPA qPCR value, we obtained the following quality metrics for the barcoded fc_1 used in our bioarchive preprint: Q30 >= 86; PF > 78%; occupied = 97%.
 
 Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
 Use a custom sequencing [recipe](../static/metadata_files/NovaSeq6000_S4_barcoding_seq_recipe.xml) that stops the run immediately after read 1 prior to on-instrument washes. 
