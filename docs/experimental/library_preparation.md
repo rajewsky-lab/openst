@@ -171,8 +171,8 @@ Pipette and run a qPCR to determine the appropriate cycle number to amplify your
 |Reagent|Final concentration|Volume (μl)|
 |----|----|----|
 |2x Blue S'Green qPCR mix + ROX |1x|10|
-|10 uM Fw primer|1 uM|2|
-|10 uM Rw primer|1 uM|2|
+|10 uM p5_fwd primer|1 uM|2|
+|10 uM p7_rev_indexing primer|1 uM|2|
 |Second strand product| |2.5|
 |Ultrapure water| |3.5|
 |**Total**| |**20**|
@@ -201,8 +201,8 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 |Reagent|Final concentration|Volume (μL)|
 |----|----|----|
 |2x KAPA HiFi Hotstart Readymix|1x|100|
-|100 uM WTA1*F primer |1 uM|2|
-|100 uM WTA1*R primer|1 uM|2|
+|100 uM p5_fwd primer |1 uM|2|
+|100 uM p7_rev_indexing primer|1 uM|2|
 |Purified 2nd strand | |80|
 |Ultrapure water| |16|
 |**Total**| |**200**|
