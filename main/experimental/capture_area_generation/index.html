@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../static/logos/openst_logo_transparent_completeO.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.9">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.f2e4d321.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1329,7 +1329,8 @@ and a poly-dT, we register the barcode sequences and their associated coordinate
 <p>For instance, you can get ~360 capture areas sized 3x4 mm from a single <strong>Illumina® NovaSeq 6000 S4</strong> flow cell.</p>
 <h2 id="sequencing-of-barcoded-library">Sequencing of barcoded library<a class="headerlink" href="#sequencing-of-barcoded-library" title="Permanent link">&para;</a></h2>
 <p>When using an <strong>Illumina® NovaSeq 6000 S4</strong> flow cell (35 cycles), sequence the HDMI32-DraI library
-(see in <a href="../getting_started/">Oligonucleotides</a>) at a loading concentration of 200 pM. </p>
+(see in <a href="../getting_started/">Oligonucleotides</a>) at a loading concentration of 200 pM. 
+Using 200 pM library, loaded according to the KAPA qPCR value, we obtained the following quality metrics for the barcoded fc_1 used in our <a href="https://www.biorxiv.org/content/10.1101/2023.12.22.572554v1.article-info">our preprint</a>: Q30 &gt;= 86%; PF = 78%; occupied = 97%. Although great results were achieved using this flow cell, 97% occupied is high. Consequently, we suggest to use a titration of library loading concentrations (one concentration per lane) when generating your first barcoded flow cell. </p>
 <p>Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
 Use a custom sequencing <a href="../../static/metadata_files/NovaSeq6000_S4_barcoding_seq_recipe.xml">recipe</a> that stops the run immediately after read 1 prior to on-instrument washes. </p>
 <h3 id="expected-data-output">Expected (data) output<a class="headerlink" href="#expected-data-output" title="Permanent link">&para;</a></h3>
