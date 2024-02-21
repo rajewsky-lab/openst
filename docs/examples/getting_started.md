@@ -21,5 +21,5 @@ data (for comparison), and notebooks for some exploratory visualization and down
   [E13 mouse head]: e13_mouse/introduction.md
 
 
-!!! note
-  Human data, showcased in the [preprint](https://www.biorxiv.org/content/10.1101/2023.12.22.572554v1), will be publicly released with the paper.
+!!! Note
+    Human data, showcased in the [preprint](https://www.biorxiv.org/content/10.1101/2023.12.22.572554v1), will be publicly released with the paper.
