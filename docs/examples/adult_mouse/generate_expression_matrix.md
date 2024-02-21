@@ -12,7 +12,7 @@ into a cell-by-genes matrix, where cells are defined from the segmentation mask.
 To create such a spatial cell-by-gene ($M\times G$) expression matrix, you will first need a segmentation mask.
 
 We efficiently segment cells (or nuclei) from staining images using [cellpose](https://github.com/MouseLand/cellpose).
-For the H&E-stained tissue provided in this example, we used our [fine-tuned model](https://github.com/danilexn/openst/blob/main/models/HE_cellpose_rajewsky).
+For the H&E-stained tissue provided in this example, we used our [fine-tuned model](https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky).
 Make sure to download it and save it into a new `models` folder that you need to create under the `openst_adult_demo` main folder.
 
 You can run the segmentation on the previously created `openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad` file, which
