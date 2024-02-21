@@ -19,7 +19,7 @@ Open-ST requires standard lab equipment
 and includes open-source software for seamless data processing and analysis.
 
 - Discuss development on [GitHub](https://github.com/rajewsky-lab/openst).
-- Read the [step-by-step protocol](https://rajewsky-lab.github.io/openst/introduction/).
+- Read the [step-by-step protocol](https://rajewsky-lab.github.io/openst/latest/introduction/).
 - Install via `pip install openst`.
 
 ## Tutorials and examples
