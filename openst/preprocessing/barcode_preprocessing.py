@@ -154,6 +154,7 @@ def _run_barcode_preprocessing(args):
         sequence = sequence[crop_seq_slice].strip()
         if args.rev_comp:
             sequence = reverse_complement_table(sequence)
+        return sequence
 
     start_time = time.time()
 
