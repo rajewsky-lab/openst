@@ -13,28 +13,26 @@
         <meta name="author" content="Daniel León-Periñán, Lena Marie Schott">
       
       
-        <link rel="canonical" href="https://open.st/main/computational/threed_reconstruction/">
+        <link rel="canonical" href="https://open.st/main/examples/e13_mouse/generate_expression_matrix/">
       
       
-        <link rel="prev" href="../generate_expression_matrix/">
+        <link rel="prev" href="../pairwise_alignment/">
       
       
-        <link rel="next" href="../../faq/">
       
-      
-      <link rel="icon" href="../../static/logos/openst_logo_transparent_completeO.png">
+      <link rel="icon" href="../../../static/logos/openst_logo_transparent_completeO.png">
       <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.10">
     
     
       
-        <title>3D reconstruction - Open-ST</title>
+        <title>Generating a cell-by-gene matrix - Open-ST</title>
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
+      <link rel="stylesheet" href="../../../assets/stylesheets/main.7e359304.min.css">
       
         
-        <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
+        <link rel="stylesheet" href="../../../assets/stylesheets/palette.06af60db.min.css">
       
       
 
@@ -55,15 +53,15 @@
     
       <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.css">
     
-      <link rel="stylesheet" href="../../stylesheets/extra.css">
+      <link rel="stylesheet" href="../../../stylesheets/extra.css">
     
-      <link rel="stylesheet" href="../../css/ansi-colours.css">
+      <link rel="stylesheet" href="../../../css/ansi-colours.css">
     
-      <link rel="stylesheet" href="../../css/jupyter-cells.css">
+      <link rel="stylesheet" href="../../../css/jupyter-cells.css">
     
-      <link rel="stylesheet" href="../../css/pandas-dataframe.css">
+      <link rel="stylesheet" href="../../../css/pandas-dataframe.css">
     
-    <script>__md_scope=new URL("../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
+    <script>__md_scope=new URL("../../..",location),__md_hash=e=>[...e].reduce((e,_)=>(e<<5)-e+_.charCodeAt(0),0),__md_get=(e,_=localStorage,t=__md_scope)=>JSON.parse(_.getItem(t.pathname+"."+e)),__md_set=(e,_,t=localStorage,a=__md_scope)=>{try{t.setItem(a.pathname+"."+e,JSON.stringify(_))}catch(e){}}</script>
     
       
 
@@ -87,7 +85,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#3d-reconstruction-from-serial-sections-of-spatial-transcriptomics-and-he-images" class="md-skip">
+        <a href="#generating-a-cell-by-gene-matrix" class="md-skip">
           Skip to content
         </a>
       
@@ -123,9 +121,9 @@
 
 <header class="md-header" data-md-component="header">
   <nav class="md-header__inner md-grid" aria-label="Header">
-    <a href="../.." title="Open-ST" class="md-header__button md-logo" aria-label="Open-ST" data-md-component="logo">
+    <a href="../../.." title="Open-ST" class="md-header__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
-  <img src="../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
+  <img src="../../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
 
     </a>
     <label class="md-header__button md-icon" for="__drawer">
@@ -142,7 +140,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              3D reconstruction
+              Generating a cell-by-gene matrix
             
           </span>
         </div>
@@ -230,7 +228,7 @@
   
   
     <li class="md-tabs__item">
-      <a href="../.." class="md-tabs__link">
+      <a href="../../.." class="md-tabs__link">
         
   
     
@@ -245,13 +243,11 @@
         
   
   
-    
-  
   
     
     
-      <li class="md-tabs__item md-tabs__item--active">
-        <a href="../../introduction/" class="md-tabs__link">
+      <li class="md-tabs__item">
+        <a href="../../../introduction/" class="md-tabs__link">
           
   
     
@@ -267,11 +263,13 @@
         
   
   
+    
+  
   
     
     
-      <li class="md-tabs__item">
-        <a href="../../examples/getting_started/" class="md-tabs__link">
+      <li class="md-tabs__item md-tabs__item--active">
+        <a href="../../getting_started/" class="md-tabs__link">
           
   
     
@@ -306,9 +304,9 @@
 
 <nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
-    <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
+    <a href="../../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
-  <img src="../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
+  <img src="../../../static/logos/openst_logo_transparent_completeO.png" alt="logo">
 
     </a>
     Open-ST
@@ -335,7 +333,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../.." class="md-nav__link">
+      <a href="../../.." class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -352,10 +350,8 @@
       
   
   
-    
   
   
-  
     
     
       
@@ -370,22 +366,19 @@
     
     
       
-        
-        
-      
       
         
       
     
     
-    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2" >
         
           
-          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2" id="__nav_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -396,7 +389,7 @@
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="true">
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_2_label" aria-expanded="false">
           <label class="md-nav__title" for="__nav_2">
             <span class="md-nav__icon md-icon"></span>
             Step-by-step
@@ -410,7 +403,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../introduction/" class="md-nav__link">
+      <a href="../../../introduction/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -448,20 +441,17 @@
       
       
         
-          
-          
-        
       
     
     
-    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+    <li class="md-nav__item md-nav__item--nested">
       
         
         
         <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_2" >
         
           
-          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="">
+          <label class="md-nav__link" for="__nav_2_2" id="__nav_2_2_label" tabindex="0">
             
   
   <span class="md-ellipsis">
@@ -486,7 +476,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experimental/getting_started/" class="md-nav__link">
+      <a href="../../../experimental/getting_started/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -507,7 +497,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experimental/capture_area_generation/" class="md-nav__link">
+      <a href="../../../experimental/capture_area_generation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -528,7 +518,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experimental/tissue_processing_and_RNA_qc/" class="md-nav__link">
+      <a href="../../../experimental/tissue_processing_and_RNA_qc/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -549,7 +539,7 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experimental/library_preparation/" class="md-nav__link">
+      <a href="../../../experimental/library_preparation/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
@@ -570,11 +560,492 @@
   
   
     <li class="md-nav__item">
-      <a href="../../experimental/sequencing_of_openst_library/" class="md-nav__link">
+      <a href="../../../experimental/sequencing_of_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
     Sequencing of Open-ST library
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="0">
+            
+  
+  <span class="md-ellipsis">
+    Computational
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_2_3">
+            <span class="md-nav__icon md-icon"></span>
+            Computational
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/threed_reconstruction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    3D reconstruction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../faq/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    FAQ
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+    
+      
+      
+  
+  
+    
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+        
+        
+      
+      
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--active md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" checked>
+        
+          
+          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Examples
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3">
+            <span class="md-nav__icon md-icon"></span>
+            Examples
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../getting_started/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Getting started
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    Adult mouse hippocampus
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_2">
+            <span class="md-nav__icon md-icon"></span>
+            Adult mouse hippocampus
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adult_mouse/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adult_mouse/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adult_mouse/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adult_mouse/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../adult_mouse/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../static/examples/notebooks/hypo_adult_eda/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Exploratory analysis (Jupyter)
   </span>
   
 
@@ -613,8 +1084,6 @@
       
         
       
-        
-      
     
     
       
@@ -630,24 +1099,24 @@
       
         
         
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_2_3" checked>
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" checked>
         
           
-          <label class="md-nav__link" for="__nav_2_3" id="__nav_2_3_label" tabindex="">
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
             
   
   <span class="md-ellipsis">
-    Computational
+    E13 mouse head
   </span>
   
 
             <span class="md-nav__icon md-icon"></span>
           </label>
         
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_2_3_label" aria-expanded="true">
-          <label class="md-nav__title" for="__nav_2_3">
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="true">
+          <label class="md-nav__title" for="__nav_3_3">
             <span class="md-nav__icon md-icon"></span>
-            Computational
+            E13 mouse head
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -658,11 +1127,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../getting_started/" class="md-nav__link">
+      <a href="../introduction/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Getting started
+    Introduction
   </span>
   
 
@@ -739,27 +1208,6 @@
                 
   
   
-  
-  
-    <li class="md-nav__item">
-      <a href="../generate_expression_matrix/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
     
   
   
@@ -776,7 +1224,7 @@
           
   
   <span class="md-ellipsis">
-    3D reconstruction
+    Generating a cell-by-gene matrix
   </span>
   
 
@@ -787,7 +1235,7 @@
         
   
   <span class="md-ellipsis">
-    3D reconstruction
+    Generating a cell-by-gene matrix
   </span>
   
 
@@ -809,54 +1257,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creation-of-csv-files" class="md-nav__link">
+  <a href="#segmentation-of-staining-image" class="md-nav__link">
     <span class="md-ellipsis">
-      Creation of csv files
+      Segmentation of staining image
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#conversion-to-n5-format" class="md-nav__link">
+  <a href="#assigning-transcripts-to-segmented-cells" class="md-nav__link">
     <span class="md-ellipsis">
-      Conversion to n5 format
+      Assigning transcripts to segmented cells
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#pairwise-alignment" class="md-nav__link">
+  <a href="#expected-output" class="md-nav__link">
     <span class="md-ellipsis">
-      Pairwise alignment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#feature-filtering-and-global-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Feature Filtering and Global Alignment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conversion-to-h5ad-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      Conversion to h5ad Format
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3d-visualization-with-paraview" class="md-nav__link">
-    <span class="md-ellipsis">
-      3D visualization with ParaView
+      Expected output
     </span>
   </a>
   
@@ -866,456 +1287,6 @@
   
 </nav>
       
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../faq/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    FAQ
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-    
-      
-      
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3" id="__nav_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Examples
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="1" aria-labelledby="__nav_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3">
-            <span class="md-nav__icon md-icon"></span>
-            Examples
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/getting_started/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Getting started
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_2" >
-        
-          
-          <label class="md-nav__link" for="__nav_3_2" id="__nav_3_2_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    Adult mouse hippocampus
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_2">
-            <span class="md-nav__icon md-icon"></span>
-            Adult mouse hippocampus
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/introduction/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Introduction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_sequencing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/pairwise_alignment/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Align image to transcriptome
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/generate_expression_matrix/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../static/examples/notebooks/hypo_adult_eda/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Exploratory analysis (Jupyter)
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-          </ul>
-        </nav>
-      
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    
-    
-      
-        
-      
-        
-      
-        
-      
-        
-      
-        
-      
-    
-    
-      
-      
-        
-      
-    
-    
-    <li class="md-nav__item md-nav__item--nested">
-      
-        
-        
-        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
-        
-          
-          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="0">
-            
-  
-  <span class="md-ellipsis">
-    E13 mouse head
-  </span>
-  
-
-            <span class="md-nav__icon md-icon"></span>
-          </label>
-        
-        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
-          <label class="md-nav__title" for="__nav_3_3">
-            <span class="md-nav__icon md-icon"></span>
-            E13 mouse head
-          </label>
-          <ul class="md-nav__list" data-md-scrollfix>
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/introduction/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Introduction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_sequencing/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/pairwise_alignment/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Align image to transcriptome
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/generate_expression_matrix/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
-  </span>
-  
-
-      </a>
     </li>
   
 
@@ -1363,54 +1334,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#creation-of-csv-files" class="md-nav__link">
+  <a href="#segmentation-of-staining-image" class="md-nav__link">
     <span class="md-ellipsis">
-      Creation of csv files
+      Segmentation of staining image
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#conversion-to-n5-format" class="md-nav__link">
+  <a href="#assigning-transcripts-to-segmented-cells" class="md-nav__link">
     <span class="md-ellipsis">
-      Conversion to n5 format
+      Assigning transcripts to segmented cells
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#pairwise-alignment" class="md-nav__link">
+  <a href="#expected-output" class="md-nav__link">
     <span class="md-ellipsis">
-      Pairwise alignment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#feature-filtering-and-global-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Feature Filtering and Global Alignment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#conversion-to-h5ad-format" class="md-nav__link">
-    <span class="md-ellipsis">
-      Conversion to h5ad Format
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#3d-visualization-with-paraview" class="md-nav__link">
-    <span class="md-ellipsis">
-      3D visualization with ParaView
+      Expected output
     </span>
   </a>
   
@@ -1431,7 +1375,7 @@
                   
 
   
-    <a href="https://github.com/rajewsky-lab/openst/edit/master/openst_wiki/computational/threed_reconstruction.md" title="Edit this page" class="md-content__button md-icon">
+    <a href="https://github.com/rajewsky-lab/openst/edit/master/openst_wiki/examples/e13_mouse/generate_expression_matrix.md" title="Edit this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10 20H6V4h7v5h5v3.1l2-2V8l-6-6H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h4v-2m10.2-7c.1 0 .3.1.4.2l1.3 1.3c.2.2.2.6 0 .8l-1 1-2.1-2.1 1-1c.1-.1.2-.2.4-.2m0 3.9L14.1 23H12v-2.1l6.1-6.1 2.1 2.1Z"/></svg>
     </a>
@@ -1440,70 +1384,63 @@
     
       
     
-    <a href="https://github.com/rajewsky-lab/openst/raw/master/openst_wiki/computational/threed_reconstruction.md" title="View source of this page" class="md-content__button md-icon">
+    <a href="https://github.com/rajewsky-lab/openst/raw/master/openst_wiki/examples/e13_mouse/generate_expression_matrix.md" title="View source of this page" class="md-content__button md-icon">
       
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M17 18c.56 0 1 .44 1 1s-.44 1-1 1-1-.44-1-1 .44-1 1-1m0-3c-2.73 0-5.06 1.66-6 4 .94 2.34 3.27 4 6 4s5.06-1.66 6-4c-.94-2.34-3.27-4-6-4m0 6.5a2.5 2.5 0 0 1-2.5-2.5 2.5 2.5 0 0 1 2.5-2.5 2.5 2.5 0 0 1 2.5 2.5 2.5 2.5 0 0 1-2.5 2.5M9.27 20H6V4h7v5h5v4.07c.7.08 1.36.25 2 .49V8l-6-6H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h4.5a8.15 8.15 0 0 1-1.23-2Z"/></svg>
     </a>
   
 
 
-<h1 id="3d-reconstruction-from-serial-sections-of-spatial-transcriptomics-and-he-images">3D reconstruction from serial sections of spatial transcriptomics and H&amp;E images<a class="headerlink" href="#3d-reconstruction-from-serial-sections-of-spatial-transcriptomics-and-he-images" title="Permanent link">&para;</a></h1>
-<p>In this section, we will guide you through the process of creating a 3D reconstruction from serial sections of spatial transcriptomics (ST) and H&amp;E images using the Spatial Transcriptomics ImgLib2/Imaging Project (STIM, v0.2.0). This reconstruction allows you to gain a comprehensive understanding of your biological samples in three dimensions.</p>
-<h2 id="creation-of-csv-files">Creation of csv files<a class="headerlink" href="#creation-of-csv-files" title="Permanent link">&para;</a></h2>
-<p>Use the provided script</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>to_3d_registration<span class="w"> </span>--args<span class="w"> </span>--metadata<span class="o">=</span>&lt;where_to_write_metadata&gt;
+<h1 id="generating-a-cell-by-gene-matrix">Generating a cell-by-gene matrix<a class="headerlink" href="#generating-a-cell-by-gene-matrix" title="Permanent link">&para;</a></h1>
+<p>After pairwise alignment, the same coordinate system is shared between the spatial barcodes and the
+staining images. </p>
+<p>However, analysis (e.g., clustering, pseudotime, DGE...) is performed on single cells, not on individual capture areas 
+(0.6 μm in the current version of the protocol).</p>
+<p>Here we show how to aggregate the barcoded spots-by-gene matrix
+into a cell-by-genes matrix, where cells are defined from the segmentation mask.</p>
+<h2 id="segmentation-of-staining-image">Segmentation of staining image<a class="headerlink" href="#segmentation-of-staining-image" title="Permanent link">&para;</a></h2>
+<p>To create such a spatial cell-by-gene (<span class="arithmatex">\(M\times G\)</span>) expression matrix, you will first need a segmentation mask.</p>
+<p>We efficiently segment cells (or nuclei) from staining images using <a href="https://github.com/MouseLand/cellpose">cellpose</a>.
+For the H&amp;E-stained tissue provided in this example, we used our <a href="https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky">fine-tuned model</a>.
+Make sure to download it and save it into a new <code>models</code> folder that you need to create under the <code>openst_e13_demo</code> main folder.</p>
+<p>You can run the segmentation on the previously created <code>openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad</code> file, which
+contains the spatial transcriptome coordinates and staining image after coarse+fine pairwise alignment.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--adata<span class="w"> </span>alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--image-in<span class="w"> </span><span class="s1">&#39;uns/spatial_pairwise_aligned/staining_image_transformed&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--output-mask<span class="w"> </span><span class="s1">&#39;uns/spatial_pairwise_aligned/mask_transformed_0px&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--model<span class="w"> </span>models/HE_cellpose_rajewsky<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>--chunked<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>--gpu<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span>--num-workers<span class="w"> </span><span class="m">8</span>
 </span></code></pre></div>
-<h2 id="conversion-to-n5-format">Conversion to n5 format<a class="headerlink" href="#conversion-to-n5-format" title="Permanent link">&para;</a></h2>
-<p>Convert the coordinate and gene expression information of these datasets into the n5 format, which is optimized for efficient image processing, using the st-resave function.
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">STIMBINS</span><span class="o">=</span><span class="s2">&quot;/home/dleonpe/data/bin&quot;</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="nv">STIMINFILES</span><span class="o">=</span><span class="s2">&quot;/data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/aligned_sections/1_input&quot;</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="nv">STIMOUTFILES</span><span class="o">=</span><span class="s2">&quot;/data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/aligned_sections/2_stim_dataset&quot;</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="nv">FNAME</span><span class="o">=</span><span class="s2">&quot;stitched_spots_merged_aligned_10px_GAN_segmented.h5ad.&quot;</span>
-</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="nv">$STIMBINS</span>/st-resave<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">    </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STIMINFILES</span><span class="s2">/fc_sts_63_2_</span><span class="si">${</span><span class="nv">FNAME</span><span class="si">}</span><span class="s2">locations.csv,</span><span class="nv">$STIMINFILES</span><span class="s2">/fc_sts_63_2_</span><span class="si">${</span><span class="nv">FNAME</span><span class="si">}</span><span class="s2">genes.csv,fc_sts_63_02&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">    </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STIMINFILES</span><span class="s2">/fc_sts_63_3_</span><span class="si">${</span><span class="nv">FNAME</span><span class="si">}</span><span class="s2">locations.csv,</span><span class="nv">$STIMINFILES</span><span class="s2">/fc_sts_63_3_</span><span class="si">${</span><span class="nv">FNAME</span><span class="si">}</span><span class="s2">genes.csv,fc_sts_63_03&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">    </span>-o<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STIMOUTFILES</span><span class="s2">/fc_sts_63.n5&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">    </span>--normalize
-</span></code></pre></div></p>
-<h2 id="pairwise-alignment">Pairwise alignment<a class="headerlink" href="#pairwise-alignment" title="Permanent link">&para;</a></h2>
-<p>Utilize the st-align-pairs function to perform pairwise alignment of three sections below and above each section (r=3). This function creates image channels of gene expression for prespecified genes, aggregated per cell as a Gauss rendering around centroids, parametrized with a smoothness factor.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a><span class="nv">STIMBINS</span><span class="o">=</span><span class="s2">&quot;/home/dleonpe/data/bin&quot;</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="nv">STIMOUTFILES</span><span class="o">=</span><span class="s2">&quot;/data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/aligned_sections/2_stim_dataset&quot;</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="c1"># 2. Run pairwise alignment</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="nv">$STIMBINS</span>/st-align-pairs<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">     </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STIMOUTFILES</span><span class="s2">/fc_sts_63.n5&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">     </span>--scale<span class="w"> </span><span class="m">0</span>.03<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="w">     </span>-r<span class="w"> </span><span class="m">3</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="w">     </span>--hidePairwiseRendering<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="w">     </span>--overwrite<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-11"><a id="__codelineno-2-11" name="__codelineno-2-11" href="#__codelineno-2-11"></a><span class="w">     </span>-sf<span class="w"> </span><span class="m">4</span>.0<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-12"><a id="__codelineno-2-12" name="__codelineno-2-12" href="#__codelineno-2-12"></a><span class="w">     </span>--minNumInliers<span class="w"> </span><span class="m">15</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-13"><a id="__codelineno-2-13" name="__codelineno-2-13" href="#__codelineno-2-13"></a><span class="w">     </span>--numGenes<span class="w"> </span><span class="m">0</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-14"><a id="__codelineno-2-14" name="__codelineno-2-14" href="#__codelineno-2-14"></a><span class="w">     </span>-g<span class="w"> </span><span class="s1">&#39;KRT6A,KRT6B,S100A2,LYZ,CD74,IGKC,IGHG1,IGHA1,JCHAIN,CD74,AMTN&#39;</span>
-</span><span id="__span-2-15"><a id="__codelineno-2-15" name="__codelineno-2-15" href="#__codelineno-2-15"></a><span class="w">     </span><span class="c1">#--numGenes 20 \</span>
+<p>After running this command, the segmentation mask is created and stored in the same <code>--adata</code> file, under
+the dataset <code>uns/spatial_pairwise_aligned/mask_transformed_0px</code>.</p>
+<h2 id="assigning-transcripts-to-segmented-cells">Assigning transcripts to segmented cells<a class="headerlink" href="#assigning-transcripts-to-segmented-cells" title="Permanent link">&para;</a></h2>
+<p>Now, we aggregate the initial barcoded spots-by-gene matrix into a cells-by-genes matrix, by leveraging the
+segmentation mask.</p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>In this dataset, we did not specify <code>--dilate-px</code>. Since this model segments nuclei from H&amp;E, we are referring
+to nuclei when we talk about cells. We use this terminology for consistency with the rest of the documentation.</p>
+</div>
+<p>This step allows you to aggregate capture spots by segmented cells:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>transcript_assign<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">    </span>--adata<span class="w"> </span>alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>--spatial-key<span class="w"> </span>spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">    </span>--mask-in-adata<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">    </span>--mask<span class="w"> </span><span class="s1">&#39;uns/spatial_pairwise_aligned/mask_transformed_0px&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">    </span>--output<span class="w"> </span>alignment/openst_demo_e13_mouse_head_by_cell.h5ad
 </span></code></pre></div>
-<h2 id="feature-filtering-and-global-alignment">Feature Filtering and Global Alignment<a class="headerlink" href="#feature-filtering-and-global-alignment" title="Permanent link">&para;</a></h2>
-<p>Filter the resulting set of feature matches between pairs of sections using an affine model. Configure the st-align-pairs function with appropriate parameters, such as --minNumInliers 15, --scale 0.03, and -sf 4.0 (smoothness factor).
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="nv">STIMBINS</span><span class="o">=</span><span class="s2">&quot;/home/dleonpe/data/bin&quot;</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="nv">STIMOUTFILES</span><span class="o">=</span><span class="s2">&quot;/data/rajewsky/home/dleonpe/projects/openst_paper/data/2_downstream/fc_sts_63/aligned_sections/2_stim_dataset&quot;</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="nv">$STIMBINS</span>/st-align-global<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">     </span>-i<span class="w"> </span><span class="s2">&quot;</span><span class="nv">$STIMOUTFILES</span><span class="s2">/fc_sts_63.n5&quot;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">     </span>--skipICP<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">     </span>-g<span class="w"> </span><span class="s1">&#39;KRT6A,KRT6B,S100A2,LYZ,CD74,IGHG1,IGHA1,JCHAIN,CD74,AMTN&#39;</span>
-</span></code></pre></div></p>
-<h2 id="conversion-to-h5ad-format">Conversion to h5ad Format<a class="headerlink" href="#conversion-to-h5ad-format" title="Permanent link">&para;</a></h2>
-<p>Convert the n5 container back to the h5ad format for subsequent downstream analyses. This will also transfer the transformation models from the ST alignment onto the preprocessed and background-removed H&amp;E images. This script will output the aligned spatial coordinates and an image volume that can be used for subsequent 3D visualization, of spatial transcriptomics and H&amp;E staining in a common coordinate system.
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>from_3d_registration<span class="w"> </span>--args<span class="w"> </span>--metadata<span class="o">=</span>&lt;where_to_write_metadata&gt;
-</span></code></pre></div></p>
-<p>You can quickly generate a HTML report to visualize the alignment quality. This will provide, for instance, a volumetric rendering on your browser using the channels (genes) selected for registration. This will also visualize the sections individually, to assess the deformations per section after registration, as well as the deformation fields.</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>&lt;where_to_write_metadata&gt;<span class="w"> </span>--output<span class="o">=</span>&lt;path_to_html_file&gt;
-</span></code></pre></div>
-<p>With these steps completed, you will have successfully reconstructed a 3D representation of your biological samples, integrating spatial transcriptomics data and H&amp;E images. This 3D reconstruction provides valuable insights into the spatial distribution of gene expression within your samples and enhances your understanding of complex biological structures.</p>
-<h2 id="3d-visualization-with-paraview">3D visualization with ParaView<a class="headerlink" href="#3d-visualization-with-paraview" title="Permanent link">&para;</a></h2>
-<p>(explain)</p>
+<h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
+<p>That's it! After running the steps above, you will have that single <code>alignment/openst_demo_e13_mouse_head_by_cell.h5ad</code> file,
+which contains the transcriptomic information per segmented cell (nucleus).</p>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>Do not expect the files to be exactly the same, as there are several
+steps on the pipeline that are not deterministic (e.g., alignment, segmentation).</p>
+</div>
+<p>Now, the following sections provide some examples of exploratory data analysis that can be performed with this type of data.</p>
 
 
 
@@ -1539,7 +1476,7 @@
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../generate_expression_matrix/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Generating a cell-by-gene matrix">
+          <a href="../pairwise_alignment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Align image to transcriptome">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1549,27 +1486,11 @@
                 Previous
               </span>
               <div class="md-ellipsis">
-                Generating a cell-by-gene matrix
+                Align image to transcriptome
               </div>
             </div>
           </a>
         
-        
-          
-          <a href="../../faq/" class="md-footer__link md-footer__link--next" aria-label="Next: FAQ">
-            <div class="md-footer__title">
-              <span class="md-footer__direction">
-                Next
-              </span>
-              <div class="md-ellipsis">
-                FAQ
-              </div>
-            </div>
-            <div class="md-footer__button md-icon">
-              
-              <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M4 11v2h12l-5.5 5.5 1.42 1.42L19.84 12l-7.92-7.92L10.5 5.5 16 11H4Z"/></svg>
-            </div>
-          </a>
         
       </nav>
     
@@ -1628,12 +1549,12 @@
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
+      <script src="../../../assets/javascripts/bundle.8fd75fb4.min.js"></script>
       
-        <script src="../../javascripts/katex.js"></script>
+        <script src="../../../javascripts/katex.js"></script>
       
         <script src="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.16.7/katex.min.js"></script>
       

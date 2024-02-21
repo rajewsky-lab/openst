@@ -815,6 +815,8 @@
       
         
       
+        
+      
     
     
       
@@ -917,7 +919,7 @@
             
   
   <span class="md-ellipsis">
-    E13 mouse head
+    Adult mouse hippocampus
   </span>
   
 
@@ -927,7 +929,7 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
-            E13 mouse head
+            Adult mouse hippocampus
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1132,6 +1134,174 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    E13 mouse head
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            E13 mouse head
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1241,7 +1411,7 @@ from <code>spacemake</code>, or you followed the <a href="../preprocessing_seque
 in an environment different to the one used for <code>spacemake</code>).
 1. You are in the <code>/home/user/openst_adult_demo</code> folder (or similar, depending on your system, username...)</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>alignment/adult_brain_staining.tif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>alignment/adult_mouse_hippocampus.tif<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--h5-out<span class="w"> </span>alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--save-image-in-h5<span class="w"> </span><span class="se">\</span>

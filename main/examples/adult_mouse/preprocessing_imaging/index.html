@@ -815,6 +815,8 @@
       
         
       
+        
+      
     
     
       
@@ -917,7 +919,7 @@
             
   
   <span class="md-ellipsis">
-    E13 mouse head
+    Adult mouse hippocampus
   </span>
   
 
@@ -927,7 +929,7 @@
         <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_2_label" aria-expanded="true">
           <label class="md-nav__title" for="__nav_3_2">
             <span class="md-nav__icon md-icon"></span>
-            E13 mouse head
+            Adult mouse hippocampus
           </label>
           <ul class="md-nav__list" data-md-scrollfix>
             
@@ -1075,6 +1077,174 @@
 
               
             
+              
+                
+  
+  
+  
+  
+    
+    
+      
+        
+      
+        
+      
+        
+      
+        
+      
+        
+      
+    
+    
+      
+      
+        
+          
+          
+        
+      
+    
+    
+    <li class="md-nav__item md-nav__item--section md-nav__item--nested">
+      
+        
+        
+        <input class="md-nav__toggle md-toggle " type="checkbox" id="__nav_3_3" >
+        
+          
+          <label class="md-nav__link" for="__nav_3_3" id="__nav_3_3_label" tabindex="">
+            
+  
+  <span class="md-ellipsis">
+    E13 mouse head
+  </span>
+  
+
+            <span class="md-nav__icon md-icon"></span>
+          </label>
+        
+        <nav class="md-nav" data-md-level="2" aria-labelledby="__nav_3_3_label" aria-expanded="false">
+          <label class="md-nav__title" for="__nav_3_3">
+            <span class="md-nav__icon md-icon"></span>
+            E13 mouse head
+          </label>
+          <ul class="md-nav__list" data-md-scrollfix>
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/introduction/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Introduction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/preprocessing_sequencing/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of sequencing
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/preprocessing_imaging/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Preprocessing of imaging
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/pairwise_alignment/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Align image to transcriptome
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../e13_mouse/generate_expression_matrix/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    Generating a cell-by-gene matrix
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+          </ul>
+        </nav>
+      
+    </li>
+  
+
+              
+            
           </ul>
         </nav>
       
@@ -1132,7 +1302,7 @@
 
 
 <h1 id="preprocessing-of-imaging-data">Preprocessing of imaging data<a class="headerlink" href="#preprocessing-of-imaging-data" title="Permanent link">&para;</a></h1>
-<p>For this dataset, we archived the stitched tile-scan image (a link will be available soon). 
+<p>For this dataset, we archived the <a href="https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif">stitched tile-scan image</a>. 
 This single image was generated from multiple, independently imaged tiles, by leveraging <code>openst image_stitch</code>. So, 
 you don't need to use this command, since we already provide the stitched image. Anyway, let us know
 if you want access to this tile images, in case you want to try.</p>
@@ -1141,7 +1311,7 @@ as visual inspection of the images did not reveal any strong illumination or foc
 <p><em>(provide a screenshot of the image here)</em></p>
 <p>Therefore, feel free to download the data from the link above, and continue to the next section.
 Then, browse back to the <code>openst_adult_demo</code> folder, create a folder <code>alignment</code>, and save the
-<code>adult_brain_staining.tif</code> file inside the <code>alignment</code> folder. You will have the following file structure:</p>
+<code>adult_mouse_hippocampus.tif</code> file inside the <code>alignment</code> folder. You will have the following file structure:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>/home/user
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="p">|</span>--<span class="w"> </span>openst_adult_demo
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>data
@@ -1150,7 +1320,7 @@ Then, browse back to the <code>openst_adult_demo</code> folder, create a folder 
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="p">|</span><span class="w">   </span><span class="p">|</span><span class="w">   </span><span class="sb">`</span>--<span class="w"> </span>...
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">|</span><span class="w">   </span><span class="p">|</span>--<span class="w"> </span>bins
 </span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="p">|</span><span class="w">   </span><span class="sb">`</span>--<span class="w"> </span>alignment
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">|</span><span class="w">       </span><span class="sb">`</span>--<span class="w"> </span>adult_brain_staining.tif
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="p">|</span><span class="w">       </span><span class="sb">`</span>--<span class="w"> </span>adult_mouse_hippocampus.tif
 </span></code></pre></div>
 
 
