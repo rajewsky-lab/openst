@@ -1523,6 +1523,11 @@ and a poly-dT, we register the barcode sequences and their associated coordinate
 Using 200 pM library, loaded according to the KAPA qPCR value, we obtained the following quality metrics for the barcoded fc_1 used in our <a href="https://www.biorxiv.org/content/10.1101/2023.12.22.572554v1.article-info">our preprint</a>: Q30 &gt;= 86%; PF = 78%; occupied = 97%. Although great results were achieved using this flow cell, 97% occupied is high. Consequently, we suggest to use a titration of library loading concentrations (one concentration per lane) when generating your first barcoded flow cell. </p>
 <p>Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
 Use a custom sequencing <a href="../../static/metadata_files/NovaSeq6000_S4_barcoding_seq_recipe.xml">recipe</a> that stops the run immediately after read 1 prior to on-instrument washes. </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The custom recipe published in our bioarchive pre-print and linked above was provided by Illumina Technical Support. It was used in a sequencing run with the following versions: RTA v3.4.4, Flow Cell Consumable v1, Sbs Consumable v3, </p>
+</div>
+<p>NovaSeq control Software v 1.7.5 (in the pre-print) and v 1.8.1 (in an independent flow cell with no published data). Be aware that the custom recipe may change with different versions.  </p>
 <h3 id="expected-data-output">Expected (data) output<a class="headerlink" href="#expected-data-output" title="Permanent link">&para;</a></h3>
 <p>Either when using your own sequencing equipment or relying on a sequencing facility, you will get access
 to (most likely) already <a href="https://knowledge.illumina.com/software/general/software-general-troubleshooting-list/000005982">demultiplexed</a>
