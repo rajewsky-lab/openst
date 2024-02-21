@@ -15,6 +15,10 @@ Using 200 pM library, loaded according to the KAPA qPCR value, we obtained the f
 Sequence a single-end 37 cycle read, using Read1-DraI oligo as a custom primer.
 Use a custom sequencing [recipe](../static/metadata_files/NovaSeq6000_S4_barcoding_seq_recipe.xml) that stops the run immediately after read 1 prior to on-instrument washes. 
 
+!!! Note
+    The custom recipe published in our bioarchive pre-print and linked above was provided by Illumina Technical Support. It was used in a sequencing run with the following versions: RTA v3.4.4, Flow Cell Consumable v1, Sbs Consumable v3, 
+NovaSeq control Software v 1.7.5 (in the pre-print) and v 1.8.1 (in an independent flow cell with no published data). Be aware that the custom recipe may change with different versions.  
+    
 ### Expected (data) output
 Either when using your own sequencing equipment or relying on a sequencing facility, you will get access
 to (most likely) already [demultiplexed](https://knowledge.illumina.com/software/general/software-general-troubleshooting-list/000005982)
