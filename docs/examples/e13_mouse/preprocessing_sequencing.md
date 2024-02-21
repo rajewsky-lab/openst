@@ -6,7 +6,7 @@ transcriptomic information mapped to the mouse genome, in space.
 ## Demultiplexing
 We got basecall files in `bcl` format from our sequencing facility.
 
-We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/adult_mouse/sample_sheet.csv).
+We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/e13_mouse_head_mouse/sample_sheet.csv).
 We used the conda environment where we installed `spacemake` (see [instructions
 on how to install spacemake](https://spacemake.readthedocs.io/en/latest/install.html)), and ran the following commands:
 
@@ -18,14 +18,14 @@ on how to install spacemake](https://spacemake.readthedocs.io/en/latest/install.
     --sample-sheet /openst/data/0_sample_sheets/230616_NR_FC_ST_72_76_AT_01.csv
 ```
 
-We obtained `fastq` files that will be used for the rest of the pipeline, for [Read 1](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R1_001.fastq.gz) and [Read 2](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R2_001.fastq.gz).
+We obtained `fastq` files that will be used for the rest of the pipeline, for [Read 1](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R1_001.fastq.gz) and [Read 2](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R2_001.fastq.gz). As well, this library was *resequenced* (add more depth to the data); these [resequenced Read 1](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R1_001.fastq.gz) and [resequenced Read 2](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R2_001.fastq.gz) files are available. 
 Once you download these files, you can move them anywhere in your filesystem. We assume that you have opened a terminal,
-and you have browsed to your home directory. From there, create a folder `openst_adult_demo`; browse inside, and create
+and you have browsed to your home directory. From there, create a folder `openst_e13_mouse_head_demo`; browse inside, and create
 another folder `data`. Then, copy the folder with the `fastq` files in here. You should have a structure like:
 
 ```sh
 /home/user
-|-- openst_adult_demo
+|-- openst_e13_mouse_head_demo
 |   `-- data
 |       `-- fastq
 ```
@@ -38,11 +38,11 @@ First of all, intialize the conda environment for `spacemake`
 ```
 
 ### Initialization
-Create two folders inside your `openst_adult_demo` folder, called `spacemake` and `bins`, so you will have:
+Create two folders inside your `openst_e13_mouse_head_demo` folder, called `spacemake` and `bins`, so you will have:
 
 ```sh
 /home/user
-|-- openst_adult_demo
+|-- openst_e13_mouse_head_demo
 |   |-- data
 |   |   `-- fastq
 |   |-- spacemake
@@ -53,11 +53,11 @@ Download the [DropSeq tools](https://github.com/broadinstitute/Drop-seq/releases
 decompress it, and put it inside the `bins` subdirectory.
 
 Then, following the [spacemake *Quick start guide*](https://spacemake.readthedocs.io/en/latest/quick-start/index.html),
-browse to the `spacemake` directory you just created in the `openst_adult_demo` folder, and run the initialization:
+browse to the `spacemake` directory you just created in the `openst_e13_mouse_head_demo` folder, and run the initialization:
 
 ```sh
-(spacemake) user@computer:~$ cd /home/user/openst_adult_demo/spacemake
-(spacemake) user@computer:/home/user/openst_adult_demo/spacemake$ spacemake init
+(spacemake) user@computer:~$ cd /home/user/openst_e13_mouse_head_demo/spacemake
+(spacemake) user@computer:/home/user/openst_e13_mouse_head_demo/spacemake$ spacemake init
     --dropseq_tools /home/user/bins/Drop-seq_tools-2.5.1
 ```
 
@@ -69,7 +69,7 @@ mouse genome from [gencode](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_
 as well as the [annotation](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M9/gencode.vM9.annotation.gtf.gz).
 
 Then, you need to run the following commands (remember, in the same `spacemake` folder as before, with the `spacemake` conda environment;
-we are going to omit `(spacemake) user@computer:/home/user/openst_adult_demo/spacemake$` for brevity).
+we are going to omit `(spacemake) user@computer:/home/user/openst_e13_mouse_head_demo/spacemake$` for brevity).
 
 ```sh
 spacemake config add_species \
@@ -94,19 +94,19 @@ spacemake config add_species \
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
 generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
 
-For simplicity, we provide the [tile barcode files](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_hippocampus_tiles.tar.xz) that are related to this sample, as well as the [coordinate system 
-for the Illumina flow cell](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordinate_system.csv) that was used to generate the capture area of this experiment.
+For simplicity, we provide the [tile barcode files](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_tiles.tar.xz) that are related to this sample, as well as the [coordinate system 
+for the Illumina flow cell](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordinate_system.csv) that was used to generate the capture area of this experiment.
 
-When downloading the tile barcode files, create a folder under `openst_adult_demo/data` called `tiles`. Move the files of the tile barcode files
+When downloading the tile barcode files, create a folder under `openst_e13_mouse_head_demo/data` called `tiles`. Move the files of the tile barcode files
 into this folder. Also, move the coordinate file to the `puck_data` folder in the `spacemake` directory.
 
-Remember! You need to be in the `/home/user/openst_adult_demo/spacemake` directory (or similar, depending on what you created);
+Remember! You need to be in the `/home/user/openst_e13_mouse_head_demo/spacemake` directory (or similar, depending on what you created);
 then run the following command:
 
 ```sh
 spacemake projects add_sample \
     --project_id openst_demo \
-    --sample_id openst_demo_adult_mouse \
+    --sample_id openst_demo_e13_mouse_head_mouse \
     --R1 <path_to_R1.fastq.gz> \
     --R2 <path_to_R2.fastq.gz> \
     --species mouse \
@@ -131,7 +131,7 @@ into this:
 
 ```yaml
 openst:
-    coordinate_system: puck_id/openst_demo_adult_brain_coordinate_system.csv
+    coordinate_system: puck_id/openst_demo_e13_mouse_head_brain_coordinate_system.csv
     spot_diameter_um: 0.6
     width_um: 1200
 ```
@@ -150,10 +150,10 @@ arguments to `spacemake run` - refer to the official documentation.
 
 Once `spacemake` finishes, you will see that several folders and files have been created under `projects`
 (inside the `spacemake` directory). For example, you can check the QC reports in your web browser by opening the
-file at `projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/qc_sheets/qc_sheet_openst_demo_adult_mouse_fc_1_puck_collection.html`,
+file at `projects/openst_demo/processed_data/openst_demo_e13_mouse_head_mouse/illumina/complete_data/qc_sheets/qc_sheet_openst_demo_e13_mouse_head_mouse_fc_1_puck_collection.html`,
 giving you a first impression of what's the quality of spatial mapping, amount of transcripts and genes per barcoded spot, and others.
 
-Importantly, you will find files in the directory `projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/dge`
+Importantly, you will find files in the directory `projects/openst_demo/processed_data/openst_demo_e13_mouse_head_mouse/illumina/complete_data/dge`
 with the name `dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_*.h5ad` (where `*` is a wildcard). These files, and not the ones containing 
 the words `mesh`, `hexagon` or `circle` are the ones that will be used later to perform the pairwise alignment with imaging data, and to
 later reconstruct the cell-by-gene matrix.

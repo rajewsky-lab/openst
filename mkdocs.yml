@@ -29,13 +29,19 @@ nav:
     - FAQ: faq.md
   - Examples:
     - Getting started: examples/getting_started.md
-    - E13 mouse head:
+    - Adult mouse hippocampus:
       - Introduction: examples/adult_mouse/introduction.md
       - Preprocessing of sequencing: examples/adult_mouse/preprocessing_sequencing.md
       - Preprocessing of imaging: examples/adult_mouse/preprocessing_imaging.md
       - Align image to transcriptome: examples/adult_mouse/pairwise_alignment.md
       - Generating a cell-by-gene matrix: examples/adult_mouse/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/hypo_adult_eda.ipynb
+    - E13 mouse head:
+      - Introduction: examples/e13_mouse/introduction.md
+      - Preprocessing of sequencing: examples/e13_mouse/preprocessing_sequencing.md
+      - Preprocessing of imaging: examples/e13_mouse/preprocessing_imaging.md
+      - Align image to transcriptome: examples/e13_mouse/pairwise_alignment.md
+      - Generating a cell-by-gene matrix: examples/e13_mouse/generate_expression_matrix.md
 
 theme:
   name: material
