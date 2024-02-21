@@ -29,6 +29,7 @@ nav:
     - FAQ: faq.md
   - Examples:
     - Getting started: examples/getting_started.md
+    - Dataset summary: examples/datasets.md
     - Adult mouse hippocampus:
       - Introduction: examples/adult_mouse/introduction.md
       - Preprocessing of sequencing: examples/adult_mouse/preprocessing_sequencing.md
