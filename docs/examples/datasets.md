@@ -29,3 +29,5 @@ Here we provide a single table with all the links, size and md5 checksums for th
 | ---- | ---- | ------------ |
 | fc_1_coordinate_system.csv | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordinate_system.csv) | 83016d6d9179b68dbfe07d1da01aa0c0 |
 | fc_2_coordinate_system.csv | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordinate_system.csv) | 6da374f1d4b07b2d3c8c424e76fa8567 |
+| fc_1_L3.fastq.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_L3.fastq.gz) | 7ee4cc818708caa87401744ac9366732 |
+| fc_2_L3.fastq.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_L3.fastq.gz) | 67e2d95e9b17bc8ebdf9f315f9a09952 |
