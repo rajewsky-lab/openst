@@ -43,6 +43,7 @@ nav:
       - Preprocessing of imaging: examples/e13_mouse/preprocessing_imaging.md
       - Align image to transcriptome: examples/e13_mouse/pairwise_alignment.md
       - Generating a cell-by-gene matrix: examples/e13_mouse/generate_expression_matrix.md
+      - Exploratory analysis (Jupyter): static/examples/notebooks/e13_head_eda.ipynb
 
 theme:
   name: material
