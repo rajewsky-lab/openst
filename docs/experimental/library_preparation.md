@@ -20,7 +20,15 @@
    
 1. Slice the tissue at the selected temperature at 10 μm thickness.
 2. Place the capture area (*room temperature*) on the tissue section on the cutting stage. The tissue will melt onto the capture area.
-3. Store the capture area with tissue-side up in the cryostat until fixation. 
+3. Store the capture area with tissue-side up in the cryostat until fixation.
+
+:fontawesome-brands-youtube:{ style="color: #EE0F0F" }
+__[Open-ST: sectioning]__ by Marie Schott & Anastasiya Boltengagen – :octicons-clock-24:
+1m – Learn how to place cryosections on your Open-ST capture area
+
+  [Open-ST: sectioning]: https://youtu.be/0Gl_wn-gtM8
+
+---
 
 ## Fixation 
 
@@ -32,6 +40,14 @@
 2. Incubate at -20°C for 30 min.
 
 ## Hematoxilin and eosin (H&E) staining and imaging 
+
+:fontawesome-brands-youtube:{ style="color: #EE0F0F" }
+__[Open-ST: H&E staining]__ by Marie Schott & Anastasiya Boltengagen – :octicons-clock-24:
+1m – Capture area handling during staining
+
+  [Open-ST: H&E staining]: https://youtu.be/SKIhRH46Z2s
+
+---
 
 **Buffered Eosin (make fresh)**
 
@@ -53,7 +69,14 @@ For incubations, add enough volume to cover the capture area completely. For all
 9. Put the capture area face-down on a coverslip (#1.5, 24x50mm) and image on brightfield with the 20x objective.
 
 After imaging, place the capture areas with the tissue section face up into a multi-well gasket, such as the 16-Well ProChamber Microarray System (Grace Bio-Labs, Cat#645508). We use 100 μL reaction volume throughout the protocol whilst using the gasket. 
-  
+
+:fontawesome-brands-youtube:{ style="color: #EE0F0F" }
+__[Open-ST: imaging and incubating]__ by Marie Schott & Anastasiya Boltengagen – :octicons-clock-24:
+1m – Imaging and incubating the Open-ST capture areas
+
+  [Open-ST: imaging and incubating]: https://youtu.be/lmpGG6btMRc
+
+---
 
 ## Permeabilization 
 
