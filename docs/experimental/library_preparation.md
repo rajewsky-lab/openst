@@ -1,5 +1,13 @@
 # Library preparation
 
+:fontawesome-brands-youtube:{ style="color: #EE0F0F" }
+__[Open-ST: capture area handling]__ by Marie Schott & Anastasiya Boltengagen – :octicons-clock-24:
+1m – Tips and tricks on handling the capture areas during library preparation.
+
+  [Open-ST: capture area handling]: https://youtu.be/9DF4NMRMCMw
+
+---
+
 ## Tissue sectioning
 
 !!! note "Before starting" 
