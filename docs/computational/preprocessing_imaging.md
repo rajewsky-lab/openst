@@ -23,7 +23,7 @@ Open a terminal, and run the following command:
 openst image_stitch \
      --microscope='keyence' \
      --imagej-bin=<path_to_fiji_or_imagej> \
-     --tiles-dir=<path_to_tiles> \
+     --input-dir=<path_to_tiles> \
      --tiles-prefix=<to_read> \
      --tmp-dir=<tmp_dir> \
      --output-image=<output_image>
