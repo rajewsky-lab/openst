@@ -23,7 +23,7 @@
       
       
       <link rel="icon" href="../../static/logos/openst_logo_transparent_completeO.png">
-      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.15">
+      <meta name="generator" content="mkdocs-1.5.3, mkdocs-material-9.5.17">
     
     
       
@@ -31,7 +31,7 @@
       
     
     
-      <link rel="stylesheet" href="../../assets/stylesheets/main.7e359304.min.css">
+      <link rel="stylesheet" href="../../assets/stylesheets/main.bcfcd587.min.css">
       
         
         <link rel="stylesheet" href="../../assets/stylesheets/palette.06af60db.min.css">
@@ -1461,7 +1461,7 @@ Open a terminal, and run the following command:</p>
 <p><div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>image_stitch<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">     </span>--microscope<span class="o">=</span><span class="s1">&#39;keyence&#39;</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">     </span>--imagej-bin<span class="o">=</span>&lt;path_to_fiji_or_imagej&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span>--tiles-dir<span class="o">=</span>&lt;path_to_tiles&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span>--input-dir<span class="o">=</span>&lt;path_to_tiles&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span>--tiles-prefix<span class="o">=</span>&lt;to_read&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">     </span>--tmp-dir<span class="o">=</span>&lt;tmp_dir&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">     </span>--output-image<span class="o">=</span>&lt;output_image&gt;
@@ -1478,6 +1478,10 @@ a writeable folder).</p>
 <p>If you don't know how to specify the <code>&lt;path_to_fiji_or_imagej&gt;</code>, please follow the official instructions provided
  for <a href="https://imagej.net/learn/headless">Running Headless</a></p>
 </div>
+<p>If each file in the folder is a z-stack, you don't need to specify anything else. Otherwise, if each file represents a 
+FOV and a Z plane (e.g., file names like Image_00001_Z001.tif, Image_00001_Z002.tif,...), you can specify a regex to
+parse the Z plane from the file names, and a single file per FOV will be created before stitching. This can be specified
+with the argument <code>--join-zstack-regex</code>, which by default is set to an empty string (i.e., no merging of Z planes is performed).</p>
 <h2 id="optional-addressing-image-irregularities">(Optional) Addressing image irregularities<a class="headerlink" href="#optional-addressing-image-irregularities" title="Permanent link">&para;</a></h2>
 <p>Most of the times, large images have uneven illumination, focus or noise. This can be challenging when doing downstream
 processing on these images, like segmentation, feature extraction or quantification (i.e., on fluorescence images). 
@@ -1628,7 +1632,7 @@ file that can be used for the downstream spatial, single-cell analysis.</p>
     <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
-      <script src="../../assets/javascripts/bundle.bd41221c.min.js"></script>
+      <script src="../../assets/javascripts/bundle.1e8ae164.min.js"></script>
       
         <script src="../../javascripts/katex.js"></script>
       
