@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 import subprocess
@@ -7,80 +6,6 @@ from collections import defaultdict
 from tqdm import tqdm
 
 from openst.utils.file import check_directory_exists, check_file_exists, get_absolute_package_path
-
-
-def get_image_stitch_parser():
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        add_help=False,
-        description="stitching various image tiles into a single image (wrapper for ImageJ)",
-    )
-
-    parser.add_argument(
-        "--input-dir",
-        type=str,
-        help="path to collection of images",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--output-image",
-        type=str,
-        help="path where to save the image (must be a filename)",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--imagej-bin",
-        type=str,
-        help="path to the ImageJ/Fiji executable. Must have the Grid Collection plugin available!",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--microscope",
-        type=str,
-        help="microscope model or imaging strategy that was used for imaging",
-        choices=["keyence"],
-        required=True,
-    )
-
-    parser.add_argument(
-        "--no-run",
-        default=False,
-        action="store_true",
-        help="When specified, do not run ImageJ, but return the command line",
-    )
-
-    parser.add_argument(
-        "--metadata-out",
-        type=str,
-        default="",
-        help="Path where the metadata will be stored. If not specified, metadata is not saved.",
-    )
-
-    parser.add_argument(
-        "--join-zstack-regex",
-        type=str,
-        default="",
-        help="""When non empty, this specifies how to find the Z location 
-             from the individual filename and will create a z-stack from single images.
-             Example regex: 'Image_([0-9]*)_Z([0-9]*)_CH1.tif'"""
-    )
-
-    return parser
-
-
-def setup_image_stitch_parser(parent_parser):
-    """setup_image_stitch_parser"""
-    parser = parent_parser.add_parser(
-        "image_stitch",
-        help="stitching image tiles into a single image (wrapper for ImageJ)",
-        parents=[get_image_stitch_parser()],
-    )
-    parser.set_defaults(func=_run_image_stitch)
-
-    return parser
 
 
 def generate_zstacks_from_tiles(input_dir, join_zstack_regex):
@@ -208,5 +133,6 @@ def _run_image_stitch(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_image_stitch_parser
     args = get_image_stitch_parser().parse_args()
     _run_image_stitch(args)

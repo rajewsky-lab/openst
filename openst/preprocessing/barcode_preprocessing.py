@@ -1,77 +1,8 @@
-import argparse
 import gzip
 import os
 import time
 
 import pandas as pd
-
-
-def get_barcode_preprocessing_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        add_help=False,
-        description="convert fastq files into spatial barcode files (sequence and coordinates)",
-    )
-    parser.add_argument("--in-fastq", type=str, required=True, help="path to the fastq file")
-    parser.add_argument(
-        "--out-path",
-        type=str,
-        required=True,
-        help="folder where the output files will be generated",
-    )
-    parser.add_argument(
-        "--out-suffix",
-        type=str,
-        required=True,
-        help="where to write the output file. it works as the suffix when multiple tiles are generated",
-    )
-    parser.add_argument(
-        "--out-prefix",
-        type=str,
-        default="",
-        help="where to write the output file. it works as the prefix when multiple tiles are generated",
-    )
-    parser.add_argument(
-        "--crop-seq",
-        type=str,
-        default=":",
-        help="crop the input sequence, should be a valid python slice",
-    )
-    parser.add_argument(
-        "--rev-comp",
-        action="store_true",
-        help="applies reverse complementary after sequence cropping",
-    )
-    parser.add_argument(
-        "--single-tile",
-        action="store_true",
-        help="it is guarranteed that the input .fastq(.gz) file contains only a tile. Throw an error otherwise",
-    )
-    parser.add_argument(
-        "--unsorted",
-        action="store_true",
-        help="supports that the file is unsorted respect to tiles. might be slower",
-    )
-
-    return parser
-
-
-def setup_barcode_preprocessing_parser(parent_parser):
-    """setup_barcode_preprocessing_parser"""
-    parser = parent_parser.add_parser(
-        "barcode_preprocessing",
-        help="convert fastq files into spatial barcode files (sequence and coordinates)",
-        parents=[get_barcode_preprocessing_parser()],
-    )
-    parser.set_defaults(func=_run_barcode_preprocessing)
-
-    return parser
 
 
 tab = str.maketrans("ACTG", "TGAC")

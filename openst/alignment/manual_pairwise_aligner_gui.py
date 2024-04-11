@@ -47,16 +47,6 @@ from skimage.transform import estimate_transform, warp
 
 from openst.utils.pseudoimage import create_paired_pseudoimage
 
-def setup_manual_pairwise_aligner_gui_parser(parent_parser):
-    """setup_manual_pairwise_aligner_gui_parser"""
-    parser = parent_parser.add_parser(
-        "manual_pairwise_aligner_gui",
-        help="GUI for openst manual pairwise alignment of spatial transcriptomics and imaging data",
-    )
-    parser.set_defaults(func=_run_manual_pairwise_aligner_gui)
-
-    return parser
-
 def h5_to_dict(val):
     result = {}
     for key, value in val.items():

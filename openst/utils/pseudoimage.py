@@ -1,74 +1,8 @@
-import argparse
 import cv2
 import numpy as np
 from skimage.transform import resize
 from skimage.filters import gaussian
 import logging
-
-def get_pseudoimage_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="generate and visualize pseudoimage of Open-ST RNA data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    # Input
-    parser.add_argument(
-        "--adata",
-        type=str,
-        required=True,
-        help="Necessary to create the pseudoimage",
-    )
-
-    # RNA density-based pseudoimage
-    parser.add_argument(
-        "--spatial-coord-key",
-        type=str,
-        default='obsm/spatial',
-        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')"
-    )
-    parser.add_argument(
-        "--input-resolution",
-        type=float,
-        default=1,
-        help="""Spatial resolution of the input coordinates (retrieved from --spatial-coord-key).
-              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor."""
-    )
-    parser.add_argument(
-        "--render-scale",
-        type=float,
-        default=2,
-        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2."
-    )
-    parser.add_argument(
-        "--render-sigma",
-        type=float,
-        default=1,
-        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)"
-    )
-    parser.add_argument(
-        "--output-resolution",
-        type=float,
-        default=0.6,
-        help="Final resolution (micron/pixel) for the segmentation mask."
-    )
-    return parser
-
-def setup_pseudoimage_parser(parent_parser):
-    """setup_pseudoimage_parser"""
-    parser = parent_parser.add_parser(
-        "pseudoimage",
-        help="generate and visualize pseudoimage of Open-ST RNA data",
-        parents=[get_pseudoimage_parser()],
-    )
-    parser.set_defaults(func=_run_pseudoimage_visualizer)
-
-    return parser
 
 def create_paired_pseudoimage(
     coords: np.ndarray,
@@ -281,5 +215,6 @@ def _run_pseudoimage_visualizer(args):
     napari.run()
 
 if __name__ == "__main__":
+    from openst.cli import get_pseudoimage_parser
     args = get_pseudoimage_parser().parse_args()
     _run_pseudoimage_visualizer()
