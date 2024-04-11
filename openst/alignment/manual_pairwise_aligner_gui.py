@@ -50,50 +50,6 @@ from skimage.transform import warp
 from openst.alignment.manual_pairwise_aligner import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
 from openst.utils.pseudoimage import create_paired_pseudoimage
 
-def get_manual_pairwise_aligner_gui_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        default="",
-        help="Path to the input h5ad file containing spatial coordinates",
-    )
-    parser.add_argument(
-        "--spatial-key",
-        type=str,
-        default="",
-        help="Path in the h5ad file to the spatial coordinates",
-    )
-    parser.add_argument(
-        "--image-key",
-        type=str,
-        default="",
-        help="Path in the h5ad file to the image",
-    )
-    return parser
-
-def setup_manual_pairwise_aligner_gui_parser(parent_parser):
-    """setup_manual_pairwise_aligner_gui_parser"""
-    parser = parent_parser.add_parser(
-        "manual_pairwise_aligner_gui",
-        help="GUI for openst manual pairwise alignment of spatial transcriptomics and imaging data",
-        parents=[get_manual_pairwise_aligner_gui_parser()],
-    )
-    parser.set_defaults(func=_run_manual_pairwise_aligner_gui)
-
-    return parser
-
-# Utils for h5ad files
 def h5_to_dict(val):
     result = {}
     for key, value in val.items():

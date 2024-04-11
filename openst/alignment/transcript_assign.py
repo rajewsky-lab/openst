@@ -1,4 +1,3 @@
-import argparse
 import logging
 
 import numpy as np
@@ -10,87 +9,6 @@ from skimage import measure
 from openst.utils.file import (check_directory_exists, check_file_exists,
                                load_properties_from_adata)
 from openst.utils.spacemake import reassign_indices_adata
-
-
-def get_transcript_assign_parser():
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        add_help=False,
-        description="openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask",
-    )
-
-    parser.add_argument(
-        "--adata",
-        type=str,
-        help="path to previously aligned spatial.h5ad AnnData file",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--mask-in-adata",
-        default=False,
-        action="store_true",
-        help="When specified, the image mask is loaded from the adata, at the internal path specified by '--mask'",
-    )
-
-    parser.add_argument(
-        "--shuffle-umi",
-        default=False,
-        action="store_true",
-        help="When specified, UMI locations will be shuffled. This can be used as a baseline for feature selection.",
-    )
-
-    parser.add_argument(
-        "--mask",
-        type=str,
-        help="""path to image mask; must be in same coordinates as the obsm['spatial'] in the AnnData file.
-        If --mask-in-adata, it is a path within the h5ad file""",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--spatial-key",
-        type=str,
-        help="""obsm dataset for the aligned coordinates, e.g. 'spatial_pairwise_aligned_coarse'  or
-        'spatial_pairwise_aligned_fine' if the data has been aligned with openst pairwise_aligner""",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        help="path and filename for output file that will be generated",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--metadata-out",
-        type=str,
-        default="",
-        help="""Path where the metadata will be stored.
-        If not specified, metadata is not saved.
-        Warning: a report (via openst report) cannot be generated without metadata!""",
-    )
-
-    return parser
-
-
-def setup_transcript_assign_parser(parent_parser):
-    """setup_transcript_assign_parser"""
-    parser = parent_parser.add_parser(
-        "transcript_assign",
-        help="assign transcripts into previously aligned segmentation mask",
-        parents=[get_transcript_assign_parser()],
-    )
-    parser.set_defaults(func=_run_transcript_assign)
-
-    return parser
 
 
 def assert_valid_mask(im):
@@ -211,5 +129,6 @@ def _run_transcript_assign(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_transcript_assign_parser
     args = get_transcript_assign_parser().parse_args()
     _run_transcript_assign(args)

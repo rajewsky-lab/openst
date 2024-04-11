@@ -1,4 +1,3 @@
-import argparse
 import h5py
 import logging
 import dask
@@ -14,76 +13,6 @@ from ome_zarr.io import parse_url
 from ome_zarr.writer import write_image
 import zarr
 from openst.utils.file import check_directory_exists, check_file_exists
-
-
-def get_segment_merge_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="segmentation of Open-ST imaging data with cellpose",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--mask-in",
-        type=str,
-        required=True,
-        nargs=2,
-        help="Path to the input segmentation masks - two of them!",
-    )
-    parser.add_argument(
-        "--mask-out",
-        type=str,
-        required=True,
-        help="Path (file or h5) where the merged mask will be saved",
-    )
-    parser.add_argument(
-        "--adata",
-        type=str,
-        default='',
-        help="When specified, masks are loaded from adata (--mask-in), and segmentation is saved there (to --mask-out)",
-    )
-    parser.add_argument(
-        "--chunk-size",
-        type=int,
-        default=512,
-        help="When prediction of the mask runs in separate chunks, this is the chunk square size (in pixels)",
-    )
-    parser.add_argument(
-        "--chunked",
-        action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--num-workers",
-        type=int,
-        help="Number of parallel workers when --chunked is specified",
-        required=False,
-        default=-1,
-    )
-    return parser
-
-
-def setup_segment_merge_parser(parent_parser):
-    """setup_segment_merge_parser"""
-    parser = parent_parser.add_parser(
-        "segment_merge",
-        help="merge segmentations from Open-ST data",
-        parents=[get_segment_merge_parser()],
-    )
-    parser.set_defaults(func=_run_segment_merge)
-
-    return parser
 
 
 def _segment_merge(mask_a, mask_b):
@@ -188,5 +117,6 @@ def _run_segment_merge(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_segment_merge_parser
     args = get_segment_merge_parser().parse_args()
     _run_segment_merge(args)

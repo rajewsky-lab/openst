@@ -1,4 +1,3 @@
-import argparse
 import logging
 from typing import List, Union
 
@@ -7,113 +6,6 @@ from anndata import AnnData, concat, read_h5ad
 
 from openst.utils.file import (check_directory_exists, check_file_exists,
                                check_obs_unique)
-
-DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
-
-
-def get_spatial_stitch_parser():
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        description="stitching spatial transcriptomics tiles into a common global coordinate system",
-        add_help=False,
-    )
-
-    parser.add_argument(
-        "--tiles",
-        type=str,
-        nargs="+",
-        help="path to spatial.h5ad AnnData file, one per tile",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--tile-id",
-        type=str,
-        nargs="+",
-        help="list of tile id for the input files, same order as tiles."
-        + "Must be specified when the filenames do not contain a tile id that can be parsed with --tile-id-regex",
-        default=None,
-    )
-
-    parser.add_argument(
-        "--tile-coordinates",
-        type=str,
-        help="name of tile collection",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        help="path to output.h5ad AnnData file",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--tile-id-regex",
-        type=str,
-        help="regex to find tile id in file names",
-        default=DEFAULT_REGEX_TILE_ID,
-    )
-
-    parser.add_argument(
-        "--tile-id-key",
-        type=str,
-        help="name of .obs variable where tile id are (will be) stored",
-        default="tile_id",
-    )
-
-    parser.add_argument(
-        "--merge-output",
-        type=str,
-        help='how to merge tiles, can be "same", "unique", "first", "only"',
-        choices=["same", "unique", "first", "only"],
-        default="same",
-    )
-
-    parser.add_argument(
-        "--join-output",
-        type=str,
-        help='how to join tiles, can be "inner", "outer"',
-        choices=["inner", "outer"],
-        default="outer",
-    )
-
-    parser.add_argument(
-        "--no-reset-index",
-        default=False,
-        action="store_true",
-        help="""do not reset the obs_name index of the AnnData object
-        as 'obs_name:<tile_id_key>'; keep original 'obs_name'""",
-    )
-
-    parser.add_argument(
-        "--no-transform",
-        default=False,
-        action="store_true",
-        help="do not transform the spatial coordinates of the AnnData object",
-    )
-
-    parser.add_argument(
-        "--metadata-out",
-        type=str,
-        default="",
-        help="Path where the metadata will be stored. If not specified, metadata is not saved.",
-    )
-
-    return parser
-
-
-def setup_spatial_stitch_parser(parent_parser):
-    """setup_spatial_stitch_parser"""
-    parser = parent_parser.add_parser(
-        "spatial_stitch",
-        help="stitching STS tiles into a global coordinate system",
-        parents=[get_spatial_stitch_parser()],
-    )
-    parser.set_defaults(func=_run_spatial_stitch)
-
-    return parser
 
 
 def _transform_tile(tile: AnnData, tiles_transform: dict):
@@ -356,5 +248,6 @@ def _run_spatial_stitch(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_spatial_stitch_parser
     args = get_spatial_stitch_parser().parse_args()
     _run_spatial_stitch(args)

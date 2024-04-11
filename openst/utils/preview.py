@@ -1,81 +1,3 @@
-import argparse
-import cv2
-import numpy as np
-from skimage.transform import resize
-from skimage.filters import gaussian
-import logging
-
-def get_preview_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="preview pseudoimage and images of Open-ST data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    # Input
-    parser.add_argument(
-        "--adata",
-        type=str,
-        required=True,
-        help="Necessary to create the pseudoimage",
-    )
-
-    # RNA density-based pseudoimage
-    parser.add_argument(
-        "--spatial-coord-keys",
-        type=str,
-        nargs="+",
-        default=None,
-        help="""Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial').
-                Can be one or many (separated by space)"""
-    )
-
-    # Staining image
-    parser.add_argument(
-        "--image-keys",
-        type=str,
-        nargs="+",
-        default=None,
-        help="""Path to the image to be visualized.
-              Can be one or many (separated by space)"""
-    )
-
-    # Resampling before previsualizing
-    parser.add_argument(
-        "--spatial-coord-resampling",
-        type=int,
-        nargs="+",
-        default=[1],
-        help="""Will load every n-th point. Can be one (same for all spatial-coords)
-                or many (1-to-1 mapping to the spatial-coord list)"""
-    )
-    parser.add_argument(
-        "--image-resampling",
-        type=int,
-        nargs="+",
-        default=[1],
-        help="""Will load every n-th pixel. Can be one (same for all images)
-                or many (1-to-1 mapping to the image list)"""
-    )
-
-    return parser
-
-def setup_preview_parser(parent_parser):
-    """setup_preview_parser"""
-    parser = parent_parser.add_parser(
-        "preview",
-        help="prepreview the dataset with napari",
-        parents=[get_preview_parser()],
-    )
-    parser.set_defaults(func=_run_preview)
-
-    return parser
-
 def _run_preview(args):
     import h5py
     try:
@@ -113,5 +35,6 @@ def _run_preview(args):
     napari.run()
 
 if __name__ == "__main__":
+    from openst.cli import get_preview_parser
     args = get_preview_parser().parse_args()
     _run_preview()
