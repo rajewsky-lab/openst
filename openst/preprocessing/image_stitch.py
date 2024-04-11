@@ -136,6 +136,7 @@ def _run_image_stitch(args):
 
     cmd = image_stitch_imagej(
         imagej_bin=args.imagej_bin,
+        microscope=args.microscope,
         input_dir=args.input_dir,
         output_image=args.output_image,
     )
