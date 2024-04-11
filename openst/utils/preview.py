@@ -50,7 +50,7 @@ def get_preview_parser():
         "--spatial-coord-resampling",
         type=int,
         nargs="+",
-        default=1,
+        default=[1],
         help="""Will load every n-th point. Can be one (same for all spatial-coords)
                 or many (1-to-1 mapping to the spatial-coord list)"""
     )
@@ -58,7 +58,7 @@ def get_preview_parser():
         "--image-resampling",
         type=int,
         nargs="+",
-        default=1,
+        default=[1],
         help="""Will load every n-th pixel. Can be one (same for all images)
                 or many (1-to-1 mapping to the image list)"""
     )
