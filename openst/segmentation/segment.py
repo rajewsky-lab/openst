@@ -22,6 +22,7 @@ from ome_zarr.writer import write_image
 import zarr
 from openst.utils.file import check_directory_exists, check_file_exists
 from openst.utils.pimage import mask_tissue
+from openst.utils.pseudoimage import create_unpaired_pseudoimage
 from skimage.segmentation import find_boundaries
 
 # TODO: implement gray_dilation
@@ -44,8 +45,14 @@ def get_segment_parser():
     parser.add_argument(
         "--image-in",
         type=str,
-        required=True,
         help="Path to the input image.",
+    )
+    parser.add_argument(
+        "--rna-segment",
+        action="store_true",
+        help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
+              instead of using a staining image. 
+              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)"""
     )
     parser.add_argument(
         "--output-mask",
@@ -141,14 +148,7 @@ def get_segment_parser():
         help="Whether to set the background of the imaging modalities to white after tissue masking",
     )
 
-    # RNA density-based segmentation
-    parser.add_argument(
-        "--rna-segment",
-        action="store_true",
-        help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
-              instead of using a staining image. 
-              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)"""
-    )
+    # RNA density-based segmentation configuration
     parser.add_argument(
         "--rna-segment-spatial-coord-key",
         type=str,
@@ -350,52 +350,7 @@ def expand_labels(label_image, distance=1):
     else:
         return expand_labels_block(label_image)
 
-
-def pseudoimage_as_input(
-    adata,
-    spatial_coord_key: str = "obsm/spatial",
-    input_resolution: float = 1,
-    render_scale: float = 1,
-    render_sigma: float = 1.5,
-    output_resolution: float = 1,
-):
-    """
-    Create pseudoimage for segmentation based on RNA density (experimental feature)
-
-    Args:
-        adata (ad.AnnData): Input AnnData object containing the spot-by-gene matrix.
-        lims (tuple): the 2D limits for cropping the spatial coordinates, as (x_min, x_max, y_min, y_max).
-        shape (tuple): the final shape of the image that will be segmented. Should lead to 1:1 aspect ratio.
-        render_scale (float): rescale the coordinates by render_scale for calculating the bin image
-        render_sigma (float): apply gaussian smoothing with render_sigma to the rendered pseudoimage.
-
-    Returns:
-        numpy.ndarray: pseudoimage.
-    """
-    from openst.utils.pseudoimage import recenter_points, show_expression_on_image
-    _spatial_coords = adata[spatial_coord_key]
-    _total_counts = adata["obs/total_counts"]
-
-    marker_filtered = recenter_points(_spatial_coords)
-    marker_filtered = marker_filtered[np.repeat(np.arange(len(marker_filtered)), _total_counts)]
-    marker_filtered_scaled = marker_filtered * input_resolution
-
-    pim = show_expression_on_image(marker_filtered_scaled, render_scale, render_sigma, output_resolution)
-
-    # we need to write the transformed coordinates so they can be applied to the pseudo image
-    _out_spatial_coord_key = f"{spatial_coord_key}_pseudoimage_scale_{render_scale}_sigma_{render_sigma}"
-    if _out_spatial_coord_key in adata:
-        adata[_out_spatial_coord_key][...] = marker_filtered_scaled[:] * output_resolution
-    else:
-        adata[_out_spatial_coord_key] = marker_filtered_scaled[:] * output_resolution
-
-    logging.info(f"Added transformed coordinates as {_out_spatial_coord_key} to the AnnData")
-
-    return pim
-
-
-
-def _run_segment(args):
+def _cellpose_segment(im, args):
     """
     Wrapper for whole or tiled segmentation with cellpose.
 
@@ -421,11 +376,13 @@ def _run_segment(args):
         _num_workers = args.num_workers
 
     # Load cellpose model (path or pretrained)
-    if args.model in models.MODEL_NAMES:
-        model = models.Cellpose(gpu=args.gpu, model_type=args.model).cp
-    else:
+    if args.model != "" and args.model not in models.MODEL_NAMES:
         check_file_exists(args.model)
         model = models.CellposeModel(gpu=args.gpu, pretrained_model=args.model)
+    elif args.model in models.MODEL_NAMES:
+        model = models.Cellpose(gpu=args.gpu, model_type=args.model).cp
+    else:
+        raise FileNotFoundError(f"Cellpose model {args.model} was not found")
 
     if args.chunked:
         logging.info("Loading images into chunks")
@@ -503,19 +460,20 @@ def _load_image(args):
         adata = h5py.File(args.adata, 'r+')
 
         if args.rna_segment:
-            im = pseudoimage_as_input(adata, 
-                                      args.rna_segment_render_spatial_coord_key,
-                                      args.rna_segment_render_input_resolution,
+            im, _ = create_unpaired_pseudoimage(adata, 
+                                      args.rna_segment_spatial_coord_key,
+                                      args.rna_segment_input_resolution,
                                       args.rna_segment_render_scale,
                                       args.rna_segment_render_sigma,
-                                      args.rna_segment_render_output_resolution)
-            logging.info("Will perform segmentation on a")
+                                      args.rna_segment_output_resolution)
+            logging.info("Will perform segmentation on a pseudoimage")
         else:
             im = adata[args.image_in]
             if args.chunked:
                 im = da.from_array(im)
             else:
                 im = im[:]
+            logging.info("Will perform segmentation on a staining image")
 
     else:
         check_file_exists(args.image_in)
@@ -526,7 +484,9 @@ def _load_image(args):
         else:
             im = np.array(Image.open(args.image_in))
         
-    return im
+        adata = None
+        
+    return adata, im
 
 def _save_mask(adata, im, mask_complete, args):
     # Transpose the image, so the axes are cxy
@@ -572,12 +532,14 @@ def _save_mask(adata, im, mask_complete, args):
             logging.info(f'Saving mask to separate file in {args.output_mask}')
             Image.fromarray(mask_complete.astype(dtype)).save(args.output_mask)
 
-if __name__ == "__main__":
-    args = get_segment_parser().parse_args()
-    
+def _run_segment(args):
     # Set maximum image size to support large HE (if not chunked)
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 
     adata, im = _load_image(args)
-    im, mask_complete = _run_segment(adata, im, args)
+    im, mask_complete = _cellpose_segment(im, args)
     _save_mask(adata, im, mask_complete, args)
+
+if __name__ == "__main__":
+    args = get_segment_parser().parse_args()
+    _run_segment()
