@@ -2,6 +2,7 @@ import argparse
 
 DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
+
 def get_pseudoimage_parser():
     """
     Parse command-line arguments.
@@ -26,35 +27,36 @@ def get_pseudoimage_parser():
     parser.add_argument(
         "--spatial-coord-key",
         type=str,
-        default='obsm/spatial',
-        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')"
+        default="obsm/spatial",
+        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')",
     )
     parser.add_argument(
         "--input-resolution",
         type=float,
         default=1,
         help="""Spatial resolution of the input coordinates (retrieved from --spatial-coord-key).
-              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor."""
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
     )
     parser.add_argument(
         "--render-scale",
         type=float,
         default=2,
-        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2."
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
     )
     parser.add_argument(
         "--render-sigma",
         type=float,
         default=1,
-        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)"
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
     )
     parser.add_argument(
         "--output-resolution",
         type=float,
         default=0.6,
-        help="Final resolution (micron/pixel) for the segmentation mask."
+        help="Final resolution (micron/pixel) for the segmentation mask.",
     )
     return parser
+
 
 def setup_pseudoimage_parser(parent_parser):
     """setup_pseudoimage_parser"""
@@ -67,8 +69,10 @@ def setup_pseudoimage_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_pseudoimage_visualizer(args):
     from openst.utils.pseudoimage import _run_pseudoimage_visualizer
+
     _run_pseudoimage_visualizer(args)
 
 
@@ -99,7 +103,7 @@ def get_preview_parser():
         nargs="+",
         default=None,
         help="""Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial').
-                Can be one or many (separated by space)"""
+                Can be one or many (separated by space)""",
     )
 
     # Staining image
@@ -109,7 +113,7 @@ def get_preview_parser():
         nargs="+",
         default=None,
         help="""Path to the image to be visualized.
-              Can be one or many (separated by space)"""
+              Can be one or many (separated by space)""",
     )
 
     # Resampling before previsualizing
@@ -119,7 +123,7 @@ def get_preview_parser():
         nargs="+",
         default=[1],
         help="""Will load every n-th point. Can be one (same for all spatial-coords)
-                or many (1-to-1 mapping to the spatial-coord list)"""
+                or many (1-to-1 mapping to the spatial-coord list)""",
     )
     parser.add_argument(
         "--image-resampling",
@@ -127,10 +131,11 @@ def get_preview_parser():
         nargs="+",
         default=[1],
         help="""Will load every n-th pixel. Can be one (same for all images)
-                or many (1-to-1 mapping to the image list)"""
+                or many (1-to-1 mapping to the image list)""",
     )
 
     return parser
+
 
 def setup_preview_parser(parent_parser):
     """setup_preview_parser"""
@@ -143,9 +148,12 @@ def setup_preview_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_preview(args):
     from openst.utils.preview import _run_preview
+
     _run_preview(args)
+
 
 def get_segment_parser():
     """
@@ -171,7 +179,7 @@ def get_segment_parser():
         action="store_true",
         help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
               instead of using a staining image. 
-              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)"""
+              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)""",
     )
     parser.add_argument(
         "--output-mask",
@@ -185,7 +193,7 @@ def get_segment_parser():
         default="",
         help="When specified, staining image is loaded from adata (from --image-in), and segmentation is saved there (to --output-mask)",
     )
-    
+
     # Cellpose
     parser.add_argument(
         "--model",
@@ -272,35 +280,34 @@ def get_segment_parser():
     parser.add_argument(
         "--rna-segment-spatial-coord-key",
         type=str,
-        default='obsm/spatial',
-        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')"
+        default="obsm/spatial",
+        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')",
     )
     parser.add_argument(
         "--rna-segment-input-resolution",
         type=float,
         default=1,
         help="""Spatial resolution of the input coordinates (retrieved from --rna-segment-spatial-coord-key).
-              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor."""
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
     )
     parser.add_argument(
         "--rna-segment-render-scale",
         type=float,
         default=2,
-        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2."
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
     )
     parser.add_argument(
         "--rna-segment-render-sigma",
         type=float,
         default=1,
-        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)"
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
     )
     parser.add_argument(
         "--rna-segment-output-resolution",
         type=float,
         default=0.6,
-        help="Final resolution (micron/pixel) for the segmentation mask."
+        help="Final resolution (micron/pixel) for the segmentation mask.",
     )
-    
 
     # General
     parser.add_argument(
@@ -335,6 +342,7 @@ def setup_segment_parser(parent_parser):
 
 def cmd_run_segment(args):
     from openst.segmentation.segment import _run_segment
+
     _run_segment(args)
 
 
@@ -366,7 +374,7 @@ def get_segment_merge_parser():
     parser.add_argument(
         "--adata",
         type=str,
-        default='',
+        default="",
         help="When specified, masks are loaded from adata (--mask-in), and segmentation is saved there (to --mask-out)",
     )
     parser.add_argument(
@@ -410,6 +418,7 @@ def setup_segment_merge_parser(parent_parser):
 
 def cmd_run_segment_merge(args):
     from openst.segmentation.segment_merge import _run_segment_merge
+
     _run_segment_merge(args)
 
 
@@ -469,7 +478,7 @@ def get_image_stitch_parser():
         default="",
         help="""When non empty, this specifies how to find the Z location 
              from the individual filename and will create a z-stack from single images.
-             Example regex: 'Image_([0-9]*)_Z([0-9]*)_CH1.tif'"""
+             Example regex: 'Image_([0-9]*)_Z([0-9]*)_CH1.tif'""",
     )
 
     return parser
@@ -489,6 +498,7 @@ def setup_image_stitch_parser(parent_parser):
 
 def cmd_run_image_stitch(args):
     from openst.preprocessing.image_stitch import _run_image_stitch
+
     _run_image_stitch(args)
 
 
@@ -599,6 +609,7 @@ def setup_spatial_stitch_parser(parent_parser):
 
 def cmd_run_spatial_stitch(args):
     from openst.preprocessing.spatial_stitch import _run_spatial_stitch
+
     _run_spatial_stitch(args)
 
 
@@ -614,12 +625,9 @@ def get_image_preprocess_parser():
         allow_abbrev=False,
         add_help=False,
     )
-    parser.add_argument('--input_img', type=str, required=True,
-                        help='path to input image')
-    parser.add_argument('--cut_dir', type=str, required=True,
-                        help='path to CUT directory (to save patched images)')
-    parser.add_argument('--tile_size_px', type=int, required=True,
-                        help='size of the tile in pixels')
+    parser.add_argument("--input_img", type=str, required=True, help="path to input image")
+    parser.add_argument("--cut_dir", type=str, required=True, help="path to CUT directory (to save patched images)")
+    parser.add_argument("--tile_size_px", type=int, required=True, help="size of the tile in pixels")
     parser.add_argument(
         "--device",
         type=str,
@@ -627,7 +635,7 @@ def get_image_preprocess_parser():
         choices=["cpu", "cuda"],
         help="Device used to run feature matching model. Can be ['cpu', 'cuda']",
     )
-    parser.add_argument('--checkpoints_dir', type=str, default='./checkpoints', help='models are saved here')
+    parser.add_argument("--checkpoints_dir", type=str, default="./checkpoints", help="models are saved here")
 
     return parser
 
@@ -643,8 +651,10 @@ def setup_image_preprocess_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_image_preprocess(args):
     from openst.preprocessing.image_preprocess import _run_image_preprocess
+
     _run_image_preprocess(args)
 
 
@@ -715,8 +725,10 @@ def setup_barcode_preprocessing_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_barcode_preprocessing(args):
     from openst.preprocessing.barcode_preprocessing import _run_barcode_preprocessing
+
     _run_barcode_preprocessing(args)
 
 
@@ -759,8 +771,10 @@ def setup_report_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_report(args):
     from openst.metadata.report import _run_report
+
     _run_report(args)
 
 
@@ -844,8 +858,10 @@ def setup_transcript_assign_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_transcript_assign(args):
     from openst.alignment.transcript_assign import _run_transcript_assign
+
     _run_transcript_assign(args)
 
 
@@ -911,8 +927,10 @@ def setup_manual_pairwise_aligner_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_manual_pairwise_aligner(args):
     from openst.alignment.manual_pairwise_aligner import _run_manual_pairwise_aligner
+
     _run_manual_pairwise_aligner(args)
 
 
@@ -926,8 +944,10 @@ def setup_manual_pairwise_aligner_gui_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_manual_pairwise_aligner_gui(args):
     from openst.alignment.manual_pairwise_aligner_gui import _run_manual_pairwise_aligner_gui
+
     _run_manual_pairwise_aligner_gui(args)
 
 
@@ -1090,7 +1110,7 @@ def get_pairwise_aligner_parser():
         "--feature-matcher",
         type=str,
         default="LoFTR",
-        choices=["LoFTR", "SIFT", 'KeyNet'],
+        choices=["LoFTR", "SIFT", "KeyNet"],
         help="Feature matching algorithm",
     )
     parser.add_argument(
@@ -1140,8 +1160,10 @@ def setup_pairwise_aligner_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_pairwise_aligner(args):
     from openst.alignment.pairwise_aligner import _run_pairwise_aligner
+
     _run_pairwise_aligner(args)
 
 
@@ -1254,8 +1276,10 @@ def setup_from_3d_registration_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_from_3d_registration(args):
     from openst.threed.from_3d_registration import _run_from_3d_registration
+
     _run_from_3d_registration(args)
 
 
@@ -1316,9 +1340,12 @@ def setup_to_3d_registration_parser(parent_parser):
 
     return parser
 
+
 def cmd_run_to_3d_registration(args):
     from openst.threed.to_3d_registration import _run_to_3d_registration
+
     _run_to_3d_registration(args)
+
 
 def cmdline_args():
     parent_parser = argparse.ArgumentParser(
