@@ -1,6 +1,7 @@
 import cv2
 import numpy as np
 from skimage.transform import resize
+from skimage.filters import gaussian
 
 
 def create_pseudoimage(
@@ -120,3 +121,23 @@ def create_pseudoimage(
     }
 
     return pseudoimage_and_metadata
+
+
+# pseudoimage for density segmentation
+def recenter_points(points):
+    points_roi = points.copy()
+    points_roi[:, 0] = points_roi[:, 0] - points[:, 0].min()
+    points_roi[:, 1] = points_roi[:, 1] - points[:, 1].min()
+    return points_roi
+
+def show_expression_on_image(points_roi,
+                             render_scale: int = 1, 
+                             render_sigma: float = 1.5,
+                             output_resolution: float = 1):
+    im_shape = points_roi.max(axis=0)
+
+    gene_im, _, _ = np.histogram2d(points_roi[:, 0], points_roi[:, 1],
+                                   bins=tuple((im_shape * render_scale).astype(int)))
+    gene_im = gaussian(gene_im, render_sigma)
+    gene_im = resize(gene_im, tuple((im_shape * output_resolution).astype(int)))
+    return gene_im
