@@ -99,7 +99,6 @@ def _run_preview(args):
             else:
                 image_resampling = args.image_resampling[i]
 
-            print(adata[_image_key].shape)
             viewer.add_image(data=adata[_image_key][::image_resampling, ::image_resampling])
 
     if args.spatial_coord_keys is not None:

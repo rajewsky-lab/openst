@@ -257,7 +257,12 @@ def create_unpaired_pseudoimage(
 
 def _run_pseudoimage_visualizer(args):
     import h5py
-    import napari
+    try:
+        import napari
+    except ImportError:
+        raise ImportError(
+            "Please install napari: `pip install napari`."
+        )
 
     from openst.utils.file import check_file_exists
     
