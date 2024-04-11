@@ -63,6 +63,7 @@ def get_segment_parser():
     parser.add_argument(
         "--adata",
         type=str,
+        default="",
         help="When specified, staining image is loaded from adata (from --image-in), and segmentation is saved there (to --output-mask)",
     )
     
@@ -491,7 +492,7 @@ def _load_image(args):
 def _save_mask(adata, im, mask_complete, args):
     # Transpose the image, so the axes are cxy
     if args.chunked:
-        if args.adata:
+        if args.adata != "":
             if args.output_mask in adata:
                 logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
                 del adata[args.output_mask]
@@ -521,7 +522,7 @@ def _save_mask(adata, im, mask_complete, args):
         elif mask_complete.max() >= (2**64 - 1):
             dtype = np.uint64
 
-        if args.adata:
+        if args.adata != "":
             if args.output_mask in adata:
                 logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
                 del adata[args.output_mask]
