@@ -23,7 +23,7 @@ Open a terminal, and run the following command:
 openst image_stitch \
      --microscope='keyence' \
      --imagej-bin=<path_to_fiji_or_imagej> \
-     --tiles-dir=<path_to_tiles> \
+     --input-dir=<path_to_tiles> \
      --tiles-prefix=<to_read> \
      --tmp-dir=<tmp_dir> \
      --output-image=<output_image>
@@ -39,6 +39,11 @@ a writeable folder).
 !!! question
      If you don't know how to specify the `<path_to_fiji_or_imagej>`, please follow the official instructions provided
      for [Running Headless](https://imagej.net/learn/headless)
+
+If each file in the folder is a z-stack, you don't need to specify anything else. Otherwise, if each file represents a 
+FOV and a Z plane (e.g., file names like Image_00001_Z001.tif, Image_00001_Z002.tif,...), you can specify a regex to
+parse the Z plane from the file names, and a single file per FOV will be created before stitching. This can be specified
+with the argument `--join-zstack-regex`, which by default is set to an empty string (i.e., no merging of Z planes is performed).
 
 ## (Optional) Addressing image irregularities
 Most of the times, large images have uneven illumination, focus or noise. This can be challenging when doing downstream

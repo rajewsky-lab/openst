@@ -47,44 +47,8 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntValidator
 from skimage.transform import warp
 
-from openst.utils.pseudoimage import create_pseudoimage
 from openst.alignment.manual_pairwise_aligner import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
-
-# TODO: we select which tiles to plot in the general visualization (or, if we only show one of them. That happens when we select >1 at the same time...)
-
-# cmdline
-def get_manual_pairwise_aligner_gui_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        default="",
-        help="Path to the input h5ad file containing spatial coordinates",
-    )
-    parser.add_argument(
-        "--spatial-key",
-        type=str,
-        default="",
-        help="Path in the h5ad file to the spatial coordinates",
-    )
-    parser.add_argument(
-        "--image-key",
-        type=str,
-        default="",
-        help="Path in the h5ad file to the image",
-    )
-    return parser
-
+from openst.utils.pseudoimage import create_paired_pseudoimage
 
 def setup_manual_pairwise_aligner_gui_parser(parent_parser):
     """setup_manual_pairwise_aligner_gui_parser"""
@@ -368,7 +332,7 @@ class ImageRenderer(QThread):
         if self.layer == "all_tiles_coarse":
             staining_image_rescaled = staining_image[:: self.rescale_factor_coarse, :: self.rescale_factor_coarse]
             
-            sts_pseudoimage = create_pseudoimage(
+            sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],
                 self.pseudoimg_size,
                 staining_image_rescaled.shape,
@@ -401,7 +365,7 @@ class ImageRenderer(QThread):
                 self.layer
             )
 
-            _t_sts_pseudoimage = create_pseudoimage(
+            _t_sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],  # we need to flip these coordinates
                 self.pseudoimg_size,
                 staining_image_rescaled.shape,

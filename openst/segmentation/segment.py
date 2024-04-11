@@ -22,6 +22,7 @@ from ome_zarr.writer import write_image
 import zarr
 from openst.utils.file import check_directory_exists, check_file_exists
 from openst.utils.pimage import mask_tissue
+from openst.utils.pseudoimage import create_unpaired_pseudoimage
 from skimage.segmentation import find_boundaries
 
 # TODO: implement gray_dilation
@@ -39,11 +40,19 @@ def get_segment_parser():
         allow_abbrev=False,
         add_help=False,
     )
+
+    # Data
     parser.add_argument(
         "--image-in",
         type=str,
-        required=True,
         help="Path to the input image.",
+    )
+    parser.add_argument(
+        "--rna-segment",
+        action="store_true",
+        help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
+              instead of using a staining image. 
+              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)"""
     )
     parser.add_argument(
         "--output-mask",
@@ -54,8 +63,11 @@ def get_segment_parser():
     parser.add_argument(
         "--adata",
         type=str,
+        default="",
         help="When specified, staining image is loaded from adata (from --image-in), and segmentation is saved there (to --output-mask)",
     )
+    
+    # Cellpose
     parser.add_argument(
         "--model",
         type=str,
@@ -102,6 +114,8 @@ def get_segment_parser():
         action="store_true",
         help="When specified, a GPU will be used for prediction",
     )
+
+    # Postprocessing
     parser.add_argument(
         "--dilate-px",
         type=int,
@@ -116,6 +130,8 @@ def get_segment_parser():
         required=False,
         default=0,
     )
+
+    # Preprocessing
     parser.add_argument(
         "--mask-tissue",
         action="store_true",
@@ -132,6 +148,42 @@ def get_segment_parser():
         action="store_true",
         help="Whether to set the background of the imaging modalities to white after tissue masking",
     )
+
+    # RNA density-based segmentation configuration
+    parser.add_argument(
+        "--rna-segment-spatial-coord-key",
+        type=str,
+        default='obsm/spatial',
+        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')"
+    )
+    parser.add_argument(
+        "--rna-segment-input-resolution",
+        type=float,
+        default=1,
+        help="""Spatial resolution of the input coordinates (retrieved from --rna-segment-spatial-coord-key).
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor."""
+    )
+    parser.add_argument(
+        "--rna-segment-render-scale",
+        type=float,
+        default=2,
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2."
+    )
+    parser.add_argument(
+        "--rna-segment-render-sigma",
+        type=float,
+        default=1,
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)"
+    )
+    parser.add_argument(
+        "--rna-segment-output-resolution",
+        type=float,
+        default=0.6,
+        help="Final resolution (micron/pixel) for the segmentation mask."
+    )
+    
+
+    # General
     parser.add_argument(
         "--num-workers",
         type=int,
@@ -221,7 +273,7 @@ def da_imsave(fname, arr, compute=True):
         return res
 
 
-def cellpose_segmentation(
+def run_cellpose_inference(
     im,
     model,
     diameter: float = 20,
@@ -271,11 +323,12 @@ def _segment_chunk(block, block_id, num_blocks, shift, **kwargs):
     else:
         raise ValueError(f"Expected either `2`, `3` or `4` dimensional chunks, found `{len(num_blocks)}`.")
 
-    labels = np.array(cellpose_segmentation(block, **kwargs)[0])
+    labels = np.array(run_cellpose_inference(block, **kwargs)[0])
     mask = labels > 0
     labels[mask] = (labels[mask] << shift) | block_num
 
     return labels
+
 
 def expand_labels(label_image, distance=1):
     from scipy.ndimage import distance_transform_edt
@@ -298,8 +351,7 @@ def expand_labels(label_image, distance=1):
     else:
         return expand_labels_block(label_image)
 
-
-def _run_segment(args):
+def _cellpose_segment(im, args):
     """
     Wrapper for whole or tiled segmentation with cellpose.
 
@@ -317,22 +369,6 @@ def _run_segment(args):
     except ImportError:
         raise ImportError("'cellpose' could not be found. Please install with 'pip install cellpose'")
 
-    # Check input and output data
-    im = None
-    if args.adata != '':
-        check_file_exists(args.adata)
-        adata = h5py.File(args.adata, 'r+')
-        im = adata[args.image_in]
-        if args.chunked:
-            im = da.from_array(im)
-        else:
-            im = im[:]
-
-    else:
-        check_file_exists(args.image_in)
-        if not check_directory_exists(args.output_mask):
-            raise FileNotFoundError("Parent directory for --output-mask does not exist")
-
     if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
     
@@ -340,26 +376,20 @@ def _run_segment(args):
     if args.num_workers > 0:
         _num_workers = args.num_workers
 
-    # Set maximum image size to support large HE (if not chunked)
-    Image.MAX_IMAGE_PIXELS = args.max_image_pixels
-
     # Load cellpose model (path or pretrained)
-    if args.model in models.MODEL_NAMES:
-        model = models.Cellpose(gpu=args.gpu, model_type=args.model).cp
-    else:
+    if args.model != "" and args.model not in models.MODEL_NAMES:
         check_file_exists(args.model)
         model = models.CellposeModel(gpu=args.gpu, pretrained_model=args.model)
-
+    elif args.model in models.MODEL_NAMES:
+        model = models.Cellpose(gpu=args.gpu, model_type=args.model).cp
+    else:
+        raise FileNotFoundError(f"Cellpose model {args.model} was not found")
 
     if args.chunked:
         logging.info("Loading images into chunks")
         # TODO: implement checking of input file (dimensions)
-        if im is None:
-            im = dask_image.imread.imread(args.image_in)[0] # to have 3 dimensions
-
         im = im.rechunk({0: args.chunk_size, 1: args.chunk_size})
         shift = int(np.prod(im.numblocks) - 1).bit_length()
-
         
         # This dask chunked option is useful for limited GPU memory
         # we need to specify processes scheduler such that CUDA
@@ -396,33 +426,7 @@ def _run_segment(args):
                 if args.outline_px > 0:
                     mask_complete = find_boundaries(mask_complete, connectivity=1, mode='inner', background=0)
                     mask_complete = da.where(mask_complete, mask_complete, 0)
-
-                # Transpose the image, so the axes are cxy
-                if args.adata:
-                    if args.output_mask in adata:
-                        logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
-                        del adata[args.output_mask]
-
-                    dset = adata.create_dataset(args.output_mask, shape=mask_complete.shape,
-                                                    dtype=mask_complete.dtype)  
-                    logging.info(f'Saving mask to adata in {args.output_mask}')
-                    da.store(mask_complete, dset)
-
-                    logging.info(f'Relabeling mask in {args.output_mask}')
-                    adata[args.output_mask][...] = measure.label(adata[args.output_mask])
-                    
-                else:
-                    # Save large image mask as zarr
-                    store = parse_url(args.output_mask, mode="w").store
-                    root = zarr.group(store=store)
-                    labels_grp = root.create_group('labels')
-                    logging.info(f'Saving mask to separate file in {args.output_mask}')
-                    write_image(im.transpose(2, 0, 1), group=root, compute=True, axes=['c', 'x', 'y'])
-                    write_image(mask_complete, group=labels_grp, compute=True, axes=['x', 'y'])
     else:
-        if im is None:
-            im = np.array(Image.open(args.image_in))
-
         if args.mask_tissue:
             logging.info("Masking whole tissue from background")
             im = mask_tissue(im, 
@@ -431,21 +435,13 @@ def _run_segment(args):
                             return_hsv=False)
 
         logging.info("Segmenting & relabeling whole image")
-        mask_complete = cellpose_segmentation(
+        mask_complete = run_cellpose_inference(
             im,
             model,
             diameter=args.diameter,
             flow_threshold=args.flow_threshold,
             cellprob_threshold=args.cellprob_threshold,
         )[0]
-
-        dtype = np.uint8
-        if mask_complete.max() >= (2**16 - 1):
-            dtype = np.uint16
-        elif mask_complete.max() >= (2**32 - 1):
-            dtype = np.uint32
-        elif mask_complete.max() >= (2**64 - 1):
-            dtype = np.uint64
 
         if args.dilate_px > 0:
             mask_complete = expand_labels(mask_complete, distance=args.dilate_px)
@@ -457,7 +453,76 @@ def _run_segment(args):
 
         mask_complete = measure.label(mask_complete)
 
-        if args.adata:
+    return im, mask_complete
+
+def _load_image(args):
+    if args.adata != '':
+        check_file_exists(args.adata)
+        adata = h5py.File(args.adata, 'r+')
+
+        if args.rna_segment:
+            im, _ = create_unpaired_pseudoimage(adata, 
+                                      args.rna_segment_spatial_coord_key,
+                                      args.rna_segment_input_resolution,
+                                      args.rna_segment_render_scale,
+                                      args.rna_segment_render_sigma,
+                                      args.rna_segment_output_resolution)
+            logging.info("Will perform segmentation on a pseudoimage")
+        else:
+            im = adata[args.image_in]
+            if args.chunked:
+                im = da.from_array(im)
+            else:
+                im = im[:]
+            logging.info("Will perform segmentation on a staining image")
+
+    else:
+        check_file_exists(args.image_in)
+        if not check_directory_exists(args.output_mask):
+            raise FileNotFoundError("Parent directory for --output-mask does not exist")
+        if args.chunked:
+            im = dask_image.imread.imread(args.image_in)[0] # to have 3 dimensions
+        else:
+            im = np.array(Image.open(args.image_in))
+        
+        adata = None
+        
+    return adata, im
+
+def _save_mask(adata, im, mask_complete, args):
+    # Transpose the image, so the axes are cxy
+    if args.chunked:
+        if args.adata != "":
+            if args.output_mask in adata:
+                logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
+                del adata[args.output_mask]
+
+            dset = adata.create_dataset(args.output_mask, shape=mask_complete.shape,
+                                            dtype=mask_complete.dtype)  
+            logging.info(f'Saving mask to adata in {args.output_mask}')
+            da.store(mask_complete, dset)
+
+            logging.info(f'Relabeling mask in {args.output_mask}')
+            adata[args.output_mask][...] = measure.label(adata[args.output_mask])
+            
+        else:
+            # Save large image mask as zarr
+            store = parse_url(args.output_mask, mode="w").store
+            root = zarr.group(store=store)
+            labels_grp = root.create_group('labels')
+            logging.info(f'Saving mask to separate file in {args.output_mask}')
+            write_image(im.transpose(2, 0, 1), group=root, compute=True, axes=['c', 'x', 'y'])
+            write_image(mask_complete, group=labels_grp, compute=True, axes=['x', 'y'])
+    else:
+        dtype = np.uint8
+        if mask_complete.max() >= (2**16 - 1):
+            dtype = np.uint16
+        elif mask_complete.max() >= (2**32 - 1):
+            dtype = np.uint32
+        elif mask_complete.max() >= (2**64 - 1):
+            dtype = np.uint64
+
+        if args.adata != "":
             if args.output_mask in adata:
                 logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
                 del adata[args.output_mask]
@@ -468,7 +533,14 @@ def _run_segment(args):
             logging.info(f'Saving mask to separate file in {args.output_mask}')
             Image.fromarray(mask_complete.astype(dtype)).save(args.output_mask)
 
+def _run_segment(args):
+    # Set maximum image size to support large HE (if not chunked)
+    Image.MAX_IMAGE_PIXELS = args.max_image_pixels
+
+    adata, im = _load_image(args)
+    im, mask_complete = _cellpose_segment(im, args)
+    _save_mask(adata, im, mask_complete, args)
 
 if __name__ == "__main__":
     args = get_segment_parser().parse_args()
-    _run_segment(args)
+    _run_segment()

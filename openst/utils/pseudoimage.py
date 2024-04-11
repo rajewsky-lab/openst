@@ -1,9 +1,76 @@
+import argparse
 import cv2
 import numpy as np
 from skimage.transform import resize
+from skimage.filters import gaussian
+import logging
 
+def get_pseudoimage_parser():
+    """
+    Parse command-line arguments.
 
-def create_pseudoimage(
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="generate and visualize pseudoimage of Open-ST RNA data",
+        allow_abbrev=False,
+        add_help=False,
+    )
+    # Input
+    parser.add_argument(
+        "--adata",
+        type=str,
+        required=True,
+        help="Necessary to create the pseudoimage",
+    )
+
+    # RNA density-based pseudoimage
+    parser.add_argument(
+        "--spatial-coord-key",
+        type=str,
+        default='obsm/spatial',
+        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')"
+    )
+    parser.add_argument(
+        "--input-resolution",
+        type=float,
+        default=1,
+        help="""Spatial resolution of the input coordinates (retrieved from --spatial-coord-key).
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor."""
+    )
+    parser.add_argument(
+        "--render-scale",
+        type=float,
+        default=2,
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2."
+    )
+    parser.add_argument(
+        "--render-sigma",
+        type=float,
+        default=1,
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)"
+    )
+    parser.add_argument(
+        "--output-resolution",
+        type=float,
+        default=0.6,
+        help="Final resolution (micron/pixel) for the segmentation mask."
+    )
+    return parser
+
+def setup_pseudoimage_parser(parent_parser):
+    """setup_pseudoimage_parser"""
+    parser = parent_parser.add_parser(
+        "pseudoimage",
+        help="generate and visualize pseudoimage of Open-ST RNA data",
+        parents=[get_pseudoimage_parser()],
+    )
+    parser.set_defaults(func=_run_pseudoimage_visualizer)
+
+    return parser
+
+def create_paired_pseudoimage(
     coords: np.ndarray,
     scale: float,
     target_size: tuple = None,
@@ -14,7 +81,8 @@ def create_pseudoimage(
     resize_method: str = 'scikit-image',
 ) -> dict:
     """
-    Create a pseudoimage representation from input coordinates (two-dimensional).
+    Create a pseudoimage representation from input coordinates (two-dimensional), paired
+    to a staining image (will set the limits and dimensions accordingly)
 
     Args:
         coords (np.ndarray): Input coordinates to create the pseudoimage from.
@@ -122,3 +190,98 @@ def create_pseudoimage(
     }
 
     return pseudoimage_and_metadata
+
+
+# pseudoimage for density segmentation
+def recenter_points(points):
+    points_roi = points.copy()
+    points_roi[:, 0] = points_roi[:, 0] - points[:, 0].min()
+    points_roi[:, 1] = points_roi[:, 1] - points[:, 1].min()
+    return points_roi
+
+def show_expression_on_image(points_roi,
+                             render_scale: int = 1, 
+                             render_sigma: float = 1.5,
+                             output_resolution: float = 1):
+    im_shape = points_roi.max(axis=0)
+
+    gene_im, _, _ = np.histogram2d(points_roi[:, 0], points_roi[:, 1],
+                                   bins=tuple((im_shape * (1/render_scale)).astype(int)))
+    gene_im = gaussian(gene_im, render_sigma)
+    gene_im = resize(gene_im, tuple((im_shape * output_resolution).astype(int)))
+    return gene_im
+
+def create_unpaired_pseudoimage(
+    adata,
+    spatial_coord_key: str = "obsm/spatial",
+    input_resolution: float = 1,
+    render_scale: float = 1,
+    render_sigma: float = 1.5,
+    output_resolution: float = 1,
+):
+    """
+    Create pseudoimage for segmentation based on RNA density (experimental feature), i.e.,
+    not paired to a staining image (no cropping, no rescaling)
+
+    Args:
+        adata (ad.AnnData): Input AnnData object containing the spot-by-gene matrix.
+        lims (tuple): the 2D limits for cropping the spatial coordinates, as (x_min, x_max, y_min, y_max).
+        shape (tuple): the final shape of the image that will be segmented. Should lead to 1:1 aspect ratio.
+        render_scale (float): rescale the coordinates by render_scale for calculating the bin image
+        render_sigma (float): apply gaussian smoothing with render_sigma to the rendered pseudoimage.
+
+    Returns:
+        numpy.ndarray: pseudoimage
+        numpy.ndarray: transformed points
+    """
+
+    _spatial_coords = adata[spatial_coord_key][:]
+    _total_counts = adata["obs/total_counts"][:].astype(int)
+
+    marker_filtered = recenter_points(_spatial_coords)
+    marker_filtered = marker_filtered[np.repeat(np.arange(len(marker_filtered)), _total_counts)]
+    marker_filtered_scaled = marker_filtered * input_resolution
+
+    pim = show_expression_on_image(marker_filtered_scaled, render_scale, render_sigma, output_resolution)
+    logging.info(f"Created pseudoimage with {pim.shape} pixels")
+
+    # we need to write the transformed coordinates so they can be applied to the pseudo image
+    _out_spatial_coord_key = f"{spatial_coord_key}_pseudoimage_scale_{render_scale}_sigma_{render_sigma}"
+    marker_filtered_scaled = marker_filtered_scaled * output_resolution
+    if _out_spatial_coord_key in adata:
+        adata[_out_spatial_coord_key][...] = marker_filtered_scaled
+    else:
+        adata[_out_spatial_coord_key] = marker_filtered_scaled
+
+    logging.info(f"Added transformed coordinates as {_out_spatial_coord_key} to the AnnData")
+
+    return pim, marker_filtered_scaled
+
+def _run_pseudoimage_visualizer(args):
+    import h5py
+    try:
+        import napari
+    except ImportError:
+        raise ImportError(
+            "Please install napari: `pip install napari`."
+        )
+
+    from openst.utils.file import check_file_exists
+    
+    check_file_exists(args.adata)
+    adata = h5py.File(args.adata, 'r+')
+    
+    im, pts = create_unpaired_pseudoimage(adata, 
+                                     args.spatial_coord_key,
+                                     args.input_resolution,
+                                     args.render_scale,
+                                     args.render_sigma,
+                                     args.output_resolution)
+    
+    viewer = napari.Viewer()
+    viewer.add_image(data=im)
+    napari.run()
+
+if __name__ == "__main__":
+    args = get_pseudoimage_parser().parse_args()
+    _run_pseudoimage_visualizer()

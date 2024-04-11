@@ -188,3 +188,21 @@ def copytree2(source: str, dest: str) -> str:
     else:
         shutil.copytree(source, dest_dir, dirs_exist_ok=True)
     return dest_dir
+
+def get_package_path():
+    """Get the absolute path of the directory containing the current Python package."""
+    import openst
+    return os.path.dirname(os.path.abspath(openst.__file__))
+
+def get_absolute_package_path(relative_path):
+    """
+    Get the absolute path by concatenating the package path and the relative path.
+
+    Parameters:
+        relative_path (str): Relative path from the package directory.
+
+    Returns:
+        str: Absolute path.
+    """
+    package_path = get_package_path()
+    return os.path.join(package_path, relative_path)
