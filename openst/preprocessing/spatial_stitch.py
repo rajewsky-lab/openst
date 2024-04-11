@@ -8,7 +8,7 @@ from anndata import AnnData, concat, read_h5ad
 from openst.utils.file import (check_directory_exists, check_file_exists,
                                check_obs_unique)
 
-DEFAULT_REGEX_tile_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
+DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
 
 def get_spatial_stitch_parser():
@@ -53,7 +53,7 @@ def get_spatial_stitch_parser():
         "--tile-id-regex",
         type=str,
         help="regex to find tile id in file names",
-        default=DEFAULT_REGEX_tile_ID,
+        default=DEFAULT_REGEX_TILE_ID,
     )
 
     parser.add_argument(
@@ -172,14 +172,14 @@ def create_spatial_stitch(
     return tile
 
 
-def parse_tile_id_from_path(f: str, tile_id_regex: str = DEFAULT_REGEX_tile_ID):
+def parse_tile_id_from_path(f: str, tile_id_regex: str = DEFAULT_REGEX_TILE_ID):
     """
     Parse the tile ID from a file path using a regular expression.
 
     Args:
         f (str): File path.
         tile_id_regex (str, optional): Regular expression pattern for extracting the tile ID.
-                                       Defaults to DEFAULT_REGEX_tile_ID.
+                                       Defaults to DEFAULT_REGEX_TILE_ID.
 
     Returns:
         str: Extracted tile ID from the file path.
@@ -201,7 +201,7 @@ def parse_tile_id_from_path(f: str, tile_id_regex: str = DEFAULT_REGEX_tile_ID):
 def read_tiles_to_list(
     f: Union[str, List[str]],
     tile_id: Union[int, List[int], None] = None,
-    tile_id_regex: str = DEFAULT_REGEX_tile_ID,
+    tile_id_regex: str = DEFAULT_REGEX_TILE_ID,
     tile_id_key: str = "tile_id",
 ):
     """
@@ -211,7 +211,7 @@ def read_tiles_to_list(
         f (Union[str, List[str]]): File path or list of file paths to read tiles from.
         tile_id (Union[int, List[int], None], optional): Tile ID or list of tile IDs. Defaults to None.
         tile_id_regex (str, optional): Regular expression pattern for extracting tile IDs from file paths.
-                                       Defaults to DEFAULT_REGEX_tile_ID.
+                                       Defaults to DEFAULT_REGEX_TILE_ID.
         tile_id_key (str, optional): Observation key name for tile IDs in the AnnData object. Defaults to "tile_id".
 
     Returns:
@@ -269,7 +269,8 @@ def parse_tile_coordinate_system_file(f: str):
 
     cs = pd.read_csv(f, sep="[,|\t]", engine="python")
 
-    cs = cs.set_index("tile_id")
+    _tile_id_col = cs.columns[0]
+    cs = cs.set_index(_tile_id_col)
 
     cs = cs.loc[~cs.index.duplicated(keep="first")]
 

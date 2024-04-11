@@ -41,8 +41,9 @@ from openst.metadata.classes.pairwise_alignment import (
     AlignmentResult, PairwiseAlignmentMetadata)
 from openst.utils.file import (check_adata_structure, check_directory_exists,
                                check_file_exists, load_properties_from_adata)
-from openst.utils.pimage import mask_tissue
-from openst.utils.pseudoimage import create_pseudoimage
+from openst.utils.pimage import mask_tissue as p_mask_tissue
+from openst.utils.pimage import is_grayscale
+from openst.utils.pseudoimage import create_paired_pseudoimage
 
 
 def get_pairwise_aligner_parser():
@@ -324,7 +325,7 @@ def prepare_image_for_feature_matching(
     hsv_image = rgb2hsv(image)
 
     if mask_tissue:
-        image_out, hsv_image_out = mask_tissue(image, hsv_image,
+        image_out, hsv_image_out = p_mask_tissue(image, hsv_image,
                                                keep_black_background,
                                                mask_gaussian_blur,
                                                return_hsv=True)
@@ -335,6 +336,61 @@ def prepare_image_for_feature_matching(
     prepared_images = [gaussian((equalize_adapthist(rgb2gray(image_out))), gaussian_blur)]
     prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
     prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in image_out.transpose(2, 0, 1)]
+    return prepared_images
+
+
+def prepare_image_for_feature_matching_grayscale(
+    image: np.ndarray,
+    gaussian_blur: float = 0,
+    flip: list = [1, 1],
+    rotation: float = 0,
+    crop: list = [9, None, 0, None],
+    mask_tissue: bool = False,
+    keep_black_background: bool = False,
+    mask_gaussian_blur: float = 5,
+):
+    """
+    Prepare an image for feature matching by applying a series of image processing steps.
+
+    Args:
+        image (np.ndarray): Input RGB image to be prepared.
+        gaussian_blur (float, optional): Standard deviation for Gaussian blurring applied after processing.
+        flip (list, optional): List indicating whether to flip the image along the x and y axes.
+        rotation (float, optional): float indicating the rotation angle in degrees in counter-clockwise direction.
+        crop (list, optional): List specifying cropping range [x_min, x_max, y_min, y_max] for the prepared image.
+        mask_tissue (bool, optional): If True, background is removed with saturation -> blur -> otsu
+        keep_black_background (bool, optional): If True, keeps background pixels as black. Only if mask_tissue=True
+        mask_gaussian_blur (float, optional): Standard deviation for Gaussian blurring of the saturation channel.
+
+    Returns:
+        list: A list containing prepared images after applying the specified processing steps.
+            - Each element of the list corresponds to a processed channel of the input image.
+
+    Notes:
+        - This function prepares the input image for feature matching by applying a series of processing steps.
+        - The steps include thresholding, binary fill, background removal, equalization, blurring, and flipping.
+        - The 'mask_gaussian_blur' parameter controls the amount of blurring applied to the saturation channel.
+        - The 'keep_black_background' parameter toggles background pixel replacement with white.
+        - The 'gaussian_blur' parameter controls the amount of blurring applied after processing.
+        - The 'flip' parameter specifies flipping along the x and y axes using a list of factors [x_flip, y_flip].
+        - The 'crop' parameter defines the cropping range for the prepared image.
+
+    Raises:
+        ValueError: If provided arguments have invalid values.
+        ValueError: If the input 'image' is not an RGB image (3-channel).
+    """
+    # Check if flip argument is a list with two elements
+    if not isinstance(flip, list) or len(flip) != 2:
+        raise ValueError("The 'flip' argument should be a list with two elements [x_flip, y_flip].")
+
+    # Check if crop argument is a list with four elements
+    if not isinstance(crop, list) or len(crop) != 4:
+        raise ValueError("The 'crop' argument should be a list with four elements [x_min, x_max, y_min, y_max].")
+
+    image = transform_image(image, flip, crop, rotation)
+    image_out = image
+
+    prepared_images = [gaussian((equalize_adapthist(image_out)), gaussian_blur)]
     return prepared_images
 
 
@@ -412,8 +468,13 @@ def run_registration(
     # ).astype(np.uint8)
     # src = staining_image_rescaled
 
+    _fn_prepare_image_for_feature_matching = prepare_image_for_feature_matching
+
+    if is_grayscale(src):
+        _fn_prepare_image_for_feature_matching = prepare_image_for_feature_matching_grayscale
+
     def src_augmenter(x, flip, rotation):
-        return prepare_image_for_feature_matching(
+        return _fn_prepare_image_for_feature_matching(
             image=x,
             flip=flip,
             rotation=rotation,
@@ -423,7 +484,7 @@ def run_registration(
         )
 
     sts_coords = in_coords[total_counts > args.threshold_counts_coarse]
-    sts_pseudoimage = create_pseudoimage(sts_coords, args.pseudoimage_size_coarse, src.shape, resize_method='cv2')
+    sts_pseudoimage = create_paired_pseudoimage(sts_coords, args.pseudoimage_size_coarse, src.shape, resize_method='cv2')
     dst = prepare_pseudoimage_for_feature_matching(sts_pseudoimage["pseudoimage"])
 
     # Feature matching
@@ -511,7 +572,7 @@ def run_registration(
 
         logging.info(f"Registering tile {tile_code} with {_t_valid_coords.sum()} coordinates")
 
-        _t_sts_pseudoimage = create_pseudoimage(
+        _t_sts_pseudoimage = create_paired_pseudoimage(
             sts_coords_transformed[:, ::-1],  # we flip these coordinates
             args.pseudoimage_size_fine,
             staining_image_rescaled.shape,
@@ -525,7 +586,7 @@ def run_registration(
             _i_sts_coords_coarse_within_image_bounds
         ][_t_valid_coords]
 
-        _t_sts_pseudoimage_counts = create_pseudoimage(
+        _t_sts_pseudoimage_counts = create_paired_pseudoimage(
             sts_coords_transformed[:, ::-1],  # we flip these coordinates
             args.pseudoimage_size_fine,
             staining_image_rescaled.shape,

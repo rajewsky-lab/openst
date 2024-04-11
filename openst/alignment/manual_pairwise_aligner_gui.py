@@ -45,7 +45,7 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntValidator
 from skimage.transform import estimate_transform, warp
 
-from openst.utils.pseudoimage import create_pseudoimage
+from openst.utils.pseudoimage import create_paired_pseudoimage
 
 def setup_manual_pairwise_aligner_gui_parser(parent_parser):
     """setup_manual_pairwise_aligner_gui_parser"""
@@ -278,7 +278,7 @@ class ImageRenderer(QThread):
         if self.layer == "all_tiles_coarse":
             staining_image_rescaled = staining_image[:: self.rescale_factor_coarse, :: self.rescale_factor_coarse]
             
-            sts_pseudoimage = create_pseudoimage(
+            sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],
                 self.pseudoimg_size,
                 staining_image_rescaled.shape,
@@ -306,7 +306,7 @@ class ImageRenderer(QThread):
                 self.layer
             )
 
-            _t_sts_pseudoimage = create_pseudoimage(
+            _t_sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],  # we need to flip these coordinates
                 self.pseudoimg_size,
                 staining_image_rescaled.shape,

@@ -1,0 +1,82 @@
+adapters:
+  optical_primer: GAATCACGATACGTACACCA
+  smart: AATGATACGGCGACCACCGAGATCTACACTCTTTCCCTACACGACGCTCTTC
+barcode_flavors:
+  default:
+    UMI: r1[12:20]
+    bam_tags: CR:{cell},CB:{cell},MI:{UMI},RG:{assigned}
+    cell: r1[0:12]
+  openst:
+    UMI: r2[0:9]
+    bam_tags: CR:{cell},CB:{cell},MI:{UMI},RG:{assigned}
+    cell: r1[2:27]
+external_bin:
+  dropseq_tools: Drop-seq_tools-2.5.1
+microscopy_out: ''
+puck_data:
+  barcode_file: predictions_ml.csv
+  root: puck_data
+pucks:
+  default:
+    coordinate_system: ''
+    spot_diameter_um: 10
+    width_um: 3000
+  fc_1:
+    coordinate_system: fc_1.csv
+    spot_diameter_um: 0.6
+    width_um: 1200
+  fc_2:
+    coordinate_system: fc_2.csv
+    spot_diameter_um: 0.6
+    width_um: 1200
+root_dir: ''
+run_modes:
+  default:
+    clean_dge: false
+    count_intronic_reads: true
+    count_mm_reads: false
+    detect_tissue: false
+    mesh_data: false
+    mesh_spot_diameter_um: 55
+    mesh_spot_distance_um: 100
+    mesh_type: circle
+    n_beads: 100000
+    polyA_adapter_trimming: true
+    spatial_barcode_min_matches: 0
+    umi_cutoff:
+    - 100
+    - 300
+    - 500
+  openst:
+    clean_dge: false
+    count_intronic_reads: true
+    count_mm_reads: true
+    detect_tissue: false
+    mesh_data: false
+    n_beads: 2500000
+    polyA_adapter_trimming: true
+    spatial_barcode_min_matches: 0.1
+    umi_cutoff:
+    - 5
+species:
+  mouse:
+    genome:
+      annotation: genomes/mouse/genome/annotation.gtf
+      sequence: genomes/mouse/genome/sequence.fa
+    phiX:
+      annotation: ''
+      sequence: genomes/phiX/phiX.fa
+    rRNA:
+      annotation: ''
+      sequence: genomes/mouse/rRNA/sequence.fa
+  human:
+    genome:
+      annotation: genomes/human/genome/annotation.gtf
+      sequence: genomes/human/genome/sequence.fa
+    phiX:
+      annotation: ''
+      sequence: genomes/phiX/phiX.fa
+    rRNA:
+      annotation: ''
+      sequence: genomes/human/rRNA/sequence.fa
+temp_dir: /tmp
