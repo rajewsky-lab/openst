@@ -6,9 +6,9 @@ def apply_transform(in_coords: np.ndarray, transform: SimilarityTransform, check
     # Check if transform within the acceptable bounds
     if (
         check_bounds
-        and (transform.rotation > np.pi / 4)
+        and ((transform.rotation > np.pi / 4)
         or (transform.scale > 2 or transform.scale < 0.5)
-        or (transform.translation.max() > in_coords.max(axis=0).max())
+        or (transform.translation.max() > in_coords.max(axis=0).max()))
     ):
         return in_coords
 

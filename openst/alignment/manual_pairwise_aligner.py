@@ -6,7 +6,7 @@ import shutil
 
 import numpy as np
 from anndata import read_h5ad
-from skimage.transform import estimate_transform
+from skimage.transform import estimate_transform as ski_estimate_transform
 
 from openst.alignment.transformation import apply_transform
 from openst.utils.file import (check_adata_structure, check_directory_exists,
@@ -74,10 +74,29 @@ def setup_manual_pairwise_aligner_parser(parent_parser):
 
     return parser
 
+def estimate_transform(model: str, src: np.ndarray, dst: np.ndarray):
+    """
+    TODO: write documentation
+    returns sklearn transform and True/False depending on whether flip needs to be applied to the src points before tform
+    """
+    tform_points = ski_estimate_transform("similarity", src, dst)
+
+    src_flip = np.array([src[:, 0], (src[:, 1]*-1) - ((src[:, 1]*-1).min() - (src[:, 1]).min())]).T
+    tform_points_flip = ski_estimate_transform("similarity", src_flip, dst)
+
+    _distance_defa = np.mean(np.linalg.norm(tform_points(src) - dst, axis=1))
+    _distance_flip = np.mean(np.linalg.norm(tform_points_flip(src_flip) - dst, axis=1))
+
+    if _distance_flip < _distance_defa:
+        return tform_points_flip, True
+    else:
+        return tform_points, False
+
 def apply_transform_to_coords(
     in_coords: np.ndarray,
     tile_id: np.ndarray,
     keypoints: dict,
+    check_bounds: bool = False,
 ) -> (np.ndarray, np.ndarray):
     """
     Perform manual registration of spatial transcriptomics (STS) data with a staining image.
@@ -98,8 +117,12 @@ def apply_transform_to_coords(
         mkpts = keypoints['all_tiles_coarse']
         mkpts_coarse0, mkpts_coarse1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
         # Preparing images and preprocessing routines
-        tform_points = estimate_transform("similarity", mkpts_coarse1, mkpts_coarse0)
-        sts_coords_transformed[..., :2] = apply_transform(in_coords[..., :2], tform_points, check_bounds=False)[..., :2][..., ::-1]
+        tform_points, needs_flip = estimate_transform("similarity", mkpts_coarse1, mkpts_coarse0)
+        if needs_flip:
+            # this applies flipping to the coordinates
+            sts_coords_transformed[..., 0] = (sts_coords_transformed[..., 0]*-1) - ((mkpts_coarse1[..., 1]*-1).min() - (mkpts_coarse1[..., 1]).min())
+
+        sts_coords_transformed[..., :2] = apply_transform(sts_coords_transformed[..., :2], tform_points, check_bounds=check_bounds)[..., :2][..., ::-1]
     else:
         # Collect tile identifiers
         tile_codes = np.unique(tile_id.codes)
@@ -111,17 +134,19 @@ def apply_transform_to_coords(
             mkpts_fine0, mkpts_fine1 = np.array(mkpts['point_src']).astype(float), np.array(mkpts['point_dst']).astype(float)
 
             _t_valid_coords = tile_id.codes == tile_code
-            tform_points = estimate_transform("similarity", mkpts_fine1, mkpts_fine0)
-            sts_coords_transformed[..., :2][_t_valid_coords] = apply_transform(in_coords[..., :2][_t_valid_coords], tform_points, check_bounds=False)[..., :2][..., ::-1]
+            tform_points, needs_flip = estimate_transform("similarity", mkpts_fine1, mkpts_fine0)
+            if needs_flip:
+                # this applies flipping to the coordinates
+                sts_coords_transformed[..., 0] = (sts_coords_transformed[..., 0]*-1) - ((mkpts_fine1[..., 1]*-1).min() - (mkpts_fine1[..., 1]).min())
+
+            sts_coords_transformed[..., :2][_t_valid_coords] = apply_transform(sts_coords_transformed[..., :2][_t_valid_coords], tform_points, check_bounds=check_bounds)[..., :2][..., ::-1]
 
     return sts_coords_transformed
 
-def load_keypoints_from_json(fname: str):
+def keypoints_json_to_dict(keypoints_json):
     keypoints_by_key = {}
-    with open(fname) as j:
-        _keypoints_dict = json.load(j)['points']
 
-    for keypoint in _keypoints_dict:
+    for keypoint in keypoints_json:
         if keypoint['layer'] not in keypoints_by_key.keys():
             keypoints_by_key[keypoint['layer']] = {"point_src": [], "point_dst": []}
 
@@ -129,6 +154,13 @@ def load_keypoints_from_json(fname: str):
         keypoints_by_key[keypoint['layer']]["point_dst"].append(keypoint["point_dst_offset_rescaled"])
 
     return keypoints_by_key
+
+def load_keypoints_from_json(fname: str):
+    
+    with open(fname) as j:
+        keypoints_json = json.load(j)['points']
+
+    return keypoints_json_to_dict(keypoints_json)
 
 def _run_manual_pairwise_aligner(args):
     logging.info("Open-ST pairwise alignment; running with parameters:")

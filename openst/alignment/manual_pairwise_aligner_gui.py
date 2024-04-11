@@ -1,3 +1,4 @@
+import argparse
 import json
 import sys
 import h5py
@@ -10,6 +11,7 @@ from PyQt5.QtWidgets import (
     QMainWindow,
     QHBoxLayout,
     QVBoxLayout,
+    QFormLayout,
     QWidget,
     QPushButton,
     QFileDialog,
@@ -43,20 +45,59 @@ from PyQt5.QtCore import (
 )
 
 from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntValidator
-from skimage.transform import estimate_transform, warp
+from skimage.transform import warp
 
 from openst.utils.pseudoimage import create_pseudoimage
+from openst.alignment.manual_pairwise_aligner import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
+
+# TODO: we select which tiles to plot in the general visualization (or, if we only show one of them. That happens when we select >1 at the same time...)
+
+# cmdline
+def get_manual_pairwise_aligner_gui_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
+        allow_abbrev=False,
+        add_help=False,
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="Path to the input h5ad file containing spatial coordinates",
+    )
+    parser.add_argument(
+        "--spatial-key",
+        type=str,
+        default="",
+        help="Path in the h5ad file to the spatial coordinates",
+    )
+    parser.add_argument(
+        "--image-key",
+        type=str,
+        default="",
+        help="Path in the h5ad file to the image",
+    )
+    return parser
+
 
 def setup_manual_pairwise_aligner_gui_parser(parent_parser):
     """setup_manual_pairwise_aligner_gui_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner_gui",
         help="GUI for openst manual pairwise alignment of spatial transcriptomics and imaging data",
+        parents=[get_manual_pairwise_aligner_gui_parser()],
     )
     parser.set_defaults(func=_run_manual_pairwise_aligner_gui)
 
     return parser
 
+# Utils for h5ad files
 def h5_to_dict(val):
     result = {}
     for key, value in val.items():
@@ -66,7 +107,7 @@ def h5_to_dict(val):
             result[key] = None  # You can set a default value if needed.
     return result
 
-
+# GUI elements
 class CollapsibleBox(QWidget):
     def __init__(self, title="", parent=None):
         super(CollapsibleBox, self).__init__(parent)
@@ -117,18 +158,6 @@ class CollapsibleBox(QWidget):
         content_animation.setStartValue(0)
         content_animation.setEndValue(content_height)
 
-
-class NpEncoder(json.JSONEncoder):
-    def default(self, obj):
-        if isinstance(obj, np.integer):
-            return int(obj)
-        if isinstance(obj, np.floating):
-            return float(obj)
-        if isinstance(obj, np.ndarray):
-            return obj.tolist()
-        return super(NpEncoder, self).default(obj)
-
-
 class OverlayDialog(QDialog):
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -157,7 +186,6 @@ class OverlayDialog(QDialog):
 
     def updateTextLabel(self, text):
         self.label.setText(f"Please wait: {text}")
-
 
 class TreeViewDialog(QDialog):
     def __init__(self, data, parent=None):
@@ -204,7 +232,67 @@ class TreeViewDialog(QDialog):
                 item = item.parent()
             return "/".join(path)
 
+class InputDialog(QDialog):
+    def __init__(self, parent=None):
+        super().__init__(parent)
 
+        self.layername = QLineEdit(self)
+        buttonBox = QDialogButtonBox(QDialogButtonBox.Ok | QDialogButtonBox.Cancel, self)
+
+        layout = QFormLayout(self)
+        layout.addRow("Layer name", self.layername)
+        layout.addWidget(buttonBox)
+
+        buttonBox.accepted.connect(self.accept)
+        buttonBox.rejected.connect(self.reject)
+
+    def getInputs(self):
+        return self.layername.text()
+
+class ItemDelegate(QStyledItemDelegate):
+    def initStyleOption(self, option, index):
+        super().initStyleOption(option, index)
+        option.decorationSize = option.rect.size()  # Adjust the size of items
+        option.textElideMode = Qt.ElideNone  # Disable text eliding
+
+class LabelledIntField(QWidget):
+    def __init__(self, title, initial_value=None):
+        QWidget.__init__(self)
+        layout = QVBoxLayout()
+        self.setLayout(layout)
+
+        self.label = QLabel()
+        self.label.setText(title)
+        layout.addWidget(self.label)
+
+        self.lineEdit = QLineEdit(self)
+        self.lineEdit.setValidator(QIntValidator())
+        if initial_value != None:
+            self.lineEdit.setText(str(initial_value))
+        layout.addWidget(self.lineEdit)
+        layout.addStretch()
+
+    def setLabelWidth(self, width):
+        self.label.setFixedWidth(width)
+
+    def setInputWidth(self, width):
+        self.lineEdit.setFixedWidth(width)
+
+    def getValue(self):
+        return int(self.lineEdit.text())
+
+# encoding numpy into json file
+class NpEncoder(json.JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.integer):
+            return int(obj)
+        if isinstance(obj, np.floating):
+            return float(obj)
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return super(NpEncoder, self).default(obj)
+
+# image & pseudoimage renderer utils
 class ImageRenderer(QThread):
     update_text = pyqtSignal(str)
     result_ready = pyqtSignal(dict)
@@ -262,6 +350,7 @@ class ImageRenderer(QThread):
         _i_counts_above_threshold = total_counts > self.threshold_counts
         sts_coords = in_coords[_i_counts_above_threshold]
 
+        # TODO: if no coordinate is inside of the image, perform recentering automatically
         if not self.recenter_coarse:
             _i_sts_coords_coarse_within_image_bounds = np.where(
                 (sts_coords[:, 0] > 0)
@@ -275,6 +364,7 @@ class ImageRenderer(QThread):
         #     raise ValueError("""The spatial coordinates are too large for the selected image\n
         #                         Please choose a different rescaling factor!""")
 
+        # TODO: instead of this, we plot specific sections...
         if self.layer == "all_tiles_coarse":
             staining_image_rescaled = staining_image[:: self.rescale_factor_coarse, :: self.rescale_factor_coarse]
             
@@ -286,6 +376,8 @@ class ImageRenderer(QThread):
                 resize_method="cv2",
             )
 
+            #sts_coords_to_transform = sts_pseudoimage["coords_rescaled"] * sts_pseudoimage["rescaling_factor"]
+            #min_lim, max_lim = sts_coords_to_transform.min(axis=0).astype(int), sts_coords_to_transform.max(axis=0).astype(int)
             min_lim, max_lim = sts_coords.min(axis=0).astype(int), sts_coords.max(axis=0).astype(int)
             x_min, y_min = min_lim
             x_max, y_max = max_lim
@@ -295,7 +387,10 @@ class ImageRenderer(QThread):
                 "imageB": sts_pseudoimage["pseudoimage"],
                 "lims": [x_min, x_max, y_min, y_max],
                 "factor_rescale": self.rescale_factor_coarse,
-                "offset_factor": sts_pseudoimage["offset_factor"],
+                "rescale_factor": sts_pseudoimage["rescale_factor"],
+                "rescaling_factor": sts_pseudoimage["rescaling_factor"],
+                "scale": self.pseudoimg_size,
+                "offset_factor": sts_pseudoimage["offset_factor"]
             }
             self.update_text.emit(f"Creating metadata for '{self.layer}'")
         else:
@@ -318,6 +413,8 @@ class ImageRenderer(QThread):
 
             _t_sts_coords_to_transform = _t_sts_pseudoimage["coords_rescaled"] * _t_sts_pseudoimage["rescaling_factor"]
 
+            # TODO: check if these can be from the original coordinates,
+            # not from the offset (so the points are properly specified)
             min_lim, max_lim = _t_sts_coords_to_transform[_t_valid_coords].min(axis=0).astype(
                 int
             ), _t_sts_coords_to_transform[_t_valid_coords].max(axis=0).astype(int)
@@ -333,7 +430,10 @@ class ImageRenderer(QThread):
                 "imageB": _pseudoimage,
                 "lims": [x_min, x_max, y_min, y_max],
                 "factor_rescale": self.rescale_factor_fine,
-                "offset_factor": _t_sts_pseudoimage["offset_factor"],
+                "rescale_factor": _t_sts_pseudoimage["rescale_factor"],
+                "rescaling_factor": _t_sts_pseudoimage["rescaling_factor"],
+                "scale": self.pseudoimg_size,
+                "offset_factor": _t_sts_pseudoimage["offset_factor"]
             }
             del _t_sts_pseudoimage
             gc.collect()
@@ -356,8 +456,23 @@ class ImageRenderer(QThread):
         except Exception as e:
             self.exception.emit(e)
 
+class ColorImageView(pg.ImageView):
+    """
+    Wrapper around the ImageView to create a color lookup
+    table automatically as there seem to be issues with displaying
+    color images through pg.ImageView.
+    """
 
-class OpenWorkerThread(QThread):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.lut = None
+
+    def updateImage(self, autoHistogramRange=True):
+        super().updateImage(autoHistogramRange)
+        self.getImageItem().setLookupTable(self.lut)
+
+# file management
+class OpenAnndataWorkerThread(QThread):
     update_text = pyqtSignal(str)
     result_ready = pyqtSignal(h5py.File)
 
@@ -371,7 +486,25 @@ class OpenWorkerThread(QThread):
         self.result_ready.emit(adata)
 
     def load_image_pairs_from_h5ad(self):
-        return h5py.File(self.file_path)
+        return h5py.File(self.file_path, 'r+')
+    
+class OpenImageWorkerThread(QThread):
+    update_text = pyqtSignal(str)
+    result_ready = pyqtSignal(np.ndarray)
+
+    def __init__(self, file_path):
+        super().__init__()
+        self.file_path = file_path
+
+    def run(self):
+        self.update_text.emit(f"Loading data")
+        image = self.load_image_from_file()
+        self.result_ready.emit(image)
+
+    def load_image_from_file(self):
+        # TODO: do lazy loading, so we don't need to load the whole image (also, support ome tiff etc)
+        from tifffile import imread
+        return imread(self.file_path)
 
 
 class SavePointsWorkerThread(QThread):
@@ -389,63 +522,15 @@ class SavePointsWorkerThread(QThread):
         self.result_ready.emit(result)
 
     def save_points_to_text_file(self):
+        # TODO: check if has extension, otherwise add   
         with open(f"{self.file_path}.json", "w") as fp:
             json.dump(self.points_to_write, fp, indent=4, cls=NpEncoder)
 
         return True
 
 
-class ColorImageView(pg.ImageView):
-    """
-    Wrapper around the ImageView to create a color lookup
-    table automatically as there seem to be issues with displaying
-    color images through pg.ImageView.
-    """
-
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.lut = None
-
-    def updateImage(self, autoHistogramRange=True):
-        super().updateImage(autoHistogramRange)
-        self.getImageItem().setLookupTable(self.lut)
-
-class ItemDelegate(QStyledItemDelegate):
-    def initStyleOption(self, option, index):
-        super().initStyleOption(option, index)
-        option.decorationSize = option.rect.size()  # Adjust the size of items
-        option.textElideMode = Qt.ElideNone  # Disable text eliding
-
-
-class LabelledIntField(QWidget):
-    def __init__(self, title, initial_value=None):
-        QWidget.__init__(self)
-        layout = QVBoxLayout()
-        self.setLayout(layout)
-
-        self.label = QLabel()
-        self.label.setText(title)
-        layout.addWidget(self.label)
-
-        self.lineEdit = QLineEdit(self)
-        self.lineEdit.setValidator(QIntValidator())
-        if initial_value != None:
-            self.lineEdit.setText(str(initial_value))
-        layout.addWidget(self.lineEdit)
-        layout.addStretch()
-
-    def setLabelWidth(self, width):
-        self.label.setFixedWidth(width)
-
-    def setInputWidth(self, width):
-        self.lineEdit.setFixedWidth(width)
-
-    def getValue(self):
-        return int(self.lineEdit.text())
-
-
 class ImageAlignmentApp(QMainWindow):
-    def __init__(self):
+    def __init__(self, args):
         super().__init__()
 
         # Working variables
@@ -466,6 +551,7 @@ class ImageAlignmentApp(QMainWindow):
         self.renderer = None
         self._merged_rgb_layer = None
         self._merged_pseudoimage_layer = None
+        self.args = args
 
         # Initialize whole user interface
         self._init_ui()
@@ -473,6 +559,9 @@ class ImageAlignmentApp(QMainWindow):
         # Add all image pairs into layers
         for name in self.layer_names:
             self.add_image_pair(name)
+
+        # Process arguments
+        self._process_cmdline_args(args)
 
     # Building UI elements
     def _init_ui(self):
@@ -489,6 +578,16 @@ class ImageAlignmentApp(QMainWindow):
 
         # Set up keyPressEvent to handle backspace key
         self.keyPressEvent = self.on_key_press
+
+    def _process_cmdline_args(self, args):
+        if args.h5_in != "":
+            self.open_h5ad(args.h5_in)
+        
+        if args.image_key != "":
+            self._sidebar_buttons_tree_image.setText(args.image_key)
+
+        if args.spatial_key != "":
+            self._sidebar_buttons_tree_spatial.setText(args.spatial_key)
 
     def _init_layout(self):
         self.grid = QGridLayout(self.central_widget)
@@ -534,6 +633,10 @@ class ImageAlignmentApp(QMainWindow):
         lay.addWidget(self._sidebar_buttons_tree_image_label)
         lay.addWidget(self._sidebar_buttons_tree_image)
 
+        self._sidebar_buttons_tree_load_image = QPushButton("Load image data", self)
+        self._sidebar_buttons_tree_load_image.clicked.connect(self.open_image_data)
+        lay.addWidget(self._sidebar_buttons_tree_load_image)
+
         self._sidebar_buttons_tree_spatial_label = QLabel("Spatial coordinates", self)
         self._sidebar_buttons_tree_spatial = QPushButton("...", self)
         self._sidebar_buttons_tree_spatial.clicked.connect(self.select_spatial_path)
@@ -547,7 +650,7 @@ class ImageAlignmentApp(QMainWindow):
         self._collapse_box_imagerender = CollapsibleBox("Rendering settings")
         lay = QVBoxLayout()
         self._sidebar_checkbox_offset_coarse = QCheckBox("Recenter global")
-        self._sidebar_checkbox_offset_coarse.setChecked(False)
+        self._sidebar_checkbox_offset_coarse.setChecked(True)
         self._sidebar_checkbox_offset_coarse.stateChanged.connect(self._update_imagerender_params)
         lay.addWidget(self._sidebar_checkbox_offset_coarse)
 
@@ -619,6 +722,11 @@ class ImageAlignmentApp(QMainWindow):
         self._sidebar_buttons_preview_alignment = QPushButton("Preview alignment", self)
         self._sidebar_buttons_preview_alignment.clicked.connect(self.preview_alignment)
         self._sidebar_buttons_groupbox_vbox.addWidget(self._sidebar_buttons_preview_alignment)
+
+        # Button: apply transform to data
+        self._sidebar_buttons_apply_to_data = QPushButton("Apply to data", self)
+        self._sidebar_buttons_apply_to_data.clicked.connect(self.apply_to_data)
+        self._sidebar_buttons_groupbox_vbox.addWidget(self._sidebar_buttons_apply_to_data)
 
     def select_image_path(self):
         self.show_path_selection_dialog(self._sidebar_buttons_tree_image)
@@ -721,10 +829,13 @@ class ImageAlignmentApp(QMainWindow):
             _t_mkpts0[i] = np.array([xA+xA_0, yA+yA_0])
             _t_mkpts1[i] = np.array([xB+xB_0, yB+yB_0])
 
-        _t_matrix = estimate_transform("similarity", _t_mkpts1[:, ::-1], _t_mkpts0[:, ::-1])
+        _t_image_B = self.imageB
+        _t_matrix, needs_flip = estimate_transform("similarity", _t_mkpts1[:, ::-1], _t_mkpts0[:, ::-1])
+        if needs_flip:
+            _t_image_B = _t_image_B[::-1]
 
         # warp the image using the transformation matrix (similarity)
-        _t_image_B = warp(self.imageB, _t_matrix.inverse) # warp from skimage
+        _t_image_B = warp(_t_image_B, _t_matrix.inverse) # warp from skimage
 
         # Remove current images from merged viewport (if any)
         if self._merged_rgb_layer is not None:
@@ -740,6 +851,37 @@ class ImageAlignmentApp(QMainWindow):
         self._merged_pseudoimage_layer.setOpts(update=True, opacity=self.update_opacity_B_slider.value()/100)
         self.image_view_merged.addItem(self._merged_pseudoimage_layer)
 
+    def apply_to_data(self):
+        # so we can validate that applying the transform will look good...
+        self.preview_alignment()
+
+        # we show a dialog to get the name for the new layer
+        # TOOD: get dialog
+        dialog = InputDialog()
+        if dialog.exec():
+            spatial_key_out = dialog.getInputs()
+        else:
+            QMessageBox.warning(self, "Warning", "Please specify a name to save the coordinates into 'obsm'")
+            return
+    
+        # we apply the transformation using the manual_pairwise_aligner code
+        in_coords = self.adata[self.renderer.spatial_path][:]
+
+        # TODO: we only do for the whole display layer, we need to adapt for the whole thing...
+        tile_id = None
+        keypoints = keypoints_json_to_dict(self.generate_point_pairs_dict()['points'])
+
+        # Apply transform to all coordinates & retransform back
+        sts_coords_coarse = in_coords[..., ::-1].copy()
+        sts_transformed = apply_transform_to_coords(sts_coords_coarse, tile_id, keypoints, check_bounds=False)
+
+        if f"obsm/{spatial_key_out}" in self.adata:
+            self.adata[f"obsm/{spatial_key_out}"][...] = sts_transformed[:][..., ::-1]
+        else:
+            self.adata[f"obsm/{spatial_key_out}"] = sts_transformed[:][..., ::-1]
+
+        # TODO: display some success feedback
+        self.adata_structure = h5_to_dict(self.adata)
 
     def _update_imagerender_params(self):
         if self.adata is None or self.renderer is None:
@@ -785,18 +927,60 @@ class ImageAlignmentApp(QMainWindow):
         self.renderer.finished.connect(self.overlay_dialog.accept)
         self.renderer.result_ready.connect(self.display_images)
         self.renderer.exception.connect(self.handle_render_exception)
+        self._update_imagerender_params()
 
-    def open_h5ad(self):
-        options = QFileDialog.Options()
-        file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "AnnData h5 files (*.h5ad)", options=options)
+    def image_data_loaded(self, img):
+        # TODO: check if it is a dictionary or what, so we can save accordingly
+        if self.adata is None:
+            QMessageBox.warning(self, "Warning", "No anndata file was loaded.")
+            return
+    
+        dialog = InputDialog()
+        if dialog.exec():
+            img_key_out = dialog.getInputs()
+        else:
+            QMessageBox.warning(self, "Warning", "Please specify a path to save the image into 'uns'")
+            return
+
+        # TODO: do the copy lazily into the h5 file (no need to load the whole image into memory)
+        if f"uns/{img_key_out}" in self.adata:
+            self.adata[f"uns/{img_key_out}"][...] = img
+        else:
+            self.adata[f"uns/{img_key_out}"] = img
+    
+        # Setup the tree structure
+        self.adata_structure = h5_to_dict(self.adata)
+
+    def open_h5ad(self, file_path=False):
+        if file_path is False:
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "AnnData h5 files (*.h5ad)", options=options)
 
         if file_path:
             self.overlay_dialog = OverlayDialog(self)
             self.overlay_dialog.setWindowModality(Qt.WindowModal)
             self.overlay_dialog.show()
 
-            self.worker_thread = OpenWorkerThread(file_path)
+            self.worker_thread = OpenAnndataWorkerThread(file_path)
             self.worker_thread.result_ready.connect(self.data_loaded)
+
+            self.worker_thread.update_text.connect(self.overlay_dialog.updateTextLabel)
+            self.worker_thread.finished.connect(self.overlay_dialog.accept)
+
+            self.worker_thread.start()
+
+    def open_image_data(self, file_path=False):
+        if file_path is False:
+            options = QFileDialog.Options()
+            file_path, _ = QFileDialog.getOpenFileName(self, "Open File", "", "Image files (*.tiff *.tif *.png *.jpeg *.ome.tiff)", options=options)
+
+        if file_path:
+            self.overlay_dialog = OverlayDialog(self)
+            self.overlay_dialog.setWindowModality(Qt.WindowModal)
+            self.overlay_dialog.show()
+
+            self.worker_thread = OpenImageWorkerThread(file_path)
+            self.worker_thread.result_ready.connect(self.image_data_loaded)
 
             self.worker_thread.update_text.connect(self.overlay_dialog.updateTextLabel)
             self.worker_thread.finished.connect(self.overlay_dialog.accept)
@@ -829,7 +1013,6 @@ class ImageAlignmentApp(QMainWindow):
 
     def handle_render_exception(self, exception):
         QMessageBox.warning(self, "Rendering exception", repr(exception))
-
 
     def display_images(self, image_pair=None):
         if image_pair is None:
@@ -912,6 +1095,16 @@ class ImageAlignmentApp(QMainWindow):
         self._merged_pseudoimage_layer.setOpts(opacity=opacity_value/100)
         self.image_view_merged.update()
 
+    def load_point_pairs_dict(self, point_pairs_dict):
+        for keypoint in point_pairs_dict['points']:
+            # set the layer and add the point
+            self.current_layer = keypoint['layer']
+
+            # readjust with the point size (will be added later)
+            _p_sz = (self.point_size_slider.value() / 2)
+            self.add_point((float(keypoint['point_src'][0]) + _p_sz, float(keypoint['point_src'][1]) + _p_sz), which="A")
+            self.add_point((float(keypoint['point_dst'][0]) + _p_sz, float(keypoint['point_dst'][1]) + _p_sz), which="B")
+
     def load_point_pairs(self):
         options = QFileDialog.Options()
         filedialog = QFileDialog()
@@ -925,27 +1118,13 @@ class ImageAlignmentApp(QMainWindow):
 
             return _keypoints_dict
         
-        self.points_to_load = load_keypoints_from_json(file_path)
-
+        points_to_load = load_keypoints_from_json(file_path)
         _old_layer = self.current_layer
-
-        for keypoint in self.points_to_load['points']:
-            # set the layer and add the point
-            self.current_layer = keypoint['layer']
-
-            # readjust with the point size (will be added later)
-            _p_sz = (self.point_size_slider.value() / 2)
-            self.add_point((float(keypoint['point_src'][0]) + _p_sz, float(keypoint['point_src'][1]) + _p_sz), which="A")
-            self.add_point((float(keypoint['point_dst'][0]) + _p_sz, float(keypoint['point_dst'][1]) + _p_sz), which="B")
-
+        self.load_point_pairs_dict(points_to_load)
         self.current_layer = _old_layer
-    
-    def save_point_pairs(self):
-        if all(len(value) == 0 for value in self.points_on_image.values()):
-            QMessageBox.warning(self, "Warning", "No points to save.")
-            return
 
-        self.points_to_write = {"points": []}
+    def generate_point_pairs_dict(self):
+        points_to_write = {"points": []}
         for k, v in self.image_pairs.items():
             for i in range(0, len(self.points_on_image[k]), 2):
                 pointA = self.points_on_image[k][i]
@@ -962,7 +1141,7 @@ class ImageAlignmentApp(QMainWindow):
                 _rescale = v["factor_rescale"]
                 _lims = v["lims"]
 
-                self.points_to_write["points"].append(
+                points_to_write["points"].append(
                     {
                         "layer": k,
                         "point_src": [f"{(xA+xA_0):.2f}", f"{(yA+yA_0):.2f}"],
@@ -971,15 +1150,26 @@ class ImageAlignmentApp(QMainWindow):
                         "factor_rescale": _rescale,
                         "offset_factor": _ofs_factor,
                         "point_src_offset_rescaled": [
-                            f"{((((xA+xA_0)+_lims[0])*_rescale)):.2f}",
-                            f"{((((yA+yA_0)+_lims[2])*_rescale)):.2f}",
+                            f"{((((xA+xA_0)+_lims[0]-_ofs_factor[1])*_rescale)):.2f}",
+                            f"{((((yA+yA_0)+_lims[2]-_ofs_factor[0])*_rescale)):.2f}",
                         ],
                         "point_dst_offset_rescaled": [
-                            f"{((((xB+xB_0)+_lims[0])*_rescale)+_ofs_factor[0]):.2f}",
-                            f"{((((yB+yB_0)+_lims[2])*_rescale)+_ofs_factor[1]):.2f}",
+                            # f"{((((xB+xB_0)+_lims[0])*_rescale*_scale)+_ofs_factor[1]):.2f}",
+                            # f"{((((yB+yB_0)+_lims[2])*_rescale*_scale)+_ofs_factor[0]):.2f}",
+                            f"{(((xB+xB_0)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_ofs_factor[0]+_lims[0]):.2f}",
+                            f"{(((yB+yB_0)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_ofs_factor[1]+_lims[2]):.2f}"
                         ],
                     }
                 )
+
+        return points_to_write
+    
+    def save_point_pairs(self):
+        if all(len(value) == 0 for value in self.points_on_image.values()):
+            QMessageBox.warning(self, "Warning", "No points to save.")
+            return
+
+        points_to_write = self.generate_point_pairs_dict()
 
         options = QFileDialog.Options()
         filedialog = QFileDialog()
@@ -990,7 +1180,7 @@ class ImageAlignmentApp(QMainWindow):
         self.overlay_dialog = OverlayDialog(self)
         self.overlay_dialog.setWindowModality(Qt.WindowModal)
         self.overlay_dialog.show()
-        self.worker_thread = SavePointsWorkerThread(file_path, self.points_to_write)
+        self.worker_thread = SavePointsWorkerThread(file_path, points_to_write)
         self.worker_thread.finished.connect(self.overlay_dialog.accept)
         self.worker_thread.start()
 
@@ -1013,17 +1203,12 @@ class ImageAlignmentApp(QMainWindow):
 
         self.points_on_image[self.current_layer].append(point)
 
-    def onEllipseMoved(self):
-        print("Ellipse moved!")
-
-
     def add_point(self, pos, which="B"):
         x, y = pos
         point_size = self.point_size_slider.value()
         self.add_point_to_image(pos, which)
         self.point_pairs[self.current_layer].append((x - (point_size / 2), y - (point_size / 2)))
 
-    # UI responsiveness
     def on_key_press(self, event):
         if event.key() == Qt.Key_Backspace and len(self.points_on_image[self.current_layer]) > 0:
             last_point = self.points_on_image[self.current_layer].pop()
@@ -1038,7 +1223,7 @@ class ImageAlignmentApp(QMainWindow):
             return
 
         if self.active_view is None:
-            return  # No active view is set, do nothing
+            return
 
         if self.active_view == "A" and len(self.point_pairs[self.current_layer]) % 2 == 0:
             point_img_coord = self.image_view_a.getImageItem().mapFromScene(
@@ -1064,9 +1249,9 @@ class ImageAlignmentApp(QMainWindow):
             )
 
 
-def _run_manual_pairwise_aligner_gui(*args, **kwargs):
+def _run_manual_pairwise_aligner_gui(args):
     app = QApplication(sys.argv)
-    window = ImageAlignmentApp()
+    window = ImageAlignmentApp(args)
     window.setWindowTitle("Manual Pairwise Alignment (Open-ST)")
     window.setGeometry(100, 100, 1000, 1000)
     window.show()
@@ -1082,4 +1267,5 @@ def _run_manual_pairwise_aligner_gui(*args, **kwargs):
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    _run_manual_pairwise_aligner_gui()
+    args = get_manual_pairwise_aligner_gui_parser().parse_args()
+    _run_manual_pairwise_aligner_gui(args)

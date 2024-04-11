@@ -88,8 +88,10 @@ def create_pseudoimage(
 
     if values is None:
         values = 1
-
-    _sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
+    
+    # new version to generate the pseudoimage
+    np.add.at(_sts_pseudoimage, (coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]), values)
+    #_sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
 
     if resize_method == 'scikit-image':
         sts_pseudoimage = resize(_sts_pseudoimage, target_size[:2], anti_aliasing=True)
