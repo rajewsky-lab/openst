@@ -17,6 +17,8 @@ from openst.segmentation.segment_merge import setup_segment_merge_parser
 from openst.threed.from_3d_registration import \
     setup_from_3d_registration_parser
 from openst.threed.to_3d_registration import setup_to_3d_registration_parser
+from openst.utils.pseudoimage import setup_pseudoimage_parser
+from openst.utils.preview import setup_preview_parser
 
 
 def cmdline_args():
@@ -53,6 +55,10 @@ def cmdline_args():
     setup_from_3d_registration_parser(parent_parser_subparsers)
     # create the parser for the "barcode_preprocessing" command
     setup_barcode_preprocessing_parser(parent_parser_subparsers)
+    # create the parser for the "pseudoimage" command
+    setup_pseudoimage_parser(parent_parser_subparsers)
+    # create the parser for the "preview" command
+    setup_preview_parser(parent_parser_subparsers)
 
     return parent_parser, parent_parser.parse_args()
 

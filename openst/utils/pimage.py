@@ -260,3 +260,22 @@ def mask_tissue(
         return image_out, hsv_image_out
     else:
         return image_out
+    
+
+
+def is_grayscale(image):
+    """
+    Check if an image is grayscale (2D).
+
+    Parameters:
+        image (numpy.ndarray): Input image.
+
+    Returns:
+        bool: True if the image is grayscale (2D), False otherwise.
+    """
+    if isinstance(image, np.ndarray):
+        if len(image.shape) == 2:
+            return True
+        elif len(image.shape) == 3 and image.shape[2] == 1:
+            return True
+    return False
