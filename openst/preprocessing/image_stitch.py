@@ -2,8 +2,11 @@ import argparse
 import logging
 import os
 import subprocess
+import re
+from collections import defaultdict
+from tqdm import tqdm
 
-from openst.utils.file import check_directory_exists, check_file_exists
+from openst.utils.file import check_directory_exists, check_file_exists, get_absolute_package_path
 
 
 def get_image_stitch_parser():
@@ -56,6 +59,15 @@ def get_image_stitch_parser():
         help="Path where the metadata will be stored. If not specified, metadata is not saved.",
     )
 
+    parser.add_argument(
+        "--join-zstack-regex",
+        type=str,
+        default="",
+        help="""When non empty, this specifies how to find the Z location 
+             from the individual filename and will create a z-stack from single images.
+             Example regex: 'Image_([0-9]*)_Z([0-9]*)_CH1.tif'"""
+    )
+
     return parser
 
 
@@ -71,6 +83,48 @@ def setup_image_stitch_parser(parent_parser):
     return parser
 
 
+def generate_zstacks_from_tiles(input_dir, join_zstack_regex):
+    """
+    Generate Z-stacks from tiles in input directory based on the provided regex pattern.
+
+    Args:
+    - input_dir (str): Path to the directory containing tile images.
+    - join_zstack_regex (str): Regular expression pattern to extract ID and Z-stack location from filenames.
+    - output_dir (str): Optional. Path to the directory where Z-stack images will be saved.
+
+    Returns:
+    - None
+    """
+    import tifffile
+
+    zstack_files = defaultdict(list)
+
+
+
+    # Compile regex pattern
+    pattern = re.compile(join_zstack_regex)
+    for filename in os.listdir(input_dir):
+        match = pattern.match(filename)
+        if match:
+            id_, z = match.groups()
+            zstack_files[id_].append((int(z), filename))
+    
+    for id_, files in zstack_files.items():
+        zstack_files[id_] = [filename for _, filename in sorted(files)]
+
+    # Save Z-stacks
+    for id_, files in tqdm(zstack_files.items()):
+        output_filename = f"Image_{id_}_CH4.tif"  # TODO: customizable
+        stack_path = os.path.join(input_dir or input_dir, output_filename)
+    
+        with tifffile.TiffWriter(stack_path, bigtiff=True) as stack_writer:
+            for z, filename in enumerate(files):
+                image_path = os.path.join(input_dir, filename)
+                with tifffile.TiffFile(image_path) as image:
+                    stack_writer.write(image.asarray(), contiguous=True)
+
+
+
 def _image_stitch_imagej_keyence(
     imagej_bin: str,
     input_dir: str,
@@ -79,10 +133,10 @@ def _image_stitch_imagej_keyence(
     import binascii
     import zipfile
 
-    macro_keyence_path = "imagej_macros/keyence_stitch.ijm"
+    macro_keyence_path = get_absolute_package_path("preprocessing/imagej_macros/keyence_stitch.ijm")
 
     # Checking whether the grid file exists
-    check_file_exists(os.path.join(args.input_dir, "Image.bcf"))
+    check_file_exists(os.path.join(input_dir, "Image.bcf"))
 
     # Loading the bcf metadata from keyence microscope
     archive = zipfile.ZipFile(os.path.join(input_dir, "Image.bcf"), "r")
@@ -133,6 +187,11 @@ def _run_image_stitch(args):
 
     if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
+    
+    if args.join_zstack_regex != "" and not args.no_run:
+        logging.info(f"Creating z-stack from individual tiles before stitching using regex '{args.join_zstack_regex}'")
+        generate_zstacks_from_tiles(args.input_dir, args.join_zstack_regex)
+        logging.info("Z-stacks created successfully")
 
     cmd = image_stitch_imagej(
         imagej_bin=args.imagej_bin,
