@@ -1,9 +1,5 @@
 import argparse
 
-from openst.threed.from_3d_registration import \
-    setup_from_3d_registration_parser
-from openst.threed.to_3d_registration import setup_to_3d_registration_parser
-
 DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
 def get_pseudoimage_parser():
