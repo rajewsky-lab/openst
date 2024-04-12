@@ -18,7 +18,7 @@ The alignment workflow consists of two steps, that can be performed [automatical
 ## Required input data
 For automatic and manual alignment, two inputs are required: (1) a stitched tile-scan of 
 the staining image (see [Preprocessing of imaging](preprocessing_imaging.md)), and (2) a
-single [h5ad] file containing all the [barcoded tiles] of a sample 
+single [h5ad] file containing all the [barcoded tiles](preprocessing_sequencing.md#flow-cell-related-terms) of a sample 
 (see [Preprocessing of sequencing](preprocessing_sequencing.md)). 
 
 !!! warning

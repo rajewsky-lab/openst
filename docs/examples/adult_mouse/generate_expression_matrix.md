@@ -46,7 +46,7 @@ This step allows you to aggregate capture spots by segmented cells:
 openst transcript_assign \
     --h5-in alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad \
     --spatial-key spatial_pairwise_aligned_fine \
-    --mask-in'uns/spatial_pairwise_aligned/mask_transformed_0px' \
+    --mask-in 'uns/spatial_pairwise_aligned/mask_transformed_0px' \
     --h5-out alignment/openst_demo_adult_mouse_by_cell.h5ad
 ```
 

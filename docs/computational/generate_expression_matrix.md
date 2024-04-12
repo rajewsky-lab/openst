@@ -80,7 +80,7 @@ This step allows you to associate capture spots with segmented cells.
 openst transcript_assign \
     --h5-in <path_to_aligned_h5ad> \
     --spatial-key spatial_pairwise_aligned_fine \
-    --mask-in<mask_out_path> \
+    --mask-in <mask_out_path> \
     --h5-out <path_to_sc_h5ad>
 ```
 
