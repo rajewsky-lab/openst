@@ -7,6 +7,7 @@ from anndata import AnnData, concat, read_h5ad
 from openst.utils.file import (check_directory_exists, check_file_exists,
                                check_obs_unique)
 
+DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
 def _transform_tile(tile: AnnData, tiles_transform: dict):
     """
@@ -226,10 +227,10 @@ def _run_spatial_stitch(args):
         for t in args.tiles:
             check_file_exists(t)
 
-    if not check_directory_exists(args.output):
-        raise FileNotFoundError("Parent directory for --output does not exist")
+    if not check_directory_exists(args.h5_out):
+        raise FileNotFoundError("Parent directory for --h5-out does not exist")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
     spatial_stitch = merge_tiles_to_collection(
@@ -244,7 +245,7 @@ def _run_spatial_stitch(args):
         join_output=args.join_output,
     )
 
-    spatial_stitch.write_h5ad(args.output)
+    spatial_stitch.write_h5ad(args.h5_out)
 
 
 if __name__ == "__main__":

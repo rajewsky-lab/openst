@@ -84,19 +84,19 @@ def _run_manual_pairwise_aligner(args):
     _to_load = ["obs/total_counts"]
     if args.per_tile:
         _to_load += ["obs/tile_id"]
-    _to_load += [f"obsm/{args.spatial_key_in}"]
+    _to_load += [f"{args.spatial_key_in}"]
 
     _tile_ids = None
 
     logging.info(f"Loading properties from {args.h5_in}")
     sts = load_properties_from_adata(args.h5_in, properties=_to_load)
 
-    logging.info(f"Loading manually selected keypoints from {args.keypoints_json}")
-    keypoints = load_keypoints_from_json(args.keypoints_json)
+    logging.info(f"Loading manually selected keypoints from {args.keypoints_in}")
+    keypoints = load_keypoints_from_json(args.keypoints_in)
     
     logging.info(f"Applying coordinate transformation")
     # transpose spatial locations to XY coordinates
-    _coords = sts[f"obsm/{args.spatial_key_in}"][:][..., ::-1]
+    _coords = sts[f"{args.spatial_key_in}"][:][..., ::-1]
 
     if args.per_tile:
         _tile_ids = sts["obs/tile_id"]
@@ -115,11 +115,11 @@ def _run_manual_pairwise_aligner(args):
 
     logging.info(f"Modifying coordinates in {args.h5_out}")
     with h5py.File(args.h5_out, 'r+') as adata:
-        if f"obsm/{args.spatial_key_out}" in adata:
+        if f"{args.spatial_key_out}" in adata:
             # reconvert to YX (same axes as the images)
-            adata[f"obsm/{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
+            adata[f"{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
         else:
-            adata[f"obsm/{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
+            adata[f"{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
 
     logging.info(f"Output {args.h5_out} file was written. Finished!")
 

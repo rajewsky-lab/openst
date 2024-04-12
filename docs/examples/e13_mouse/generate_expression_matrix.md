@@ -20,35 +20,30 @@ contains the spatial transcriptome coordinates and staining image after coarse+f
 
 ```sh
 openst segment \
-    --adata alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
+    --h5-in alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
     --image-in 'uns/spatial_pairwise_aligned/staining_image_transformed' \
-    --output-mask 'uns/spatial_pairwise_aligned/mask_transformed_0px' \
+    --mask-out 'uns/spatial_pairwise_aligned/mask_transformed_0px' \
     --model models/HE_cellpose_rajewsky \
     --chunked \
-    --gpu \
+    --device cuda \
     --num-workers 8
 ```
 
-After running this command, the segmentation mask is created and stored in the same `--adata` file, under
+After running this command, the segmentation mask is created and stored in the same `--h5-in` file, under
 the dataset `uns/spatial_pairwise_aligned/mask_transformed_0px`.
 
 ## Assigning transcripts to segmented cells
 Now, we aggregate the initial barcoded spots-by-gene matrix into a cells-by-genes matrix, by leveraging the
 segmentation mask.
 
-!!! note
-    In this dataset, we did not specify `--dilate-px`. Since this model segments nuclei from H&E, we are referring
-    to nuclei when we talk about cells. We use this terminology for consistency with the rest of the documentation.
-
 This step allows you to aggregate capture spots by segmented cells:
 
 ```sh
 openst transcript_assign \
-    --adata alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
+    --h5-in alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
     --spatial-key spatial_pairwise_aligned_fine \
-    --mask-in-adata \
-    --mask 'uns/spatial_pairwise_aligned/mask_transformed_0px' \
-    --output alignment/openst_demo_e13_mouse_head_by_cell.h5ad
+    --mask-in'uns/spatial_pairwise_aligned/mask_transformed_0px' \
+    --h5-out alignment/openst_demo_e13_mouse_head_by_cell.h5ad
 ```
 
 ## Expected output

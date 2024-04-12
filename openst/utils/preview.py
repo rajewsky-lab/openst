@@ -9,8 +9,8 @@ def _run_preview(args):
 
     from openst.utils.file import check_file_exists
     
-    check_file_exists(args.adata)
-    adata = h5py.File(args.adata, 'r+')
+    check_file_exists(args.h5_in)
+    adata = h5py.File(args.h5_in, 'r+')
 
     viewer = napari.Viewer()
 

@@ -66,7 +66,7 @@ coarse alignment, and the keypoints file, to perform the fine alignment:
 
 ```sh
 openst manual_pairwise_aligner \
-    --keypoints-json alignment/openst_e13_demo_fine_keypoints.json \
+    --keypoints-in alignment/openst_e13_demo_fine_keypoints.json \
     --h5-in alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
     --fine
 ```

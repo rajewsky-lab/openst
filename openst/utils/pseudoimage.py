@@ -169,17 +169,21 @@ def create_unpaired_pseudoimage(
 
     _spatial_coords = adata[spatial_coord_key][:]
     _total_counts = adata["obs/total_counts"][:].astype(int)
+    try:
+        _pct_mt_counts = np.nan_to_num(adata["obs/pct_counts_mt"][:])/100
+        _total_counts = (_total_counts - _total_counts * _pct_mt_counts).astype(int)
+    except:
+        logging.info("'pct_counts_mt' was not found; pseudoimage may contain mitochondrial counts")
 
-    marker_filtered = recenter_points(_spatial_coords)
-    marker_filtered = marker_filtered[np.repeat(np.arange(len(marker_filtered)), _total_counts)]
-    marker_filtered_scaled = marker_filtered * input_resolution
+    marker_filtered = recenter_points(_spatial_coords) * input_resolution
+    marker_filtered_repeat = marker_filtered[np.repeat(np.arange(len(marker_filtered)), _total_counts)]
 
-    pim = show_expression_on_image(marker_filtered_scaled, render_scale, render_sigma, output_resolution)
+    pim = show_expression_on_image(marker_filtered_repeat, render_scale, render_sigma, output_resolution)
     logging.info(f"Created pseudoimage with {pim.shape} pixels")
 
     # we need to write the transformed coordinates so they can be applied to the pseudo image
     _out_spatial_coord_key = f"{spatial_coord_key}_pseudoimage_scale_{render_scale}_sigma_{render_sigma}"
-    marker_filtered_scaled = marker_filtered_scaled * output_resolution
+    marker_filtered_scaled = marker_filtered * output_resolution
     if _out_spatial_coord_key in adata:
         adata[_out_spatial_coord_key][...] = marker_filtered_scaled
     else:
@@ -200,8 +204,8 @@ def _run_pseudoimage_visualizer(args):
 
     from openst.utils.file import check_file_exists
     
-    check_file_exists(args.adata)
-    adata = h5py.File(args.adata, 'r+')
+    check_file_exists(args.h5_in)
+    adata = h5py.File(args.h5_in, 'r+')
     
     im, pts = create_unpaired_pseudoimage(adata, 
                                      args.spatial_coord_key,

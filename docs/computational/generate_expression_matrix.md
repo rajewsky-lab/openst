@@ -19,15 +19,15 @@ refer to the [cellpose](https://cellpose.readthedocs.io/en/latest/index.html) do
 
 ```sh
 openst segment \
-    --adata <path_to_aligned_h5ad> \
+    --h5-in <path_to_aligned_h5ad> \
     --image-in <image_in_path> \
-    --output-mask <mask_out_path> \
-    --model <path>/HE_cellpose_rajewsky \
-    --chunked \ # divides the image into smaller chunks (lower memory usage)
-    --gpu \ # uses GPU for segmentation (Nvidia CUDA)
-    --num-workers 8 \ # processes the image in parallel
-    --dilate-px 10 # will extend the segmentation 10 micron around
+    --mask-out <mask_out_path> \
+    --model <path>/HE_cellpose_rajewsky
+    # --device cuda \ # uses GPU for segmentation, if available
+    # --chunked \ # specify if you run out of GPU memory - segments in chunks
 ```
+By default, segmentation is extended radially 10 pixels. This can be changed with the argument `--dilate-px`.
+
 Make sure to replace the placeholders (`<...>`). For instance,
 `<path_to_aligned_h5ad>` is the full path to the `h5ad` file [after pairwise alignment](pairwise_alignment.md#expected-output); 
 `<image_in_path>` is the path to the image - a path to a file, or a location inside the `h5ad` file,
@@ -45,13 +45,10 @@ for segmentation of H&E images The rest of parameters can be checked with `opens
 
      ```sh
      openst segment \
-          --adata <path_to_aligned_h5ad> \
+          --h5-in <path_to_aligned_h5ad> \
           --image-in <image_in_path> \
-          --output-mask <mask_out_path_larger> \
+          --mask-out <mask_out_path_larger> \
           --model <path>/HE_cellpose_rajewsky \
-          --chunked \ # divides the image into smaller chunks (lower memory usage)
-          --gpu \ # uses GPU for segmentation (Nvidia CUDA)
-          --num-workers 8 \ # processes the image in parallel
           --dilate-px 50 \
           --diameter 50 # diameter for the larger cell type
      ```
@@ -65,7 +62,7 @@ for segmentation of H&E images The rest of parameters can be checked with `opens
 
      ```sh
      openst segment_merge \
-          --adata <path_to_aligned_h5ad> \
+          --h5-in <path_to_aligned_h5ad> \
           --mask-in <mask_a> <mask_b>
           --mask-out <mask_combined>
      ```
@@ -81,11 +78,10 @@ This step allows you to associate capture spots with segmented cells.
 
 ```sh
 openst transcript_assign \
-    --adata <path_to_aligned_h5ad> \
+    --h5-in <path_to_aligned_h5ad> \
     --spatial-key spatial_pairwise_aligned_fine \
-    --mask-in-adata \
-    --mask <mask_out_path> \
-    --output <path_to_sc_h5ad>
+    --mask-in<mask_out_path> \
+    --h5-out <path_to_sc_h5ad>
 ```
 
 Replace the placeholders (`<...>`) as before; in this case, the placeholder `<mask_in_path>` must be set to

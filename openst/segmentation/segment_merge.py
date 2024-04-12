@@ -41,9 +41,9 @@ def _run_segment_merge(args):
 
     # Check input and output data
     mask_a, mask_b = None, None
-    if args.adata != '':
-        check_file_exists(args.adata)
-        adata = h5py.File(args.adata, 'r+')
+    if args.h5_in != '':
+        check_file_exists(args.h5_in)
+        adata = h5py.File(args.h5_in, 'r+')
         mask_a = adata[args.mask_in[0]]
         mask_b = adata[args.mask_in[1]]
         if args.chunked:
@@ -79,7 +79,7 @@ def _run_segment_merge(args):
             with dask.config.set(scheduler='single-threaded', num_workers=_num_workers):                
                 _mask_out = _segment_merge(mask_a, mask_b)
 
-                if args.adata:
+                if args.h5_in:
                     if args.mask_out in adata:
                         logging.warn(f"The object {args.mask_out} will be removed from the h5py file")
                         del adata[args.mask_out]
@@ -104,7 +104,7 @@ def _run_segment_merge(args):
 
         _mask_out = _segment_merge(mask_a, mask_b)
 
-        if args.adata:
+        if args.h5_in:
             if args.mask_out in adata:
                 logging.warn(f"The object {args.mask_out} will be removed from the h5py file")
                 del adata[args.mask_out]

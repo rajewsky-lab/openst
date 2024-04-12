@@ -181,7 +181,7 @@ def _cellpose_segment(im, args):
     except ImportError:
         raise ImportError("'cellpose' could not be found. Please install with 'pip install cellpose'")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
     
     _num_workers = 1
@@ -189,11 +189,16 @@ def _cellpose_segment(im, args):
         _num_workers = args.num_workers
 
     # Load cellpose model (path or pretrained)
+    # TODO: check GPU available in torch
+    _gpu = False
+    if args.device == 'cuda':
+        _gpu = True
+
     if args.model != "" and args.model not in models.MODEL_NAMES:
         check_file_exists(args.model)
-        model = models.CellposeModel(gpu=args.gpu, pretrained_model=args.model)
+        model = models.CellposeModel(gpu=_gpu, pretrained_model=args.model)
     elif args.model in models.MODEL_NAMES:
-        model = models.Cellpose(gpu=args.gpu, model_type=args.model).cp
+        model = models.Cellpose(gpu=_gpu, model_type=args.model).cp
     else:
         raise FileNotFoundError(f"Cellpose model {args.model} was not found")
 
@@ -268,9 +273,9 @@ def _cellpose_segment(im, args):
     return im, mask_complete
 
 def _load_image(args):
-    if args.adata != '':
-        check_file_exists(args.adata)
-        adata = h5py.File(args.adata, 'r+')
+    if args.h5_in != '':
+        check_file_exists(args.h5_in)
+        adata = h5py.File(args.h5_in, 'r+')
 
         if args.rna_segment:
             im, _ = create_unpaired_pseudoimage(adata, 
@@ -290,8 +295,8 @@ def _load_image(args):
 
     else:
         check_file_exists(args.image_in)
-        if not check_directory_exists(args.output_mask):
-            raise FileNotFoundError("Parent directory for --output-mask does not exist")
+        if not check_directory_exists(args.mask_out):
+            raise FileNotFoundError("Parent directory for --mask-out does not exist")
         if args.chunked:
             im = dask_image.imread.imread(args.image_in)[0] # to have 3 dimensions
         else:
@@ -304,25 +309,25 @@ def _load_image(args):
 def _save_mask(adata, im, mask_complete, args):
     # Transpose the image, so the axes are cxy
     if args.chunked:
-        if args.adata != "":
-            if args.output_mask in adata:
-                logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
-                del adata[args.output_mask]
+        if args.h5_in != "":
+            if args.mask_out in adata:
+                logging.warn(f"The object {args.mask_out} will be removed from the h5py file")
+                del adata[args.mask_out]
 
-            dset = adata.create_dataset(args.output_mask, shape=mask_complete.shape,
+            dset = adata.create_dataset(args.mask_out, shape=mask_complete.shape,
                                             dtype=mask_complete.dtype)  
-            logging.info(f'Saving mask to adata in {args.output_mask}')
+            logging.info(f'Saving mask to adata in {args.mask_out}')
             da.store(mask_complete, dset)
 
-            logging.info(f'Relabeling mask in {args.output_mask}')
-            adata[args.output_mask][...] = measure.label(adata[args.output_mask])
+            logging.info(f'Relabeling mask in {args.mask_out}')
+            adata[args.mask_out][...] = measure.label(adata[args.mask_out])
             
         else:
             # Save large image mask as zarr
-            store = parse_url(args.output_mask, mode="w").store
+            store = parse_url(args.mask_out, mode="w").store
             root = zarr.group(store=store)
             labels_grp = root.create_group('labels')
-            logging.info(f'Saving mask to separate file in {args.output_mask}')
+            logging.info(f'Saving mask to separate file in {args.mask_out}')
             write_image(im.transpose(2, 0, 1), group=root, compute=True, axes=['c', 'x', 'y'])
             write_image(mask_complete, group=labels_grp, compute=True, axes=['x', 'y'])
     else:
@@ -334,16 +339,16 @@ def _save_mask(adata, im, mask_complete, args):
         elif mask_complete.max() >= (2**64 - 1):
             dtype = np.uint64
 
-        if args.adata != "":
-            if args.output_mask in adata:
-                logging.warn(f"The object {args.output_mask} will be removed from the h5py file")
-                del adata[args.output_mask]
+        if args.h5_in != "":
+            if args.mask_out in adata:
+                logging.warn(f"The object {args.mask_out} will be removed from the h5py file")
+                del adata[args.mask_out]
 
-            logging.info(f'Saving mask to adata in {args.output_mask}')
-            adata[args.output_mask] = mask_complete
+            logging.info(f'Saving mask to adata in {args.mask_out}')
+            adata[args.mask_out] = mask_complete
         else:
-            logging.info(f'Saving mask to separate file in {args.output_mask}')
-            Image.fromarray(mask_complete.astype(dtype)).save(args.output_mask)
+            logging.info(f'Saving mask to separate file in {args.mask_out}')
+            Image.fromarray(mask_complete.astype(dtype)).save(args.mask_out)
 
 def _run_segment(args):
     # Set maximum image size to support large HE (if not chunked)
