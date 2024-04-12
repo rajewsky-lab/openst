@@ -2,8 +2,8 @@ import argparse
 
 DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
-PSEUDOIMAGE_HELP = "Generate pseudoimages of Open-ST RNA data and visualize using napari"
-def get_pseudoimage_parser():
+BARCODE_PREPROCESSING_HELP = "Convert fastq files from first sequencing into spatial barcode files (sequence and coordinates)"
+def get_barcode_preprocessing_parser():
     """
     Parse command-line arguments.
 
@@ -11,478 +11,70 @@ def get_pseudoimage_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description=PSEUDOIMAGE_HELP,
         allow_abbrev=False,
         add_help=False,
+        description=BARCODE_PREPROCESSING_HELP,
     )
-    # Input
+    parser.add_argument("--fastq-in", type=str, required=True, help="Path to the fastq file")
     parser.add_argument(
-        "--h5-in",
+        "--tilecoords-out",
         type=str,
         required=True,
-        help="Necessary to create the pseudoimage",
-    )
-
-    # RNA density-based pseudoimage
-    parser.add_argument(
-        "--spatial-coord-key",
-        type=str,
-        default="obsm/spatial",
-        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
+        help="Directory where output files will be written to",
     )
     parser.add_argument(
-        "--input-resolution",
-        type=float,
-        default=1,
-        help="""Spatial resolution of the input coordinates (retrieved from --spatial-coord-key).
-              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
-    )
-    parser.add_argument(
-        "--render-scale",
-        type=float,
-        default=2,
-        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
-    )
-    parser.add_argument(
-        "--render-sigma",
-        type=float,
-        default=1,
-        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
-    )
-    parser.add_argument(
-        "--output-resolution",
-        type=float,
-        default=0.6,
-        help="Final resolution (micron/pixel) for the segmentation mask.",
-    )
-    return parser
-
-
-def setup_pseudoimage_parser(parent_parser):
-    """setup_pseudoimage_parser"""
-    parser = parent_parser.add_parser(
-        "pseudoimage",
-        help=PSEUDOIMAGE_HELP,
-        parents=[get_pseudoimage_parser()],
-    )
-    parser.set_defaults(func=cmd_run_pseudoimage_visualizer)
-
-    return parser
-
-
-def cmd_run_pseudoimage_visualizer(args):
-    from openst.utils.pseudoimage import _run_pseudoimage_visualizer
-
-    _run_pseudoimage_visualizer(args)
-
-
-PREVIEW_HELP = "Preview locations (as points) and images of Open-ST data"
-def get_preview_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description=PREVIEW_HELP,
-        allow_abbrev=False,
-        add_help=False,
-    )
-    # Input
-    parser.add_argument(
-        "--h5-in",
+        "--out-suffix",
         type=str,
         required=True,
-        help="Necessary to create the pseudoimage",
-    )
-
-    # RNA density-based pseudoimage
-    parser.add_argument(
-        "--spatial-coord-keys",
-        type=str,
-        nargs="+",
-        default=None,
-        help="""Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial').
-                Can be one or many (separated by space)""",
-    )
-
-    # Staining image
-    parser.add_argument(
-        "--image-keys",
-        type=str,
-        nargs="+",
-        default=None,
-        help="""Path to the image to be visualized.
-              Can be one or many (separated by space)""",
-    )
-
-    # Resampling before previsualizing
-    parser.add_argument(
-        "--spatial-coord-resampling",
-        type=int,
-        nargs="+",
-        default=[1],
-        help="""Will load every n-th point. Can be one (same for all spatial-coords)
-                or many (1-to-1 mapping to the spatial-coord list)""",
+        help="Suffix added to the name of the output files (i.e., extension)",
     )
     parser.add_argument(
-        "--image-resampling",
-        type=int,
-        nargs="+",
-        default=[1],
-        help="""Will load every n-th pixel. Can be one (same for all images)
-                or many (1-to-1 mapping to the image list)""",
-    )
-
-    return parser
-
-
-def setup_preview_parser(parent_parser):
-    """setup_preview_parser"""
-    parser = parent_parser.add_parser(
-        "preview",
-        help=PREVIEW_HELP,
-        parents=[get_preview_parser()],
-    )
-    parser.set_defaults(func=cmd_run_preview)
-
-    return parser
-
-def cmd_run_preview(args):
-    from openst.utils.preview import _run_preview
-
-    _run_preview(args)
-
-
-MERGE_MODALITIES_HELP = "merge_modalities locations (as points) and images of Open-ST data"
-def get_merge_modalities_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description=MERGE_MODALITIES_HELP,
-        allow_abbrev=False,
-        add_help=False,
-    )
-    # Input
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        required=True,
-        help="Input Open-ST h5 object",
-    )
-
-    parser.add_argument(
-        "--image-in",
-        type=str,
-        required=True,
-        help="Image that will be loaded and written into the Open-ST h5 object",
-    )
-
-    # Staining image
-    parser.add_argument(
-        "--image-key",
-        type=str,
-        default="uns/spatial/staining_image",
-        help="Key in the Open-ST h5 object where the image will be saved.",
-    )
-
-    return parser
-
-
-def setup_merge_modalities_parser(parent_parser):
-    """setup_merge_modalities_parser"""
-    parser = parent_parser.add_parser(
-        "merge_modalities",
-        help=MERGE_MODALITIES_HELP,
-        parents=[get_merge_modalities_parser()],
-    )
-    parser.set_defaults(func=cmd_run_merge_modalities)
-
-    return parser
-
-
-def cmd_run_merge_modalities(args):
-    from openst.preprocessing.merge_modalities import _run_merge_modalities
-
-    _run_merge_modalities(args)
-
-SEGMENT_HELP = "Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension"
-def get_segment_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description=SEGMENT_HELP,
-        allow_abbrev=False,
-        add_help=False,
-    )
-
-    # Data
-    parser.add_argument(
-        "--image-in",
-        type=str,
-        help="""Key in the Open-ST h5 object (when --h5-in is specified)
-              or path to the file where the mask will be loaded from""",
-    )
-    parser.add_argument(
-        "--h5-in",
+        "--out-prefix",
         type=str,
         default="",
-        help="If specified, image is loaded from h5 (from key --image-in). Segmentation mask is saved there (to --mask-out)",
+        help="(Optional) Prefix added to the name of the output files",
     )
     parser.add_argument(
-        "--mask-out",
+        "--crop-seq",
         type=str,
-        required=True,
-        help="""Key in the Open-ST h5 object (when --h5-in is specified)
-              or path to the file where the mask will be written into""",
+        default=":",
+        help=")Optional) A 'python-style' slice, used to crop input sequences",
     )
     parser.add_argument(
-        "--rna-segment",
+        "--rev-comp",
         action="store_true",
-        help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
-              instead of using a staining image. 
-              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)""",
-    )
-
-    # Cellpose
-    parser.add_argument(
-        "--model",
-        type=str,
-        default="",
-        help="""cellpose model - either a path or a valid string to pretrained model.""",
+        help="(Optional) Apply reverse complementary after sequence cropping",
     )
     parser.add_argument(
-        "--flow-threshold",
-        type=float,
-        default=0.5,
-        help="cellpose's 'flow_threshold' parameter",
-    )
-    parser.add_argument(
-        "--cellprob-threshold",
-        type=float,
-        default=0,
-        help="cellpose's 'cellprob_threshold' parameter",
-    )
-    parser.add_argument(
-        "--diameter",
-        type=float,
-        default=20,
-        help="cellpose's 'diameter' parameter",
-    )
-    parser.add_argument(
-        "--chunk-size",
-        type=int,
-        default=512,
-        help="When prediction of the mask runs in separate chunks, this is the chunk square size (in pixels)",
-    )
-    parser.add_argument(
-        "--chunked",
+        "--single-tile",
         action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+        help="(Optional) set if it is guarranteed that the input .fastq(.gz) file contains only a tile",
     )
     parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--device",
-        type=str,
-        default="cpu",
-        choices=["cpu", "cuda"],
-        help="Device used to run the segmentation model. Can be ['cpu', 'cuda']",
-    )
-
-    # Postprocessing
-    parser.add_argument(
-        "--dilate-px",
-        type=int,
-        help="Pixels the outlines of the segmentation mask will be extended",
-        required=False,
-        default=10,
-    )
-    parser.add_argument(
-        "--outline-px",
-        type=int,
-        help="Objects will be represented as px-width outlines (only if >0)",
-        required=False,
-        default=0,
-    )
-
-    # Preprocessing
-    parser.add_argument(
-        "--mask-tissue",
+        "--unsorted",
         action="store_true",
-        help="Tissue (imaging modality) is masked from the background before segmentation",
-    )
-    parser.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the staining image",
-    )
-    parser.add_argument(
-        "--keep-black-background",
-        action="store_true",
-        help="Whether to set the background of the imaging modalities to white after tissue masking",
+        help="(Optional) set when file is unsorted respect to tiles; might be slower",
     )
 
-    # RNA density-based segmentation configuration
-    parser.add_argument(
-        "--rna-segment-spatial-coord-key",
-        type=str,
-        default="obsm/spatial",
-        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
-    )
-    parser.add_argument(
-        "--rna-segment-input-resolution",
-        type=float,
-        default=1,
-        help="""Spatial resolution of the input coordinates (retrieved from --rna-segment-spatial-coord-key).
-              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
-    )
-    parser.add_argument(
-        "--rna-segment-render-scale",
-        type=float,
-        default=2,
-        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
-    )
-    parser.add_argument(
-        "--rna-segment-render-sigma",
-        type=float,
-        default=1,
-        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
-    )
-    parser.add_argument(
-        "--rna-segment-output-resolution",
-        type=float,
-        default=0.6,
-        help="Final resolution (micron/pixel) for the segmentation mask.",
-    )
-
-    # General
-    parser.add_argument(
-        "--num-workers",
-        type=int,
-        help="Number of parallel workers when --chunked is specified",
-        required=False,
-        default=-1,
-    )
-    parser.add_argument(
-        "--metadata",
-        type=str,
-        default="",
-        help="""Path where the metadata will be stored.
-        If not specified, metadata is not saved.
-        Warning: a report (via openst report) cannot be generated without metadata!""",
-    )
     return parser
 
 
-def setup_segment_parser(parent_parser):
-    """setup_segment_parser"""
+def setup_barcode_preprocessing_parser(parent_parser):
+    """setup_barcode_preprocessing_parser"""
     parser = parent_parser.add_parser(
-        "segment",
-        help=SEGMENT_HELP,
-        parents=[get_segment_parser()],
+        "barcode_preprocessing",
+        help=BARCODE_PREPROCESSING_HELP,
+        parents=[get_barcode_preprocessing_parser()],
     )
-    parser.set_defaults(func=cmd_run_segment)
+    parser.set_defaults(func=cmd_run_barcode_preprocessing)
 
     return parser
 
 
-def cmd_run_segment(args):
-    from openst.segmentation.segment import _run_segment
+def cmd_run_barcode_preprocessing(args):
+    from openst.preprocessing.barcode_preprocessing import _run_barcode_preprocessing
 
-    _run_segment(args)
-
-
-SEGMENT_MERGE_HELP = "Merge two segmentation masks into one"
-def get_segment_merge_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description=SEGMENT_MERGE_HELP,
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--mask-in",
-        type=str,
-        required=True,
-        nargs=2,
-        help="Path to the input segmentation masks - two of them!",
-    )
-    parser.add_argument(
-        "--mask-out",
-        type=str,
-        required=True,
-        help="Path (file or h5) where the merged mask will be saved",
-    )
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        default="",
-        help="""When specified, masks are loaded from the Open-ST h5 object (key in --mask-in),
-             and segmentation is saved there (to the key under --mask-out)""",
-    )
-    parser.add_argument(
-        "--chunk-size",
-        type=int,
-        default=512,
-        help="When prediction of the mask runs in separate chunks, this is the chunk square size (in pixels)",
-    )
-    parser.add_argument(
-        "--chunked",
-        action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--num-workers",
-        type=int,
-        help="Number of parallel workers when --chunked is specified",
-        required=False,
-        default=-1,
-    )
-    return parser
-
-
-def setup_segment_merge_parser(parent_parser):
-    """setup_segment_merge_parser"""
-    parser = parent_parser.add_parser(
-        "segment_merge",
-        help=SEGMENT_MERGE_HELP,
-        parents=[get_segment_merge_parser()],
-    )
-    parser.set_defaults(func=cmd_run_segment_merge)
-
-    return parser
-
-
-def cmd_run_segment_merge(args):
-    from openst.segmentation.segment_merge import _run_segment_merge
-
-    _run_segment_merge(args)
+    _run_barcode_preprocessing(args)
 
 
 IMAGE_STITCH_HELP = "Stitching image tiles (FOVs) into a single image; wrapper for ImageJ"
@@ -725,125 +317,6 @@ def cmd_run_image_preprocess(args):
 
     _run_image_preprocess(args)
 
-BARCODE_PREPROCESSING_HELP = "Convert fastq files from first sequencing into spatial barcode files (sequence and coordinates)"
-def get_barcode_preprocessing_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        add_help=False,
-        description=BARCODE_PREPROCESSING_HELP,
-    )
-    parser.add_argument("--fastq-in", type=str, required=True, help="Path to the fastq file")
-    parser.add_argument(
-        "--tilecoords-out",
-        type=str,
-        required=True,
-        help="Directory where output files will be written to",
-    )
-    parser.add_argument(
-        "--out-suffix",
-        type=str,
-        required=True,
-        help="Suffix added to the name of the output files (i.e., extension)",
-    )
-    parser.add_argument(
-        "--out-prefix",
-        type=str,
-        default="",
-        help="(Optional) Prefix added to the name of the output files",
-    )
-    parser.add_argument(
-        "--crop-seq",
-        type=str,
-        default=":",
-        help=")Optional) A 'python-style' slice, used to crop input sequences",
-    )
-    parser.add_argument(
-        "--rev-comp",
-        action="store_true",
-        help="(Optional) Apply reverse complementary after sequence cropping",
-    )
-    parser.add_argument(
-        "--single-tile",
-        action="store_true",
-        help="(Optional) set if it is guarranteed that the input .fastq(.gz) file contains only a tile",
-    )
-    parser.add_argument(
-        "--unsorted",
-        action="store_true",
-        help="(Optional) set when file is unsorted respect to tiles; might be slower",
-    )
-
-    return parser
-
-
-def setup_barcode_preprocessing_parser(parent_parser):
-    """setup_barcode_preprocessing_parser"""
-    parser = parent_parser.add_parser(
-        "barcode_preprocessing",
-        help=BARCODE_PREPROCESSING_HELP,
-        parents=[get_barcode_preprocessing_parser()],
-    )
-    parser.set_defaults(func=cmd_run_barcode_preprocessing)
-
-    return parser
-
-
-def cmd_run_barcode_preprocessing(args):
-    from openst.preprocessing.barcode_preprocessing import _run_barcode_preprocessing
-
-    _run_barcode_preprocessing(args)
-
-REPORT_HELP = "openst report HTML generator from metadata files (json)"
-def get_report_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description=REPORT_HELP,
-        allow_abbrev=False,
-        add_help=False,
-    )
-
-    parser.add_argument(
-        "--metadata",
-        type=str,
-        required=True,
-        help="Path to the metadata file (json)",
-    )
-    parser.add_argument(
-        "--html-out",
-        type=str,
-        required=True,
-        help="Path where the output HTML file will be created",
-    )
-    return parser
-
-
-def setup_report_parser(parent_parser):
-    """setup_report_parser"""
-    parser = parent_parser.add_parser(
-        "report",
-        help=REPORT_HELP,
-        parents=[get_report_parser()],
-    )
-    parser.set_defaults(func=cmd_run_report)
-
-    return parser
-
-
-def cmd_run_report(args):
-    from openst.metadata.report import _run_report
-
-    _run_report(args)
 
 TRANSCRIPT_ASSIGN_HELP = "openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask"
 def get_transcript_assign_parser():
@@ -1233,6 +706,281 @@ def cmd_run_pairwise_aligner(args):
 
     _run_pairwise_aligner(args)
 
+
+SEGMENT_HELP = "Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension"
+def get_segment_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=SEGMENT_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+
+    # Data
+    parser.add_argument(
+        "--image-in",
+        type=str,
+        help="""Key in the Open-ST h5 object (when --h5-in is specified)
+              or path to the file where the mask will be loaded from""",
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="If specified, image is loaded from h5 (from key --image-in). Segmentation mask is saved there (to --mask-out)",
+    )
+    parser.add_argument(
+        "--mask-out",
+        type=str,
+        required=True,
+        help="""Key in the Open-ST h5 object (when --h5-in is specified)
+              or path to the file where the mask will be written into""",
+    )
+    parser.add_argument(
+        "--rna-segment",
+        action="store_true",
+        help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
+              instead of using a staining image. 
+              This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)""",
+    )
+
+    # Cellpose
+    parser.add_argument(
+        "--model",
+        type=str,
+        default="",
+        help="""cellpose model - either a path or a valid string to pretrained model.""",
+    )
+    parser.add_argument(
+        "--flow-threshold",
+        type=float,
+        default=0.5,
+        help="cellpose's 'flow_threshold' parameter",
+    )
+    parser.add_argument(
+        "--cellprob-threshold",
+        type=float,
+        default=0,
+        help="cellpose's 'cellprob_threshold' parameter",
+    )
+    parser.add_argument(
+        "--diameter",
+        type=float,
+        default=20,
+        help="cellpose's 'diameter' parameter",
+    )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=512,
+        help="When prediction of the mask runs in separate chunks, this is the chunk square size (in pixels)",
+    )
+    parser.add_argument(
+        "--chunked",
+        action="store_true",
+        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+    )
+    parser.add_argument(
+        "--max-image-pixels",
+        type=int,
+        default=933120000,
+        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
+    )
+    parser.add_argument(
+        "--device",
+        type=str,
+        default="cpu",
+        choices=["cpu", "cuda"],
+        help="Device used to run the segmentation model. Can be ['cpu', 'cuda']",
+    )
+
+    # Postprocessing
+    parser.add_argument(
+        "--dilate-px",
+        type=int,
+        help="Pixels the outlines of the segmentation mask will be extended",
+        required=False,
+        default=10,
+    )
+    parser.add_argument(
+        "--outline-px",
+        type=int,
+        help="Objects will be represented as px-width outlines (only if >0)",
+        required=False,
+        default=0,
+    )
+
+    # Preprocessing
+    parser.add_argument(
+        "--mask-tissue",
+        action="store_true",
+        help="Tissue (imaging modality) is masked from the background before segmentation",
+    )
+    parser.add_argument(
+        "--tissue-masking-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the staining image",
+    )
+    parser.add_argument(
+        "--keep-black-background",
+        action="store_true",
+        help="Whether to set the background of the imaging modalities to white after tissue masking",
+    )
+
+    # RNA density-based segmentation configuration
+    parser.add_argument(
+        "--rna-segment-spatial-coord-key",
+        type=str,
+        default="obsm/spatial",
+        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
+    )
+    parser.add_argument(
+        "--rna-segment-input-resolution",
+        type=float,
+        default=1,
+        help="""Spatial resolution of the input coordinates (retrieved from --rna-segment-spatial-coord-key).
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
+    )
+    parser.add_argument(
+        "--rna-segment-render-scale",
+        type=float,
+        default=2,
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
+    )
+    parser.add_argument(
+        "--rna-segment-render-sigma",
+        type=float,
+        default=1,
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
+    )
+    parser.add_argument(
+        "--rna-segment-output-resolution",
+        type=float,
+        default=0.6,
+        help="Final resolution (micron/pixel) for the segmentation mask.",
+    )
+
+    # General
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        help="Number of parallel workers when --chunked is specified",
+        required=False,
+        default=-1,
+    )
+    parser.add_argument(
+        "--metadata",
+        type=str,
+        default="",
+        help="""Path where the metadata will be stored.
+        If not specified, metadata is not saved.
+        Warning: a report (via openst report) cannot be generated without metadata!""",
+    )
+    return parser
+
+
+def setup_segment_parser(parent_parser):
+    """setup_segment_parser"""
+    parser = parent_parser.add_parser(
+        "segment",
+        help=SEGMENT_HELP,
+        parents=[get_segment_parser()],
+    )
+    parser.set_defaults(func=cmd_run_segment)
+
+    return parser
+
+
+def cmd_run_segment(args):
+    from openst.segmentation.segment import _run_segment
+
+    _run_segment(args)
+
+
+SEGMENT_MERGE_HELP = "Merge two segmentation masks into one"
+def get_segment_merge_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=SEGMENT_MERGE_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    parser.add_argument(
+        "--mask-in",
+        type=str,
+        required=True,
+        nargs=2,
+        help="Path to the input segmentation masks - two of them!",
+    )
+    parser.add_argument(
+        "--mask-out",
+        type=str,
+        required=True,
+        help="Path (file or h5) where the merged mask will be saved",
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="""When specified, masks are loaded from the Open-ST h5 object (key in --mask-in),
+             and segmentation is saved there (to the key under --mask-out)""",
+    )
+    parser.add_argument(
+        "--chunk-size",
+        type=int,
+        default=512,
+        help="When prediction of the mask runs in separate chunks, this is the chunk square size (in pixels)",
+    )
+    parser.add_argument(
+        "--chunked",
+        action="store_true",
+        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+    )
+    parser.add_argument(
+        "--max-image-pixels",
+        type=int,
+        default=933120000,
+        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
+    )
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        help="Number of parallel workers when --chunked is specified",
+        required=False,
+        default=-1,
+    )
+    return parser
+
+
+def setup_segment_merge_parser(parent_parser):
+    """setup_segment_merge_parser"""
+    parser = parent_parser.add_parser(
+        "segment_merge",
+        help=SEGMENT_MERGE_HELP,
+        parents=[get_segment_merge_parser()],
+    )
+    parser.set_defaults(func=cmd_run_segment_merge)
+
+    return parser
+
+
+def cmd_run_segment_merge(args):
+    from openst.segmentation.segment_merge import _run_segment_merge
+
+    _run_segment_merge(args)
+
+
 FROM_3D_REGISTRATION_HELP = "Convert Open-ST h5 objects for 3D registration of serial sections using STIM"
 def get_from_3d_registration_parser():
     """
@@ -1413,6 +1161,263 @@ def cmd_run_to_3d_registration(args):
     from openst.threed.to_3d_registration import _run_to_3d_registration
 
     _run_to_3d_registration(args)
+
+
+PSEUDOIMAGE_HELP = "Generate pseudoimages of Open-ST RNA data and visualize using napari"
+def get_pseudoimage_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=PSEUDOIMAGE_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    # Input
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        required=True,
+        help="Necessary to create the pseudoimage",
+    )
+
+    # RNA density-based pseudoimage
+    parser.add_argument(
+        "--spatial-coord-key",
+        type=str,
+        default="obsm/spatial",
+        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
+    )
+    parser.add_argument(
+        "--input-resolution",
+        type=float,
+        default=1,
+        help="""Spatial resolution of the input coordinates (retrieved from --spatial-coord-key).
+              If it is in microns, leave as 1. If it is in pixels, specify the pixel to micron conversion factor.""",
+    )
+    parser.add_argument(
+        "--render-scale",
+        type=float,
+        default=2,
+        help="Size of bins for computing the binning (in microns). For Open-ST v1, we recommend a value of 2.",
+    )
+    parser.add_argument(
+        "--render-sigma",
+        type=float,
+        default=1,
+        help="Smoothing factor applied to the RNA pseudoimage (higher values lead to smoother images)",
+    )
+    parser.add_argument(
+        "--output-resolution",
+        type=float,
+        default=0.6,
+        help="Final resolution (micron/pixel) for the segmentation mask.",
+    )
+    return parser
+
+
+def setup_pseudoimage_parser(parent_parser):
+    """setup_pseudoimage_parser"""
+    parser = parent_parser.add_parser(
+        "pseudoimage",
+        help=PSEUDOIMAGE_HELP,
+        parents=[get_pseudoimage_parser()],
+    )
+    parser.set_defaults(func=cmd_run_pseudoimage_visualizer)
+
+    return parser
+
+
+def cmd_run_pseudoimage_visualizer(args):
+    from openst.utils.pseudoimage import _run_pseudoimage_visualizer
+
+    _run_pseudoimage_visualizer(args)
+
+
+PREVIEW_HELP = "Preview locations (as points) and images of Open-ST data"
+def get_preview_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=PREVIEW_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    # Input
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        required=True,
+        help="Necessary to create the pseudoimage",
+    )
+
+    # RNA density-based pseudoimage
+    parser.add_argument(
+        "--spatial-coord-keys",
+        type=str,
+        nargs="+",
+        default=None,
+        help="""Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial').
+                Can be one or many (separated by space)""",
+    )
+
+    # Staining image
+    parser.add_argument(
+        "--image-keys",
+        type=str,
+        nargs="+",
+        default=None,
+        help="""Path to the image to be visualized.
+              Can be one or many (separated by space)""",
+    )
+
+    # Resampling before previsualizing
+    parser.add_argument(
+        "--spatial-coord-resampling",
+        type=int,
+        nargs="+",
+        default=[1],
+        help="""Will load every n-th point. Can be one (same for all spatial-coords)
+                or many (1-to-1 mapping to the spatial-coord list)""",
+    )
+    parser.add_argument(
+        "--image-resampling",
+        type=int,
+        nargs="+",
+        default=[1],
+        help="""Will load every n-th pixel. Can be one (same for all images)
+                or many (1-to-1 mapping to the image list)""",
+    )
+
+    return parser
+
+
+def setup_preview_parser(parent_parser):
+    """setup_preview_parser"""
+    parser = parent_parser.add_parser(
+        "preview",
+        help=PREVIEW_HELP,
+        parents=[get_preview_parser()],
+    )
+    parser.set_defaults(func=cmd_run_preview)
+
+    return parser
+
+def cmd_run_preview(args):
+    from openst.utils.preview import _run_preview
+
+    _run_preview(args)
+
+
+MERGE_MODALITIES_HELP = "merge_modalities locations (as points) and images of Open-ST data"
+def get_merge_modalities_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=MERGE_MODALITIES_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    # Input
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        required=True,
+        help="Input Open-ST h5 object",
+    )
+
+    parser.add_argument(
+        "--image-in",
+        type=str,
+        required=True,
+        help="Image that will be loaded and written into the Open-ST h5 object",
+    )
+
+    # Staining image
+    parser.add_argument(
+        "--image-key",
+        type=str,
+        default="uns/spatial/staining_image",
+        help="Key in the Open-ST h5 object where the image will be saved.",
+    )
+
+    return parser
+
+
+def setup_merge_modalities_parser(parent_parser):
+    """setup_merge_modalities_parser"""
+    parser = parent_parser.add_parser(
+        "merge_modalities",
+        help=MERGE_MODALITIES_HELP,
+        parents=[get_merge_modalities_parser()],
+    )
+    parser.set_defaults(func=cmd_run_merge_modalities)
+
+    return parser
+
+
+def cmd_run_merge_modalities(args):
+    from openst.preprocessing.merge_modalities import _run_merge_modalities
+
+    _run_merge_modalities(args)
+
+
+REPORT_HELP = "openst report HTML generator from metadata files (json)"
+def get_report_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=REPORT_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+
+    parser.add_argument(
+        "--metadata",
+        type=str,
+        required=True,
+        help="Path to the metadata file (json)",
+    )
+    parser.add_argument(
+        "--html-out",
+        type=str,
+        required=True,
+        help="Path where the output HTML file will be created",
+    )
+    return parser
+
+
+def setup_report_parser(parent_parser):
+    """setup_report_parser"""
+    parser = parent_parser.add_parser(
+        "report",
+        help=REPORT_HELP,
+        parents=[get_report_parser()],
+    )
+    parser.set_defaults(func=cmd_run_report)
+
+    return parser
+
+
+def cmd_run_report(args):
+    from openst.metadata.report import _run_report
+
+    _run_report(args)
 
 
 def cmdline_args():
