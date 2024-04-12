@@ -23,10 +23,10 @@ Open a terminal, and run the following command:
 openst image_stitch \
      --microscope='keyence' \
      --imagej-bin=<path_to_fiji_or_imagej> \
-     --input-dir=<path_to_tiles> \
+     --image-indir=<path_to_tiles> \
      --tiles-prefix=<to_read> \
      --tmp-dir=<tmp_dir> \
-     --output-image=<output_image>
+     --image-out=<output_image>
 ```
 Make sure to replace the placeholders (`<...>`). For instance,
 `<path_to_fiji_or_imagej>` is the path where the [Fiji](https://imagej.net/software/fiji/downloads) executable is;

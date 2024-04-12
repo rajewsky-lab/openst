@@ -1,4 +1,3 @@
-import argparse
 import logging
 from typing import List, Union
 
@@ -9,112 +8,6 @@ from openst.utils.file import (check_directory_exists, check_file_exists,
                                check_obs_unique)
 
 DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
-
-
-def get_spatial_stitch_parser():
-    parser = argparse.ArgumentParser(
-        allow_abbrev=False,
-        description="stitching spatial transcriptomics tiles into a common global coordinate system",
-        add_help=False,
-    )
-
-    parser.add_argument(
-        "--tiles",
-        type=str,
-        nargs="+",
-        help="path to spatial.h5ad AnnData file, one per tile",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--tile-id",
-        type=str,
-        nargs="+",
-        help="list of tile id for the input files, same order as tiles."
-        + "Must be specified when the filenames do not contain a tile id that can be parsed with --tile-id-regex",
-        default=None,
-    )
-
-    parser.add_argument(
-        "--tile-coordinates",
-        type=str,
-        help="name of tile collection",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        help="path to output.h5ad AnnData file",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--tile-id-regex",
-        type=str,
-        help="regex to find tile id in file names",
-        default=DEFAULT_REGEX_TILE_ID,
-    )
-
-    parser.add_argument(
-        "--tile-id-key",
-        type=str,
-        help="name of .obs variable where tile id are (will be) stored",
-        default="tile_id",
-    )
-
-    parser.add_argument(
-        "--merge-output",
-        type=str,
-        help='how to merge tiles, can be "same", "unique", "first", "only"',
-        choices=["same", "unique", "first", "only"],
-        default="same",
-    )
-
-    parser.add_argument(
-        "--join-output",
-        type=str,
-        help='how to join tiles, can be "inner", "outer"',
-        choices=["inner", "outer"],
-        default="outer",
-    )
-
-    parser.add_argument(
-        "--no-reset-index",
-        default=False,
-        action="store_true",
-        help="""do not reset the obs_name index of the AnnData object
-        as 'obs_name:<tile_id_key>'; keep original 'obs_name'""",
-    )
-
-    parser.add_argument(
-        "--no-transform",
-        default=False,
-        action="store_true",
-        help="do not transform the spatial coordinates of the AnnData object",
-    )
-
-    parser.add_argument(
-        "--metadata-out",
-        type=str,
-        default="",
-        help="Path where the metadata will be stored. If not specified, metadata is not saved.",
-    )
-
-    return parser
-
-
-def setup_spatial_stitch_parser(parent_parser):
-    """setup_spatial_stitch_parser"""
-    parser = parent_parser.add_parser(
-        "spatial_stitch",
-        help="stitching STS tiles into a global coordinate system",
-        parents=[get_spatial_stitch_parser()],
-    )
-    parser.set_defaults(func=_run_spatial_stitch)
-
-    return parser
-
 
 def _transform_tile(tile: AnnData, tiles_transform: dict):
     """
@@ -223,7 +116,8 @@ def read_tiles_to_list(
     if tile_id is not None and type(tile_id) is str:
         tile_id = [tile_id]
     elif type(tile_id) is list and len(tile_id) != len(f):
-        raise ValueError(f"Dimensions for f ({len(f)}) and tile_id ({len(tile_id)}) are not compatible")
+        raise ValueError(f"""You must provide {len(tile_id)} items in --tile-id,
+                           one per file in --tiles (currently provides {len(f)})""")
 
     tiles = []
 
@@ -232,23 +126,26 @@ def read_tiles_to_list(
 
         if "spatial" not in _f_obj.obsm.keys():
             raise ValueError(f"Could not find valid .obsm['spatial'] data in {f}")
-        if tile_id_key not in _f_obj.obs.keys():
+        if tile_id_key not in _f_obj.obs.keys() and tile_id is None:
             if tile_id is None:
                 _tile_id = parse_tile_id_from_path(f, tile_id_regex=tile_id_regex)
                 if len(_tile_id) == 0:
                     raise ValueError(
-                        f"Could not find a tile_id from the filename {f} with the regular expression {tile_id_regex}"
+                        f"Could not find a 'tile_id' for tile {f} with the regular expression {tile_id_regex}"
                     )
             else:
                 _tile_id = tile_id[i]
 
+            _f_obj.obs[tile_id_key] = _tile_id
+        elif tile_id is not None:
+            _tile_id = tile_id[i]
             _f_obj.obs[tile_id_key] = _tile_id
 
         if tile_id_key != "tile_id":
             _f_obj.obs["tile_id"] = _tile_id
 
         if not check_obs_unique(_f_obj, "tile_id"):
-            raise ValueError(f"tile_id exist in AnnData object but are not unique for the tile in file {f}")
+            raise ValueError(f"'tile_id' exists in Open-ST h5 object but contains more than one unique value in tile {f}")
 
         tiles.append(_f_obj)
 
@@ -324,9 +221,6 @@ def merge_tiles_to_collection(
 
 def _run_spatial_stitch(args):
     """_run_spatial_stitch."""
-    logging.info("openst spatial transcriptomics stitching; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     if type(args.tiles) is str:
         check_file_exists(args.tiles)
@@ -334,10 +228,10 @@ def _run_spatial_stitch(args):
         for t in args.tiles:
             check_file_exists(t)
 
-    if not check_directory_exists(args.output):
-        raise FileNotFoundError("Parent directory for --output does not exist")
+    if not check_directory_exists(args.h5_out):
+        raise FileNotFoundError("Parent directory for --h5-out does not exist")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
     spatial_stitch = merge_tiles_to_collection(
@@ -352,9 +246,10 @@ def _run_spatial_stitch(args):
         join_output=args.join_output,
     )
 
-    spatial_stitch.write_h5ad(args.output)
+    spatial_stitch.write_h5ad(args.h5_out)
 
 
 if __name__ == "__main__":
+    from openst.cli import get_spatial_stitch_parser
     args = get_spatial_stitch_parser().parse_args()
     _run_spatial_stitch(args)

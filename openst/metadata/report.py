@@ -1,4 +1,3 @@
-import argparse
 import json
 import logging
 import os
@@ -8,47 +7,6 @@ from jinja2 import Template
 from openst.utils.file import check_directory_exists, check_file_exists
 
 absolute_path = os.path.dirname(__file__)
-
-
-def get_report_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="openst report HTML generator from metadata files (json)",
-        allow_abbrev=False,
-        add_help=False,
-    )
-
-    parser.add_argument(
-        "--metadata",
-        type=str,
-        required=True,
-        help="Path to the metadata file (json)",
-    )
-    parser.add_argument(
-        "--html-out",
-        type=str,
-        required=True,
-        help="Path where the output HTML file will be created",
-    )
-    return parser
-
-
-def setup_report_parser(parent_parser):
-    """setup_report_parser"""
-    parser = parent_parser.add_parser(
-        "report",
-        help="openst report HTML generator from metadata files (json)",
-        parents=[get_report_parser()],
-    )
-    parser.set_defaults(func=_run_report)
-
-    return parser
-
 
 def generate_html_report(json_data, template_file):
     with open(template_file, "r") as template_data:
@@ -61,9 +19,6 @@ def generate_html_report(json_data, template_file):
 
 
 def _run_report(args):
-    logging.info("openst report - running with the following parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.metadata)
 
@@ -91,5 +46,6 @@ def _run_report(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_report_parser
     args = get_report_parser().parse_args()
     _run_report(args)

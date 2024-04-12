@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 from pathlib import Path
@@ -8,64 +7,6 @@ import pandas as pd
 from anndata import AnnData, read_h5ad
 
 from openst.utils.file import check_directory_exists, check_file_exists
-
-
-def get_to_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="convert openst data for STIM (serial-section 3D registration); one file at a time",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--in-adata",
-        type=str,
-        required=True,
-        help="Path to the input adata file. Expects a file with raw counts.",
-    )
-    parser.add_argument(
-        "--output-dir",
-        type=int,
-        default=-1,
-        help="Path to the directory where the .genes and .locations csv files will be stored.",
-    )
-    parser.add_argument(
-        "--filter-umi-max",
-        type=int,
-        default=-1,
-        help="Preserve cells with at most < --filter-umi-max UMIs",
-    )
-    parser.add_argument(
-        "--rescale",
-        type=float,
-        default=1,
-        help="Rescales (multiples) the coordinates by --rescale units",
-    )
-    parser.add_argument(
-        "--genes",
-        type=str,
-        nargs="+",
-        default=None,
-        help="Exports the expression level for the specified genes",
-    )
-    return parser
-
-
-def setup_to_3d_registration_parser(parent_parser):
-    """setup_to_3d_registration_parser"""
-    parser = parent_parser.add_parser(
-        "to_3d_registration",
-        help="convert h5ad files to native STIM-supported format",
-        parents=[get_to_3d_registration_parser()],
-    )
-    parser.set_defaults(func=_run_to_3d_registration)
-
-    return parser
 
 
 def convert_adata_to_crosstab(adata: AnnData, genes: list = None):
@@ -92,8 +33,6 @@ def _run_to_3d_registration(args):
     """
     _run_to_3d_registration
     """
-    logging.info("openst to_3d_registrationation; running with parameters:")
-    logging.info(args.__dict__)
 
     # Check input and output data
     check_file_exists(args.in_adata)
@@ -125,5 +64,6 @@ def _run_to_3d_registration(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_to_3d_registration_parser
     args = get_to_3d_registration_parser().parse_args()
     _run_to_3d_registration(args)

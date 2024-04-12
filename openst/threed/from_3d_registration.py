@@ -1,4 +1,3 @@
-import argparse
 import json
 import logging
 import os
@@ -14,116 +13,6 @@ from skimage.transform import estimate_transform, resize, warp
 from tqdm import tqdm
 
 from openst.utils.file import check_directory_exists, check_file_exists
-
-
-def get_from_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="convert openst data for STIM (serial-section 3D registration); one file at a time",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--n5-dirs",
-        type=str,
-        nargs="+",
-        required=True,
-        help="Path to the n5 directories created by STIM for each of the samples. Expects more than one argument.",
-    )
-    parser.add_argument(
-        "--h5-files",
-        type=str,
-        nargs="+",
-        required=True,
-        help="""Path to the h5ad files used to create the STIM data.
-        Expects more than one argument, in the same order as --n5-dirs.""",
-    )
-    parser.add_argument(
-        "--images",
-        type=str,
-        nargs="+",
-        help="""Path to the file to load pairwise aligned images from.
-        In this case, it should have the same length as the --n5-dirs and --h5-files arguments.
-        If --images-in-adata is provided, it is the path inside the h5ad files where to load the images from.
-        In this case, there only one argument is provided.""",
-    )
-    parser.add_argument(
-        "--images-in-adata",
-        default=False,
-        action="store_true",
-        help="""When specified, the pairwise-aligned image is loaded from the adata,
-        at the internal path specified by '--images'""",
-    )
-    parser.add_argument(
-        "--output-h5",
-        type=str,
-        required=True,
-        help="""Path to output h5ad file that will be created.
-        When --separate-images is specified, it will not contain images.""",
-    )
-    parser.add_argument(
-        "--output-image",
-        type=str,
-        help="""Path to output h5ad file that will be created.
-        When --separate-images is specified, it will not contain images.""",
-    )
-    parser.add_argument(
-        "--save-images-separately",
-        default=False,
-        action="store_true",
-        help="When images are provided, these will be saved separately",
-    )
-    parser.add_argument(
-        "--rescale",
-        type=float,
-        default=1,
-        help="Rescales (multiples) the coordinates by --rescale units",
-    )
-    parser.add_argument(
-        "--downsample-iamge",
-        type=int,
-        default=1,
-        help="""How much to downwsample the resolution of the final aligned image volume
-        (recommended for very large images). Must be >= 1""",
-    )
-    parser.add_argument(
-        "--merge-output",
-        type=str,
-        help='how to merge tiles, can be "same", "unique", "first", "only"',
-        choices=["same", "unique", "first", "only"],
-        default="same",
-    )
-    parser.add_argument(
-        "--join-output",
-        type=str,
-        help='how to join tiles, can be "inner", "outer"',
-        choices=["inner", "outer"],
-        default="outer",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    return parser
-
-
-def setup_from_3d_registration_parser(parent_parser):
-    """setup_from_3d_registration_parser"""
-    parser = parent_parser.add_parser(
-        "from_3d_registration",
-        help="convert STIM-registered data into h5ad files",
-        parents=[get_from_3d_registration_parser()],
-    )
-    parser.set_defaults(func=_run_from_3d_registration)
-
-    return parser
 
 
 def transform_coordinates_h5_from_stim(adata: AnnData, transform_model: np.ndarray, rescale: float = 1):
@@ -263,13 +152,11 @@ def _run_from_3d_registration(args):
     """
     _run_from_3d_registration
     """
-    logging.info("openst from_3d_registration; running with parameters:")
-    logging.info(args.__dict__)
 
     # Check input and output data
     check_file_exists(args.in_adata_aligned)
 
-    if not check_directory_exists(args.output_h5):
+    if not check_directory_exists(args.h5_out):
         raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
@@ -298,7 +185,7 @@ def _run_from_3d_registration(args):
     # Loading image data, if specified
     if args.images == "":
         images_sections = None
-        if not check_directory_exists(args.output_image):
+        if not check_directory_exists(args.image_out):
             raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     if args.images_in_adata:
@@ -339,14 +226,15 @@ def _run_from_3d_registration(args):
             adata_aligned.uns["STIM_aligned"]["staining_images"] = {}
         for image, name in zip(section_affine_transformed_image, args.h5_files):
             if args.save_images_separately:
-                Image.fromarray(image.astype(np.uint8)).save(os.path.join(args.output_image, f"{name}_aligned.tif"))
+                Image.fromarray(image.astype(np.uint8)).save(os.path.join(args.image_out, f"{name}_aligned.tif"))
             else:
                 adata_aligned.uns["STIM_aligned"]["staining_images"][name] = image
 
     # Save final adata object
-    adata_aligned.write(args.output_h5)
+    adata_aligned.write(args.h5_out)
 
 
 if __name__ == "__main__":
+    from openst.cli import get_from_3d_registration_parser
     args = get_from_3d_registration_parser().parse_args()
     _run_from_3d_registration(args)

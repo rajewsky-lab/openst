@@ -1,4 +1,3 @@
-import argparse
 import logging
 import json
 import h5py
@@ -11,68 +10,6 @@ from skimage.transform import estimate_transform
 from openst.alignment.transformation import apply_transform
 from openst.utils.file import (check_adata_structure, check_directory_exists,
                                check_file_exists, load_properties_from_adata)
-
-def get_manual_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-    parser.add_argument(
-        "--keypoints-json",
-        type=str,
-        required=True,
-        help="Path to the json file containing keypoints",
-    )
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        required=True,
-        help="Path to the input h5ad file containing spatial coordinates",
-    )
-    parser.add_argument(
-        "--h5-out",
-        type=str,
-        default="",
-        help="""Path where the h5ad file will be saved after alignment.
-        If not indicated, data is written in place at --h5-in""",
-    )
-    parser.add_argument(
-        "--per-tile",
-        action="store_true",
-        help="If selected, individual transformations per tile are estimated from they keypoints",
-    )
-    parser.add_argument(
-        "--spatial-key-in",
-        type=str,
-        default="spatial_pairwise_aligned_coarse",
-        help="""The name of the `obsm` variable where the transformed coordinates will be read from""",
-    )
-    parser.add_argument(
-        "--spatial-key-out",
-        type=str,
-        default="spatial_pairwise_aligned_fine",
-        help="""The name of the `obsm` variable where the transformed coordinates will be written""",
-    )
-    return parser
-
-
-def setup_manual_pairwise_aligner_parser(parent_parser):
-    """setup_manual_pairwise_aligner_parser"""
-    parser = parent_parser.add_parser(
-        "manual_pairwise_aligner",
-        help="openst manual pairwise alignment of spatial transcriptomics and imaging data",
-        parents=[get_manual_pairwise_aligner_parser()],
-    )
-    parser.set_defaults(func=_run_manual_pairwise_aligner)
-
-    return parser
 
 def apply_transform_to_coords(
     in_coords: np.ndarray,
@@ -131,9 +68,6 @@ def load_keypoints_from_json(fname: str):
     return keypoints_by_key
 
 def _run_manual_pairwise_aligner(args):
-    logging.info("Open-ST pairwise alignment; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
@@ -147,19 +81,19 @@ def _run_manual_pairwise_aligner(args):
     _to_load = ["obs/total_counts"]
     if args.per_tile:
         _to_load += ["obs/tile_id"]
-    _to_load += [f"obsm/{args.spatial_key_in}"]
+    _to_load += [f"{args.spatial_key_in}"]
 
     _tile_ids = None
 
     logging.info(f"Loading properties from {args.h5_in}")
     sts = load_properties_from_adata(args.h5_in, properties=_to_load)
 
-    logging.info(f"Loading manually selected keypoints from {args.keypoints_json}")
-    keypoints = load_keypoints_from_json(args.keypoints_json)
+    logging.info(f"Loading manually selected keypoints from {args.keypoints_in}")
+    keypoints = load_keypoints_from_json(args.keypoints_in)
     
     logging.info(f"Applying coordinate transformation")
     # transpose spatial locations to XY coordinates
-    _coords = sts[f"obsm/{args.spatial_key_in}"][:][..., ::-1]
+    _coords = sts[f"{args.spatial_key_in}"][:][..., ::-1]
 
     if args.per_tile:
         _tile_ids = sts["obs/tile_id"]
@@ -178,14 +112,15 @@ def _run_manual_pairwise_aligner(args):
 
     logging.info(f"Modifying coordinates in {args.h5_out}")
     with h5py.File(args.h5_out, 'r+') as adata:
-        if f"obsm/{args.spatial_key_out}" in adata:
+        if f"{args.spatial_key_out}" in adata:
             # reconvert to YX (same axes as the images)
-            adata[f"obsm/{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
+            adata[f"{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
         else:
-            adata[f"obsm/{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
+            adata[f"{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
 
     logging.info(f"Output {args.h5_out} file was written. Finished!")
 
 if __name__ == "__main__":
+    from openst.cli import get_manual_pairwise_aligner_parser
     args = get_manual_pairwise_aligner_parser().parse_args()
     _run_manual_pairwise_aligner(args)

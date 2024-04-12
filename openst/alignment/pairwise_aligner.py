@@ -20,13 +20,12 @@ openst pairwise_aligner --image-in input_image.jpg --h5-in input_data.h5ad --h5-
                      --feature-matcher 'LoFTR' --n-threads 2 --fine-min-matches 50 --fiducial-model model.pt
 """
 
-import argparse
 import logging
 from itertools import product
 
 import cv2
 import numpy as np
-from anndata import read_h5ad
+import h5py
 from PIL import Image
 from scipy import ndimage
 from skimage.color import rgb2gray, rgb2hsv
@@ -44,216 +43,6 @@ from openst.utils.file import (check_adata_structure, check_directory_exists,
 from openst.utils.pimage import mask_tissue as p_mask_tissue
 from openst.utils.pimage import is_grayscale
 from openst.utils.pseudoimage import create_paired_pseudoimage
-
-
-def get_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
-    parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
-        allow_abbrev=False,
-        add_help=False,
-    )
-
-    parser.add_argument(
-        "--image-in",
-        type=str,
-        required=True,
-        help="Path to the input image. This is treated as the 'destination' image during pairwise alignment",
-    )
-    parser.add_argument(
-        "--h5-in",
-        type=str,
-        required=True,
-        help="Path to the input h5ad file containing spatial coordinates",
-    )
-    parser.add_argument(
-        "--metadata-out",
-        type=str,
-        default="",
-        help="Path where the metadata will be stored. If not specified, metadata is not saved.",
-    )
-    parser.add_argument(
-        "--h5-out",
-        type=str,
-        required=True,
-        help="Path where the h5ad file will be saved after alignment",
-    )
-    parser.add_argument(
-        "--save-image-in-h5",
-        action="store_true",
-        help="Whether the input image will be saved into the output h5ad file",
-    )
-    parser.add_argument(
-        "--mask-tissue",
-        action="store_true",
-        help="Tissue (imaging modality) is masked from the background for the feature detection",
-    )
-    parser.add_argument(
-        "--only-coarse",
-        action="store_true",
-        help="If selected, only the coarse alignment stage will run",
-    )
-    parser.add_argument(
-        "--rescale-factor-coarse",
-        type=int,
-        default=20,
-        help="Rescaling factor for the input image (1:factor), used during coarse pairwise alignment",
-    )
-    parser.add_argument(
-        "--rescale-factor-fine",
-        type=int,
-        default=5,
-        help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
-    )
-    parser.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
-    )
-    parser.add_argument(
-        "--fine-registration-gaussian-sigma",
-        type=int,
-        default=2,
-        help="Gaussian blur used on all modalities during fine registration",
-    )
-    parser.add_argument(
-        "--keep-black-background",
-        action="store_true",
-        help="Whether to set the background of the imaging modalities to white, after tissue masking",
-    )
-    parser.add_argument(
-        "--threshold-counts-coarse",
-        type=int,
-        default=1,
-        help="""Only spatial coordinates with counts larger than this number
-        will be kept for pseudoimage rendering during coarse alignment""",
-    )
-    parser.add_argument(
-        "--threshold-counts-fine",
-        type=int,
-        default=0,
-        help="""Only spatial coordinates with counts larger than this number
-        will be kept for pseudoimage rendering during fine alignment""",
-    )
-    parser.add_argument(
-        "--pseudoimage-size-coarse",
-        type=int,
-        default=4000,
-        help="Size (in pixels) of the pseudoimage during coarse alignment.",
-    )
-    parser.add_argument(
-        "--pseudoimage-size-fine",
-        type=int,
-        default=6000,
-        help="Size (in pixels) of the pseudoimage during fine alignment.",
-    )
-    parser.add_argument(
-        "--ransac-coarse-min-samples",
-        type=int,
-        default=3,
-        help="'min_samples' parameter of RANSAC, during coarse registration",
-    )
-    parser.add_argument(
-        "--ransac-coarse-residual-threshold",
-        type=float,
-        default=2,
-        help="'residual_threshold' parameter of RANSAC, during coarse registration",
-    )
-    parser.add_argument(
-        "--ransac-coarse-max-trials",
-        type=int,
-        default=50,
-        help="Times RANSAC will run (x1000 iterations) during coarse registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-min-samples",
-        type=int,
-        default=3,
-        help="'min_samples' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-residual-threshold",
-        type=float,
-        default=2,
-        help="'residual_threshold' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-max-trials",
-        type=int,
-        default=50,
-        help="Times RANSAC will run (x1000 iterations) during fine registration",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--n-threads",
-        type=int,
-        default=1,
-        help="Number of CPU threads for parallel processing",
-    )
-    parser.add_argument(
-        "--feature-matcher",
-        type=str,
-        default="LoFTR",
-        choices=["LoFTR", "SIFT", 'KeyNet'],
-        help="Feature matching algorithm",
-    )
-    parser.add_argument(
-        "--fine-min-matches",
-        type=int,
-        default=50,
-        help="Minimum number of matching keypoints between modalities during fine alignment",
-    )
-    parser.add_argument(
-        "--fiducial-model",
-        type=str,
-        default="",
-        help="Path to a object detection model (YOLO) to detect fiducial markers",
-    )
-    parser.add_argument(
-        "--genes-coarse",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
-    )
-    parser.add_argument(
-        "--genes-fine",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the fine alignment phase.",
-    )
-    parser.add_argument(
-        "--device",
-        type=str,
-        default="cpu",
-        choices=["cpu", "cuda"],
-        help="Device used to run feature matching model. Can be ['cpu', 'cuda']",
-    )
-    return parser
-
-
-def setup_pairwise_aligner_parser(parent_parser):
-    """setup_pairwise_aligner_parser"""
-    parser = parent_parser.add_parser(
-        "pairwise_aligner",
-        help="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
-        parents=[get_pairwise_aligner_parser()],
-    )
-    parser.set_defaults(func=_run_pairwise_aligner)
-
-    return parser
 
 
 def transform_image(im, flip: list = None, crop: list = None, rotation: int = None):
@@ -696,9 +485,6 @@ def run_registration(
 
 
 def run_pairwise_aligner(args):
-    logging.info("Open-ST pairwise alignment; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
@@ -710,7 +496,7 @@ def run_pairwise_aligner(args):
     if not check_directory_exists(args.h5_out):
         raise FileNotFoundError("Parent directory for --h5-out does not exist")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
     if args.h5_out == args.h5_in:
@@ -735,27 +521,31 @@ def run_pairwise_aligner(args):
     )
 
     # Saving the metadata (for QC)
-    if args.metadata_out != "":
+    if args.metadata != "":
         metadata.render()
-        metadata.save_json(args.metadata_out)
+        metadata.save_json(args.metadata)
 
-    # Exporting the data
-    logging.info(f"Loading {args.h5_in}")
-    adata = read_h5ad(args.h5_in)
+    logging.info(f"Updating {args.h5_in} in place")
+    with h5py.File(args.h5_in, 'r+') as adata:
+        # TODO: to this with a function, instead
+        if "uns/spatial_pairwise_aligned/staining_image" in adata:
+            del adata["uns/spatial_pairwise_aligned/staining_image"]
+        adata["uns/spatial_pairwise_aligned/staining_image"] = staining_image
 
-    # store spatial locations with same coordinates as the image (YX)
-    adata.obsm["spatial_pairwise_aligned_coarse"] = sts_aligned_coarse[..., ::-1]
-    if sts_aligned_fine is not None:
-        adata.obsm["spatial_pairwise_aligned_fine"] = sts_aligned_fine
+        if "uns/spatial_pairwise_aligned/staining_image_transformed" in adata:
+            del adata["uns/spatial_pairwise_aligned/staining_image_transformed"]
+        adata["uns/spatial_pairwise_aligned/staining_image_transformed"] = staining_image_aligned
 
-    if args.save_image_in_h5:
-        adata.uns["spatial_pairwise_aligned"] = {}
-        adata.uns["spatial_pairwise_aligned"]["staining_image"] = staining_image
-        adata.uns["spatial_pairwise_aligned"]["staining_image_transformed"] = staining_image_aligned
-
-    logging.info(f"Writing output to {args.h5_out}")
-    adata.write(args.h5_out)
-    logging.info(f"Output {args.h5_out} file was written")
+        if "obsm/spatial_pairwise_aligned_coarse" in adata:
+            adata["obsm/spatial_pairwise_aligned_coarse"][:] = sts_aligned_coarse[..., ::-1]
+        else:
+            adata["obsm/spatial_pairwise_aligned_coarse"] = sts_aligned_coarse[..., ::-1]
+        
+        if sts_aligned_fine is not None:
+            if "obsm/spatial_pairwise_aligned_fine" in adata:
+                adata["obsm/spatial_pairwise_aligned_fine"][:] = sts_aligned_fine
+            else:
+                adata["obsm/spatial_pairwise_aligned_fine"] = sts_aligned_fine
 
 
 def _run_pairwise_aligner(args):
@@ -764,5 +554,6 @@ def _run_pairwise_aligner(args):
 
 
 if __name__ == "__main__":
+    from openst.cli import get_pairwise_aligner_parser
     args = get_pairwise_aligner_parser().parse_args()
     _run_pairwise_aligner(args)
