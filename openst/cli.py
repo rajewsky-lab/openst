@@ -1353,6 +1353,9 @@ def cmdline_args():
         description="openst: computational tools of Open-ST",
     )
     parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
+    parent_parser.add_argument(
+    '--version',
+    action = 'store_true')
 
     # TODO: do this iteratively
     setup_pairwise_aligner_parser(parent_parser_subparsers)
@@ -1375,7 +1378,14 @@ def cmdline_args():
 
 
 def cmdline_main():
+    import importlib.metadata
     parser, args = cmdline_args()
+
+    if args.version and args.subcommand is None:
+        print(importlib.metadata.version('openst'))
+        return 0
+    else:
+        del args.version
 
     if "func" in args:
         args.func(args)
