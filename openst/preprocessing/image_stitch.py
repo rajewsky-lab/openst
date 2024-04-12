@@ -101,9 +101,6 @@ def image_stitch_imagej(imagej_bin: str, microscope: str, input_dir: str, image_
 
 def _run_image_stitch(args):
     """_run_image_stitch."""
-    logging.info("openst image stitching; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.image_indir)
 

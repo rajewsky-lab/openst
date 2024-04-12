@@ -87,8 +87,6 @@ def shuffle_umi(adata, spatial_key='spatial'):
 def _run_transcript_assign(args):
     """_run_transcript_assign."""
     # TODO: load with dask if it is too large
-    logging.info("openst spatial transcriptomics stitching; running with parameters:")
-    logging.info(args.__dict__)
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 

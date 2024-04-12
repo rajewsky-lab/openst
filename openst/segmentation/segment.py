@@ -193,8 +193,6 @@ def _cellpose_segment(im, args):
     Raises:
         FileNotFoundError: If input or output directories do not exist.
     """
-    logging.info("openst segmentation; running with parameters:")
-    logging.info(args.__dict__)
 
     try:
         from cellpose import models

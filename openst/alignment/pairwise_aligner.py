@@ -485,9 +485,6 @@ def run_registration(
 
 
 def run_pairwise_aligner(args):
-    logging.info("Open-ST pairwise alignment; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)

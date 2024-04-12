@@ -152,8 +152,6 @@ def _run_from_3d_registration(args):
     """
     _run_from_3d_registration
     """
-    logging.info("openst from_3d_registration; running with parameters:")
-    logging.info(args.__dict__)
 
     # Check input and output data
     check_file_exists(args.in_adata_aligned)

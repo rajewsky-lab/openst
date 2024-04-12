@@ -126,23 +126,26 @@ def read_tiles_to_list(
 
         if "spatial" not in _f_obj.obsm.keys():
             raise ValueError(f"Could not find valid .obsm['spatial'] data in {f}")
-        if tile_id_key not in _f_obj.obs.keys():
+        if tile_id_key not in _f_obj.obs.keys() and tile_id is None:
             if tile_id is None:
                 _tile_id = parse_tile_id_from_path(f, tile_id_regex=tile_id_regex)
                 if len(_tile_id) == 0:
                     raise ValueError(
-                        f"Could not find a tile_id from the filename {f} with the regular expression {tile_id_regex}"
+                        f"Could not find a 'tile_id' for tile {f} with the regular expression {tile_id_regex}"
                     )
             else:
                 _tile_id = tile_id[i]
 
+            _f_obj.obs[tile_id_key] = _tile_id
+        elif tile_id is not None:
+            _tile_id = tile_id[i]
             _f_obj.obs[tile_id_key] = _tile_id
 
         if tile_id_key != "tile_id":
             _f_obj.obs["tile_id"] = _tile_id
 
         if not check_obs_unique(_f_obj, "tile_id"):
-            raise ValueError(f"tile_id exist in AnnData object but are not unique for the tile in file {f}")
+            raise ValueError(f"'tile_id' exists in Open-ST h5 object but contains more than one unique value in tile {f}")
 
         tiles.append(_f_obj)
 
@@ -218,9 +221,6 @@ def merge_tiles_to_collection(
 
 def _run_spatial_stitch(args):
     """_run_spatial_stitch."""
-    logging.info("openst spatial transcriptomics stitching; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     if type(args.tiles) is str:
         check_file_exists(args.tiles)

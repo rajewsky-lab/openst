@@ -36,9 +36,6 @@ def _run_segment_merge(args):
     Raises:
         FileNotFoundError: If input or output directories do not exist.
     """
-    logging.info("openst segment merge; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     mask_a, mask_b = None, None
     if args.h5_in != '':
