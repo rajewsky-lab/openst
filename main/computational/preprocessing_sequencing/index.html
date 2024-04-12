@@ -1572,8 +1572,8 @@ The top surface of 1 tile is imaged, then the bottom surface of the same tile is
 <p>The <code>x_pos</code> and <code>y_pos</code> coordinates from the table above are given for each tile, separately. This information is
 encoded in the <code>bcl</code> and <code>fastq</code> files. To obtain per-tile barcodes and coordinates, run the following code: </p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>barcode_preprocessing<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--in-fastq<span class="w"> </span>&lt;fastq_of_tile&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--out-path<span class="w"> </span>&lt;out_path&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--fastq-in<span class="w"> </span>&lt;fastq_of_tile&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--tilecoords-out<span class="w"> </span>&lt;out_path&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--out-suffix<span class="w"> </span>&lt;out_suffix&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--out-prefix<span class="w"> </span>&lt;out_prefix&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>--crop-seq<span class="w"> </span>&lt;len_int&gt;<span class="w"> </span><span class="se">\</span>
@@ -1587,23 +1587,22 @@ files will be written; <code>&lt;out_suffix&gt;</code> and <code>&lt;out_prefix&
 (e.g., 2:32 will take nucleotides 2<sup>nd</sup> until 32th of the sequence in the <code>fastq</code> file); <code>--rev-comp</code> is provided whether the barcode sequences
 must be written into the <code>csv</code> as their reverse-complementary; <code>--single-tile</code> argument is provided when the <code>fastq</code> file only contains data for
 a single tile (<strong>our recommendation</strong>).</p>
-<p>The code above will generate a file in <code>&lt;out_path</code> per tile. Only a single fastq file can be provided at a time via <code>--in-fastq</code>. To
+<p>The code above will generate a file in <code>&lt;out_path</code> per tile. Only a single fastq file can be provided at a time via <code>--fastq-in</code>. To
 process this in parallel, you can run the following snippets (in Linux, assuming you start from the <code>fastq</code> files). We assume that
 you have a file <code>lanes_and_tiles.txt</code>, that contains the tile identifiers that you want to process; you can generate this file with:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>cat<span class="w"> </span>RunInfo.xml<span class="w"> </span><span class="p">|</span><span class="w"> </span>grep<span class="w"> </span><span class="s2">&quot;&lt;Tile&gt;&quot;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/ *&lt;Tile&gt;//&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/&lt;\/Tile&gt;//&#39;</span><span class="w"> </span><span class="p">|</span><span class="w"> </span>sed<span class="w"> </span><span class="s1">&#39;s/^[ \t]*//;s/[ \t]*$//&#39;</span><span class="w"> </span>&gt;<span class="w"> </span>lanes_and_tiles.txt
 </span></code></pre></div>
 <p>where <code>RunInfo.xml</code> is a file contained in the basecalls directory. <em>We don't endorse parsing xml like this, but
 this code snippet works</em> 🙈. Then, you can process various <code>fastq</code> files in the basecalls directory as follows:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>cat<span class="w"> </span>lanes_and_tiles.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span>&lt;parallel_processes&gt;<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>cat<span class="w"> </span>lanes_and_tiles.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span>&lt;parallel_processes&gt;<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;openst barcode_preprocessing \</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s1">                --in-fastq &lt;fastq_dir&gt;/{}/Undetermined_S0_R1_001.fastq.gz \</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s1">                --in-fastq &lt;fastq_of_tile&gt; \</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s1">                --out-path &lt;out_path&gt; \</span>
-</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s1">                --out-suffix .txt \</span>
-</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="s1">                --out-prefix &lt;out_prefix&gt;&quot;{}&quot; \</span>
-</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="s1">                --crop-seq &lt;len_int&gt; \</span>
-</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="s1">                --rev-comp \</span>
-</span><span id="__span-2-10"><a id="__codelineno-2-10" name="__codelineno-2-10" href="#__codelineno-2-10"></a><span class="s1">                --single-tile&#39;</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="s1">                --fastq-in &lt;fastq_dir&gt;/{}/Undetermined_S0_R1_001.fastq.gz \</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="s1">                --tilecoords-out &lt;out_path&gt; \</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="s1">                --out-suffix .txt \</span>
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="s1">                --out-prefix &lt;out_prefix&gt;&quot;{}&quot; \</span>
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="s1">                --crop-seq &lt;len_int&gt; \</span>
+</span><span id="__span-2-8"><a id="__codelineno-2-8" name="__codelineno-2-8" href="#__codelineno-2-8"></a><span class="s1">                --rev-comp \</span>
+</span><span id="__span-2-9"><a id="__codelineno-2-9" name="__codelineno-2-9" href="#__codelineno-2-9"></a><span class="s1">                --single-tile&#39;</span>
 </span></code></pre></div>
 <p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance,
 <code>&lt;parallel_processes&gt;</code> is the number of parallel processes that will be spawned (recommended: less than the number
@@ -1612,19 +1611,18 @@ of cores in your machine); <code>&lt;fastq_dir&gt;</code> is the subdirectory of
 so you can keep track when having more than one flow cell).</p>
 <p>Otherwise, if you start from <code>bcl</code> files (raw basecalls), you can run demultiplexing and conversion to <code>fastq</code>
 simultaneously to generating the barcode spatial coordinate file:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cat<span class="w"> </span>lanes_and_tiles.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span>&lt;parallel_processes&gt;<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>cat<span class="w"> </span>lanes_and_tiles.txt<span class="w"> </span><span class="p">|</span><span class="w"> </span>xargs<span class="w"> </span>-n<span class="w"> </span><span class="m">1</span><span class="w"> </span>-P<span class="w"> </span>&lt;parallel_processes&gt;<span class="w"> </span>-I<span class="w"> </span><span class="o">{}</span><span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>sh<span class="w"> </span>-c<span class="w"> </span><span class="s1">&#39;bcl2fastq -R &lt;bcl_in&gt; --no-lane-splitting \</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="s1">                -o &lt;bcl_out&gt;/&quot;{}&quot; --tiles s_&quot;{}&quot;; \</span>
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="s1">            openst barcode_preprocessing \</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s1">                --in-fastq &lt;bcl_out&gt;/{}/Undetermined_S0_R1_001.fastq.gz \</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s1">                --in-fastq &lt;fastq_of_tile&gt; \</span>
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s1">                --out-path &lt;out_path&gt; \</span>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s1">                --out-suffix .txt \</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s1">                --out-prefix &lt;out_prefix&gt;&quot;{}&quot; \</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">                --crop-seq &lt;len_int&gt; \</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">                --rev-comp \</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="s1">                --single-tile&#39;</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="s1">                --fastq-in &lt;bcl_out&gt;/{}/Undetermined_S0_R1_001.fastq.gz \</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="s1">                --tilecoords-out &lt;out_path&gt; \</span>
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a><span class="s1">                --out-suffix .txt \</span>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="s1">                --out-prefix &lt;out_prefix&gt;&quot;{}&quot; \</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a><span class="s1">                --crop-seq &lt;len_int&gt; \</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="s1">                --rev-comp \</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="s1">                --single-tile&#39;</span>
 </span></code></pre></div>
 <p>Again, make sure to replace the placeholders (<code>&lt;...&gt;</code>). Now, <code>&lt;bcl_in&gt;</code> and <code>&lt;bcl_out&gt;</code> are the directories where the
 basecall files are contained and where the converted output <code>fastq</code> files will be saved; The rest of
@@ -1664,7 +1662,7 @@ issue in our [repo], and we can generate it for you).</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>spatial_stitch<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--tiles<span class="w"> </span>&lt;space_separated_list_or_wildcards_to_h5ad&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--tile-coordinates<span class="w"> </span>&lt;path_to_coordinate_system&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--output<span class="w"> </span>&lt;output_puck_collection_h5ad&gt;
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--h5-out<span class="w"> </span>&lt;output_puck_collection_h5ad&gt;
 </span></code></pre></div>
 <p>This program has additional arguments that are explained when running <code>openst spatial_stitch --help</code>. Make sure to replace
 the placeholders (<code>&lt;...&gt;</code>); for example, <code>&lt;space_separated_list_or_wildcards_to_h5ad&gt;</code> is a space-separated list or a

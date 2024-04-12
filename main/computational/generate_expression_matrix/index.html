@@ -1454,16 +1454,15 @@ We provide a model that we fine-tuned for segmentation of fresh-frozen, H&amp;E-
 You can specify any other model that works best for your data -
 refer to the <a href="https://cellpose.readthedocs.io/en/latest/index.html">cellpose</a> documentation.</p>
 <p><div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--adata<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--image-in<span class="w"> </span>&lt;image_in_path&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--output-mask<span class="w"> </span>&lt;mask_out_path&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--model<span class="w"> </span>&lt;path&gt;/HE_cellpose_rajewsky<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>--chunked<span class="w"> </span><span class="se">\ </span><span class="c1"># divides the image into smaller chunks (lower memory usage)</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>--gpu<span class="w"> </span><span class="se">\ </span><span class="c1"># uses GPU for segmentation (Nvidia CUDA)</span>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span>--num-workers<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\ </span><span class="c1"># processes the image in parallel</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>--dilate-px<span class="w"> </span><span class="m">10</span><span class="w"> </span><span class="c1"># will extend the segmentation 10 micron around</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--mask-out<span class="w"> </span>&lt;mask_out_path&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--model<span class="w"> </span>&lt;path&gt;/HE_cellpose_rajewsky
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="c1"># --device cuda \ # uses GPU for segmentation, if available</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1"># --chunked \ # specify if you run out of GPU memory - segments in chunks</span>
 </span></code></pre></div>
-Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance,
+By default, segmentation is extended radially 10 pixels. This can be changed with the argument <code>--dilate-px</code>.</p>
+<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance,
 <code>&lt;path_to_aligned_h5ad&gt;</code> is the full path to the <code>h5ad</code> file <a href="../pairwise_alignment/#expected-output">after pairwise alignment</a>; 
 <code>&lt;image_in_path&gt;</code> is the path to the image - a path to a file, or a location inside the <code>h5ad</code> file,
 like <code>'uns/spatial_pairwise_aligned/staining_image_transformed'</code> (<em>our recommendation</em>).
@@ -1477,15 +1476,12 @@ for segmentation of H&amp;E images The rest of parameters can be checked with <c
 <p><strong>If your sample also contains very large cells</strong> (e.g., adipocytes) that are not segmented with the previous parameters,
  you can perform a second segmentation with a cellpose model, adjusting the diameter parameter.</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">     </span>--adata<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">     </span>--image-in<span class="w"> </span>&lt;image_in_path&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>--output-mask<span class="w"> </span>&lt;mask_out_path_larger&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>&lt;mask_out_path_larger&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">     </span>--model<span class="w"> </span>&lt;path&gt;/HE_cellpose_rajewsky<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">     </span>--chunked<span class="w"> </span><span class="se">\ </span><span class="c1"># divides the image into smaller chunks (lower memory usage)</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">     </span>--gpu<span class="w"> </span><span class="se">\ </span><span class="c1"># uses GPU for segmentation (Nvidia CUDA)</span>
-</span><span id="__span-1-8"><a id="__codelineno-1-8" name="__codelineno-1-8" href="#__codelineno-1-8"></a><span class="w">     </span>--num-workers<span class="w"> </span><span class="m">8</span><span class="w"> </span><span class="se">\ </span><span class="c1"># processes the image in parallel</span>
-</span><span id="__span-1-9"><a id="__codelineno-1-9" name="__codelineno-1-9" href="#__codelineno-1-9"></a><span class="w">     </span>--dilate-px<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-10"><a id="__codelineno-1-10" name="__codelineno-1-10" href="#__codelineno-1-10"></a><span class="w">     </span>--diameter<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="c1"># diameter for the larger cell type</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">     </span>--dilate-px<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">     </span>--diameter<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="c1"># diameter for the larger cell type</span>
 </span></code></pre></div>
 <p>Replace the placeholders (<code>&lt;...&gt;</code>) as before; in this case, the placeholder <code>&lt;mask_out_path_larger&gt;</code> must be different from the
  <code>&lt;mask_out_path&gt;</code> provided above.</p>
@@ -1493,7 +1489,7 @@ for segmentation of H&amp;E images The rest of parameters can be checked with <c
  This command will apply an "AND" between all images, to only preserve mask of non-overlapping,
  with the hierarchy provided in the <code>--image-in</code> argument (first has higher priority).</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>segment_merge<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--adata<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>--mask-in<span class="w"> </span>&lt;mask_a&gt;<span class="w"> </span>&lt;mask_b&gt;
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>&lt;mask_combined&gt;
 </span></code></pre></div>
@@ -1505,11 +1501,10 @@ for segmentation of H&amp;E images The rest of parameters can be checked with <c
 where <span class="arithmatex">\(N\)</span> maps to <span class="arithmatex">\(M\)</span> via the segmentation mask.</p>
 <p>This step allows you to associate capture spots with segmented cells.</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>transcript_assign<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--adata<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path_to_aligned_h5ad&gt;<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--spatial-key<span class="w"> </span>spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--mask-in-adata<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--mask<span class="w"> </span>&lt;mask_out_path&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">    </span>--output<span class="w"> </span>&lt;path_to_sc_h5ad&gt;
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--mask-in<span class="w"> </span>&lt;mask_out_path&gt;<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>&lt;path_to_sc_h5ad&gt;
 </span></code></pre></div>
 <p>Replace the placeholders (<code>&lt;...&gt;</code>) as before; in this case, the placeholder <code>&lt;mask_in_path&gt;</code> must be set to
 be equal to the <code>&lt;mask_out_path&gt;</code> (or <code>&lt;mask_combined&gt;</code> if you ran multiple segmentation); also, <code>&lt;path_to_sc_h5ad&gt;</code>

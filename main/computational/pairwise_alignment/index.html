@@ -810,9 +810,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#visual-assessment-of-alignment" class="md-nav__link">
+  <a href="#visual-assessment-with-report" class="md-nav__link">
     <span class="md-ellipsis">
-      Visual assessment of alignment
+      Visual assessment with report
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visual-assessment-with-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      Visual assessment with GUI
     </span>
   </a>
   
@@ -824,9 +833,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#manual-workflow" class="md-nav__link">
+  <a href="#manualsemiautomatic-workflow" class="md-nav__link">
     <span class="md-ellipsis">
-      Manual workflow
+      Manual/semiautomatic workflow
     </span>
   </a>
   
@@ -1473,9 +1482,18 @@
       <ul class="md-nav__list">
         
           <li class="md-nav__item">
-  <a href="#visual-assessment-of-alignment" class="md-nav__link">
+  <a href="#visual-assessment-with-report" class="md-nav__link">
     <span class="md-ellipsis">
-      Visual assessment of alignment
+      Visual assessment with report
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#visual-assessment-with-gui" class="md-nav__link">
+    <span class="md-ellipsis">
+      Visual assessment with GUI
     </span>
   </a>
   
@@ -1487,9 +1505,9 @@
 </li>
       
         <li class="md-nav__item">
-  <a href="#manual-workflow" class="md-nav__link">
+  <a href="#manualsemiautomatic-workflow" class="md-nav__link">
     <span class="md-ellipsis">
-      Manual workflow
+      Manual/semiautomatic workflow
     </span>
   </a>
   
@@ -1550,7 +1568,7 @@ can be used for the alignment of true staining images and the ST modalities.</p>
 <h2 id="required-input-data">Required input data<a class="headerlink" href="#required-input-data" title="Permanent link">&para;</a></h2>
 <p>For automatic and manual alignment, two inputs are required: (1) a stitched tile-scan of 
 the staining image (see <a href="../preprocessing_imaging/">Preprocessing of imaging</a>), and (2) a
-single <a href="https://anndata.readthedocs.io/en/latest/fileformat-prose.html">h5ad</a> file containing all the [barcoded tiles] of a sample 
+single <a href="https://anndata.readthedocs.io/en/latest/fileformat-prose.html">h5ad</a> file containing all the <a href="../preprocessing_sequencing/#flow-cell-related-terms">barcoded tiles</a> of a sample 
 (see <a href="../preprocessing_sequencing/">Preprocessing of sequencing</a>). </p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
@@ -1586,110 +1604,90 @@ column under <code>obs</code> called <code>tile_id</code>, telling which tile a 
 a barcodes-by-2d matrix under <code>obsm</code> (with the name <code>spatial</code>), containing the spatial coordinates of the barcoded
 spots.</p>
 <h2 id="automated-workflow">Automated workflow<a class="headerlink" href="#automated-workflow" title="Permanent link">&para;</a></h2>
-<p>If you want to save time (😉), we provide a script that performs coarse and fine steps of alignment 
+<p>If you want to save time, we provide a script that performs coarse and fine steps of alignment 
 automatically, by leveraging computer vision algorithms. To do so, make sure that you have the <a href="#required-input-data">necessary
 input data</a>; then, open a termina, type and run the following command (just an example):</p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>&lt;path_image&gt;/Image_Stitched_Composite.tif<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path&gt;/&lt;id&gt;_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--h5-out<span class="w"> </span>&lt;path&gt;/&lt;id&gt;_stitched_spots_aligned.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--metadata-out<span class="w"> </span>&lt;path&gt;/&lt;id&gt;_alignment_metadata.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>--save-image-in-h5<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>--n-threads<span class="w"> </span>&lt;cores&gt;
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--metadata<span class="w"> </span>alignment_metadata.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="c1"># --device cuda # by default, cpu. Only specify if you have cuda-compatible GPU</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="c1"># --only-coarse # skips the fine fiducial registration, in case you want to do that manually</span>
 </span></code></pre></div>
-<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance, <code>&lt;path_image&gt;</code> in the <code>--image-in</code> command 
-with the folder containing the <a href="../preprocessing_imaging/">stitched images</a> of the current sample, 
-<code>&lt;path&gt;</code> in the <code>--h5-in</code> and <code>--h5-out</code> arguments  to contain the folder containing the 
-<a href="../preprocessing_sequencing/">stitched barcoded tiles</a>, and <code>&lt;id&gt;</code> with the <code>sample_id</code> as 
-defined in the spacemake project. <strong>Importantly</strong>, make sure to specify a path where the metadata output file 
-should be created via <code>--metadata-out</code>; this will be useful for a visual assessment of whether
-automated alignment worked or not. You can set <code>&lt;cores&gt;</code> depending on your machine (it defaults to 1).</p>
+<p>Make sure to specify a path where the metadata output file 
+should be created via <code>--metadata</code>, for later visual assessment of the alignment.</p>
 <p>If you want to run only the coarse phase of the pairwise alignment (i.e., to run the fine
-alignment <a href="#manual-workflow">yourself</a>), you can specify the argument <code>--only-coarse</code>. If you have a CUDA-compatible
-GPU in your machine, you can specify the argument <code>--device cuda</code> to accelerate feature detection and matching. </p>
+alignment <a href="#manual-workflow">yourself</a>), you can specify the argument <code>--only-coarse</code>.</p>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For aligning STS to H&amp;E-stained tissues, <strong>we recommend</strong> leaving the arguments with the default values. 
 Anyway, you can get a full list of configurable parameters by running <code>openst pairwise_aligner --help</code>.</p>
 </div>
-<h3 id="visual-assessment-of-alignment">Visual assessment of alignment<a class="headerlink" href="#visual-assessment-of-alignment" title="Permanent link">&para;</a></h3>
-<p>Before proceeding to generating a cell-by-gene matrix, <strong>we strongly recommend</strong> visually assessing the alignment.
-For this, make sure that you specified a file name in the <code>--metadata-out</code>; then, you can open a terminal and run
-the following command:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>&lt;metadata_file&gt;<span class="w"> </span>--html-out<span class="o">=</span>&lt;path_to_html_file&gt;
-</span></code></pre></div>
-<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>) with the path to the metadata file (under <code>--metadata</code> argument), and
-the desired path and filename of the HTML report that will be generated (under <code>--html-out</code> argument). Running this command
-will create a HTML report containing images of the STS and staining image before and after alignment (coarse and/or fine,
-depending on the configuration).</p>
-<h2 id="manual-workflow">Manual workflow<a class="headerlink" href="#manual-workflow" title="Permanent link">&para;</a></h2>
-<p>If the automatic alignment is not successful, or you prefer to run the alignment yourself, we provide a
-Graphical User Interface (GUI) tool that allows to perform manual alignment. This GUI only needs an input file
-generated by the <code>openst</code> pipeline containing the spatial transcriptome (barcoded spots-by-genes) and the staining
-image, for visual reference. Such a file is generated upon running <code>openst pairwise_aligner</code> (if you'd like to
-refine an automatic alignment). Alternatively, you can start from the <a href="#required-input-data">same files as in the automated workflow</a>,
-and merge them with the command:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--prepare-data<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path&gt;/&lt;id&gt;_stitched_spots_aligned.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--image-in<span class="w"> </span>&lt;path_image&gt;/Image_Stitched_Composite.tif
-</span></code></pre></div>
-<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance, <code>&lt;path_image&gt;</code> in the <code>--image-in</code> command 
-with the folder containing the <a href="../preprocessing_imaging/">stitched images</a> of the current sample, 
-<code>&lt;path&gt;</code> in the <code>--h5-in</code> argument to contain the folder containing the 
-<a href="../preprocessing_sequencing/">stitched barcoded tiles</a>, and <code>&lt;id&gt;</code> with the <code>sample_id</code> as 
-defined in the spacemake project. </p>
-<div class="admonition warning">
-<p class="admonition-title">Warning</p>
-<p>When <code>--h5-out</code> is not provided, the image will be stored as a new layer in the
-file specified at <code>--h5-in</code>.</p>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>Right after automatic alignment and before
+proceeding to segmentation and aggregating into a cell-by-gene matrix,
+<strong>we strongly recommend</strong> visually assessing the alignment results. Specifically, that
+the tissue is overall well-aligned in both modalities, and that the fiducial markers are
+overlapping across all tiles.</p>
 </div>
-<p>Once you have prepared the input file, you can run the GUI with the following command (no arguments are required)</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+<h3 id="visual-assessment-with-report">Visual assessment with report<a class="headerlink" href="#visual-assessment-with-report" title="Permanent link">&para;</a></h3>
+<p>You can generate an HTML report that contains a qualitative summary of the alignment (images, parameters...)</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>alignment_metadata.json<span class="w"> </span>--html-out<span class="o">=</span>alignment_report.html
 </span></code></pre></div>
-<p>This GUI can be used to align the images from scratch, or to validate and refine the results from
-automatic coarse and/or fine alignment. In any case, the GUI is the same: we provide a video walthrough
-on how to use this GUI tool for all these cases. In summary, the GUI will allow you to create a <code>json</code> file
-containing a list of pairs of corresponding points between the staining and spatial transcriptome coordinates.
-This can be used later to transform the coordinates of the spatial trancriptomics to match the coordinate system of the image.</p>
+<h3 id="visual-assessment-with-gui">Visual assessment with GUI<a class="headerlink" href="#visual-assessment-with-gui" title="Permanent link">&para;</a></h3>
+<p>Alternatively, you can visualize the images &amp; ST data interactively using the GUI.
+- With the GUI:
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+</span></code></pre></div></p>
+<p>We provide a Graphical User Interface (GUI) for selecting keypoints between imaging &amp; ST modalities, 
+for visualization and refinement of automatic results. This GUI requires a single Open-ST h5 object,
+the output of <code>openst pairwise_aligner</code>.</p>
+<h2 id="manualsemiautomatic-workflow">Manual/semiautomatic workflow<a class="headerlink" href="#manualsemiautomatic-workflow" title="Permanent link">&para;</a></h2>
+<p>We provide a Graphical User Interface (GUI) for selecting keypoints between imaging &amp; ST modalities, 
+for full manual alignment or refinement of automatic results. This GUI requires a single Open-ST h5 object
+(after spatial stitching). There are two kinds of workflow:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="manualsemiautomatic-workflow-fully-manual-alignment" name="__tabbed_2" type="radio" /><input id="manualsemiautomatic-workflow-semiautomatic-alignment" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="manualsemiautomatic-workflow-fully-manual-alignment">Fully manual alignment</label><label for="manualsemiautomatic-workflow-semiautomatic-alignment">Semiautomatic alignment</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Add the image data to the Open-ST h5 object</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
+</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_manual_transformed&#39;</span>
+</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_fine&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_refined&#39;</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>We provide a video showcasing the GUI, with an illustrative example of refinement from (coarse) automated alignment.</p>
 <hr />
 <p><span class="twemoji" style="color: #EE0F0F"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 576 512"><!--! Font Awesome Free 6.5.1 by @fontawesome - https://fontawesome.com License - https://fontawesome.com/license/free (Icons: CC BY 4.0, Fonts: SIL OFL 1.1, Code: MIT License) Copyright 2023 Fonticons, Inc.--><path d="M549.655 124.083c-6.281-23.65-24.787-42.276-48.284-48.597C458.781 64 288 64 288 64S117.22 64 74.629 75.486c-23.497 6.322-42.003 24.947-48.284 48.597-11.412 42.867-11.412 132.305-11.412 132.305s0 89.438 11.412 132.305c6.281 23.65 24.787 41.5 48.284 47.821C117.22 448 288 448 288 448s170.78 0 213.371-11.486c23.497-6.321 42.003-24.171 48.284-47.821 11.412-42.867 11.412-132.305 11.412-132.305s0-89.438-11.412-132.305zm-317.51 213.508V175.185l142.739 81.205-142.739 81.201z"/></svg></span>
 <strong><a href="https://www.youtube.com">Walkthrough of the GUI for manual alignment</a></strong> by @danilexn – <span class="twemoji"><svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M12.5 7.25a.75.75 0 0 0-1.5 0v5.5c0 .27.144.518.378.651l3.5 2a.75.75 0 0 0 .744-1.302L12.5 12.315V7.25Z"/><path d="M12 1c6.075 0 11 4.925 11 11s-4.925 11-11 11S1 18.075 1 12 5.925 1 12 1ZM2.5 12a9.5 9.5 0 0 0 9.5 9.5 9.5 9.5 0 0 0 9.5-9.5A9.5 9.5 0 0 0 12 2.5 9.5 9.5 0 0 0 2.5 12Z"/></svg></span>
-5m – Learn how to align STS and imaging data in a step-by-step guide.</p>
+5m – Learn how to visualize and align STS and imaging data in a step-by-step guide.</p>
 <hr />
-<p>Once the <code>json</code> list of point correspondences has been generated with the GUI, you can run the following command to transform
-the coordinates of the spatial transcriptomics to match the coordinates of the staining image. We provide three alternative commands,
-depending on whether you chose to align from scratch, make a manual fine alignment from a (manual or automated) coarse alignment, 
-or refine an automated (or manual) fine alignment</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="2:3"><input checked="checked" id="manual-workflow-coarse-from-raw" name="__tabbed_2" type="radio" /><input id="manual-workflow-fine-from-coarse" name="__tabbed_2" type="radio" /><input id="manual-workflow-refine-from-fine" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="manual-workflow-coarse-from-raw">Coarse from raw</label><label for="manual-workflow-fine-from-coarse">Fine from coarse</label><label for="manual-workflow-refine-from-fine">Refine from fine</label></div>
-<div class="tabbed-content">
-<div class="tabbed-block">
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--keypoints-json<span class="w"> </span>&lt;path_to_keypoints.json&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path_to_sts.h5ad&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--coarse
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--keypoints-json<span class="w"> </span>&lt;path_to_keypoints.json&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path_to_sts.h5ad&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>--fine
-</span></code></pre></div>
-</div>
-<div class="tabbed-block">
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>--keypoints-json<span class="w"> </span>&lt;path_to_keypoints.json&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>&lt;path_to_sts.h5ad&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>--refine
-</span></code></pre></div>
-</div>
-</div>
-</div>
-<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance,
-<code>&lt;path_to_keypoints.json&gt;</code> is the <code>json</code> file generated with the GUI, and  in the <code>--h5-in</code> argument to contain the folder containing the 
-<a href="../preprocessing_sequencing/">stitched barcoded tiles</a>, and <code>&lt;path_to_sts.h5ad&gt;</code> is the path to the h5ad file that was loaded
-with the GUI. Running the command above will generate a new <a href="https://anndata.readthedocs.io/en/latest/generated/anndata.AnnData.obsm.html">obsm</a> layer containing the transformed spatial transcriptome coordinates</p>
 <h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
 <p>After running the automatic or manual alignment, you must have a single <code>h5ad</code> file, containing the transformed spatial coordinates.
 This will be used in the following step to aggregate the transcripts by a spatially-corresponding cell, in order to get a cell-by-gene
