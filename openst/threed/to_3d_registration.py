@@ -1,4 +1,3 @@
-import argparse
 import logging
 import os
 from pathlib import Path
@@ -34,8 +33,6 @@ def _run_to_3d_registration(args):
     """
     _run_to_3d_registration
     """
-    logging.info("openst to_3d_registrationation; running with parameters:")
-    logging.info(args.__dict__)
 
     # Check input and output data
     check_file_exists(args.in_adata)

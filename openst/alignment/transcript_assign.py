@@ -87,32 +87,30 @@ def shuffle_umi(adata, spatial_key='spatial'):
 def _run_transcript_assign(args):
     """_run_transcript_assign."""
     # TODO: load with dask if it is too large
-    logging.info("openst spatial transcriptomics stitching; running with parameters:")
-    logging.info(args.__dict__)
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 
-    check_file_exists(args.adata)
+    check_file_exists(args.h5_in)
 
-    if not args.mask_in_adata:
-        check_file_exists(args.mask)
+    if args.mask_from_file:
+        check_file_exists(args.mask_in)
 
-    if not check_directory_exists(args.output):
-        raise FileNotFoundError("Parent directory for --output does not exist")
+    if not check_directory_exists(args.h5_out):
+        raise FileNotFoundError("Parent directory for --h5-out does not exist")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
     logging.info("Loading image mask")
-    if args.mask_in_adata:
-        mask = load_properties_from_adata(args.adata, [args.mask])[args.mask]
+    if not args.mask_from_file:
+        mask = load_properties_from_adata(args.h5_in, [args.mask_in])[args.mask_in]
     else:
-        mask = np.array(Image.open(args.mask))
+        mask = np.array(Image.open(args.mask_in))
 
     assert_valid_mask(mask)
 
     logging.info("Loading adata")
-    adata = read_h5ad(args.adata)
+    adata = read_h5ad(args.h5_in)
 
     if args.shuffle_umi:
         logging.info("Spatially shuffling UMIs")
@@ -124,8 +122,8 @@ def _run_transcript_assign(args):
     logging.info("Assigning transcripts to cells in mask")
     adata_by_cell = transfer_segmentation(adata, props_filter)
 
-    logging.info(f"Writing output to {args.output}")
-    adata_by_cell.write_h5ad(args.output)
+    logging.info(f"Writing output to {args.h5_out}")
+    adata_by_cell.write_h5ad(args.h5_out)
 
 
 if __name__ == "__main__":

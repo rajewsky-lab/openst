@@ -25,7 +25,7 @@ from itertools import product
 
 import cv2
 import numpy as np
-from anndata import read_h5ad
+import h5py
 from PIL import Image
 from scipy import ndimage
 from skimage.color import rgb2gray, rgb2hsv
@@ -485,9 +485,6 @@ def run_registration(
 
 
 def run_pairwise_aligner(args):
-    logging.info("Open-ST pairwise alignment; running with parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
@@ -499,7 +496,7 @@ def run_pairwise_aligner(args):
     if not check_directory_exists(args.h5_out):
         raise FileNotFoundError("Parent directory for --h5-out does not exist")
 
-    if args.metadata_out != "" and not check_directory_exists(args.metadata_out):
+    if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
     if args.h5_out == args.h5_in:
@@ -524,27 +521,31 @@ def run_pairwise_aligner(args):
     )
 
     # Saving the metadata (for QC)
-    if args.metadata_out != "":
+    if args.metadata != "":
         metadata.render()
-        metadata.save_json(args.metadata_out)
+        metadata.save_json(args.metadata)
 
-    # Exporting the data
-    logging.info(f"Loading {args.h5_in}")
-    adata = read_h5ad(args.h5_in)
+    logging.info(f"Updating {args.h5_in} in place")
+    with h5py.File(args.h5_in, 'r+') as adata:
+        # TODO: to this with a function, instead
+        if "uns/spatial_pairwise_aligned/staining_image" in adata:
+            del adata["uns/spatial_pairwise_aligned/staining_image"]
+        adata["uns/spatial_pairwise_aligned/staining_image"] = staining_image
 
-    # store spatial locations with same coordinates as the image (YX)
-    adata.obsm["spatial_pairwise_aligned_coarse"] = sts_aligned_coarse[..., ::-1]
-    if sts_aligned_fine is not None:
-        adata.obsm["spatial_pairwise_aligned_fine"] = sts_aligned_fine
+        if "uns/spatial_pairwise_aligned/staining_image_transformed" in adata:
+            del adata["uns/spatial_pairwise_aligned/staining_image_transformed"]
+        adata["uns/spatial_pairwise_aligned/staining_image_transformed"] = staining_image_aligned
 
-    if args.save_image_in_h5:
-        adata.uns["spatial_pairwise_aligned"] = {}
-        adata.uns["spatial_pairwise_aligned"]["staining_image"] = staining_image
-        adata.uns["spatial_pairwise_aligned"]["staining_image_transformed"] = staining_image_aligned
-
-    logging.info(f"Writing output to {args.h5_out}")
-    adata.write(args.h5_out)
-    logging.info(f"Output {args.h5_out} file was written")
+        if "obsm/spatial_pairwise_aligned_coarse" in adata:
+            adata["obsm/spatial_pairwise_aligned_coarse"][:] = sts_aligned_coarse[..., ::-1]
+        else:
+            adata["obsm/spatial_pairwise_aligned_coarse"] = sts_aligned_coarse[..., ::-1]
+        
+        if sts_aligned_fine is not None:
+            if "obsm/spatial_pairwise_aligned_fine" in adata:
+                adata["obsm/spatial_pairwise_aligned_fine"][:] = sts_aligned_fine
+            else:
+                adata["obsm/spatial_pairwise_aligned_fine"] = sts_aligned_fine
 
 
 def _run_pairwise_aligner(args):

@@ -162,4 +162,4 @@ If you specified options for *meshing* in the `run_mode`, there will be a file c
 This contains *approximate* cell-by-gene information, as the transcripts are aggregated by a regular lattice and not by the true spatial arrangement of
 cells. This might be already enough for some analyses. 
 
-Anyway... keep going with the tutorial if you want to unleash the full potential of Open-ST 😉.
+Anyway... keep going with the tutorial if you want to unleash the full potential of Open-ST.

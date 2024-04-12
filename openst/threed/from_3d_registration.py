@@ -152,13 +152,11 @@ def _run_from_3d_registration(args):
     """
     _run_from_3d_registration
     """
-    logging.info("openst from_3d_registration; running with parameters:")
-    logging.info(args.__dict__)
 
     # Check input and output data
     check_file_exists(args.in_adata_aligned)
 
-    if not check_directory_exists(args.output_h5):
+    if not check_directory_exists(args.h5_out):
         raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
@@ -187,7 +185,7 @@ def _run_from_3d_registration(args):
     # Loading image data, if specified
     if args.images == "":
         images_sections = None
-        if not check_directory_exists(args.output_image):
+        if not check_directory_exists(args.image_out):
             raise FileNotFoundError("Parent directory for --output-mask does not exist")
 
     if args.images_in_adata:
@@ -228,12 +226,12 @@ def _run_from_3d_registration(args):
             adata_aligned.uns["STIM_aligned"]["staining_images"] = {}
         for image, name in zip(section_affine_transformed_image, args.h5_files):
             if args.save_images_separately:
-                Image.fromarray(image.astype(np.uint8)).save(os.path.join(args.output_image, f"{name}_aligned.tif"))
+                Image.fromarray(image.astype(np.uint8)).save(os.path.join(args.image_out, f"{name}_aligned.tif"))
             else:
                 adata_aligned.uns["STIM_aligned"]["staining_images"][name] = image
 
     # Save final adata object
-    adata_aligned.write(args.output_h5)
+    adata_aligned.write(args.h5_out)
 
 
 if __name__ == "__main__":

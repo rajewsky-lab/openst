@@ -90,14 +90,14 @@ def _run_barcode_preprocessing(args):
     start_time = time.time()
 
     if not args.single_tile and not args.unsorted:
-        process_multiple_tiles(args.in_fastq, args.out_path, args.out_prefix, args.out_suffix, sequence_preprocessor)
+        process_multiple_tiles(args.fastq_in, args.tilecoords_out, args.out_prefix, args.out_suffix, sequence_preprocessor)
     elif not args.single_tile and args.unsorted:
         raise NotImplementedError("We don't support multi-tile files with unsorted tiles yet!")
     else:
-        df = process_single_tile(args.in_fastq, sequence_preprocessor)
-        print(f"Writing {len(df):,} barcodes to {os.path.join(args.out_path, args.out_prefix + args.out_suffix)}")
+        df = process_single_tile(args.fastq_in, sequence_preprocessor)
+        print(f"Writing {len(df):,} barcodes to {os.path.join(args.tilecoords_out, args.out_prefix + args.out_suffix)}")
         df.to_csv(
-            os.path.join(args.out_path, args.out_prefix + args.out_suffix),
+            os.path.join(args.tilecoords_out, args.out_prefix + args.out_suffix),
             index=False,
             sep="\t",
         )

@@ -1,8 +1,9 @@
 import argparse
+import logging
 
 DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
-
+PSEUDOIMAGE_HELP = "Generate pseudoimages of Open-ST RNA data and visualize using napari"
 def get_pseudoimage_parser():
     """
     Parse command-line arguments.
@@ -11,13 +12,13 @@ def get_pseudoimage_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="generate and visualize pseudoimage of Open-ST RNA data",
+        description=PSEUDOIMAGE_HELP,
         allow_abbrev=False,
         add_help=False,
     )
     # Input
     parser.add_argument(
-        "--adata",
+        "--h5-in",
         type=str,
         required=True,
         help="Necessary to create the pseudoimage",
@@ -28,7 +29,7 @@ def get_pseudoimage_parser():
         "--spatial-coord-key",
         type=str,
         default="obsm/spatial",
-        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')",
+        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
     )
     parser.add_argument(
         "--input-resolution",
@@ -62,7 +63,7 @@ def setup_pseudoimage_parser(parent_parser):
     """setup_pseudoimage_parser"""
     parser = parent_parser.add_parser(
         "pseudoimage",
-        help="generate and visualize pseudoimage of Open-ST RNA data",
+        help=PSEUDOIMAGE_HELP,
         parents=[get_pseudoimage_parser()],
     )
     parser.set_defaults(func=cmd_run_pseudoimage_visualizer)
@@ -76,6 +77,7 @@ def cmd_run_pseudoimage_visualizer(args):
     _run_pseudoimage_visualizer(args)
 
 
+PREVIEW_HELP = "Preview locations (as points) and images of Open-ST data"
 def get_preview_parser():
     """
     Parse command-line arguments.
@@ -84,13 +86,13 @@ def get_preview_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="preview pseudoimage and images of Open-ST data",
+        description=PREVIEW_HELP,
         allow_abbrev=False,
         add_help=False,
     )
     # Input
     parser.add_argument(
-        "--adata",
+        "--h5-in",
         type=str,
         required=True,
         help="Necessary to create the pseudoimage",
@@ -102,7 +104,7 @@ def get_preview_parser():
         type=str,
         nargs="+",
         default=None,
-        help="""Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial').
+        help="""Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial').
                 Can be one or many (separated by space)""",
     )
 
@@ -141,13 +143,12 @@ def setup_preview_parser(parent_parser):
     """setup_preview_parser"""
     parser = parent_parser.add_parser(
         "preview",
-        help="prepreview the dataset with napari",
+        help=PREVIEW_HELP,
         parents=[get_preview_parser()],
     )
     parser.set_defaults(func=cmd_run_preview)
 
     return parser
-
 
 def cmd_run_preview(args):
     from openst.utils.preview import _run_preview
@@ -155,6 +156,63 @@ def cmd_run_preview(args):
     _run_preview(args)
 
 
+MERGE_MODALITIES_HELP = "merge_modalities locations (as points) and images of Open-ST data"
+def get_merge_modalities_parser():
+    """
+    Parse command-line arguments.
+
+    Returns:
+        argparse.Namespace: Parsed command-line arguments.
+    """
+    parser = argparse.ArgumentParser(
+        description=MERGE_MODALITIES_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    # Input
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        required=True,
+        help="Input Open-ST h5 object",
+    )
+
+    parser.add_argument(
+        "--image-in",
+        type=str,
+        required=True,
+        help="Image that will be loaded and written into the Open-ST h5 object",
+    )
+
+    # Staining image
+    parser.add_argument(
+        "--image-key",
+        type=str,
+        default="uns/spatial/staining_image",
+        help="Key in the Open-ST h5 object where the image will be saved.",
+    )
+
+    return parser
+
+
+def setup_merge_modalities_parser(parent_parser):
+    """setup_merge_modalities_parser"""
+    parser = parent_parser.add_parser(
+        "merge_modalities",
+        help=MERGE_MODALITIES_HELP,
+        parents=[get_merge_modalities_parser()],
+    )
+    parser.set_defaults(func=cmd_run_merge_modalities)
+
+    return parser
+
+
+def cmd_run_merge_modalities(args):
+    from openst.preprocessing.merge_modalities import _run_merge_modalities
+
+    _run_merge_modalities(args)
+
+SEGMENT_HELP = "Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension"
 def get_segment_parser():
     """
     Parse command-line arguments.
@@ -163,7 +221,7 @@ def get_segment_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="segmentation of Open-ST imaging data with cellpose",
+        description=SEGMENT_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -172,7 +230,21 @@ def get_segment_parser():
     parser.add_argument(
         "--image-in",
         type=str,
-        help="Path to the input image.",
+        help="""Key in the Open-ST h5 object (when --h5-in is specified)
+              or path to the file where the mask will be loaded from""",
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="If specified, image is loaded from h5 (from key --image-in). Segmentation mask is saved there (to --mask-out)",
+    )
+    parser.add_argument(
+        "--mask-out",
+        type=str,
+        required=True,
+        help="""Key in the Open-ST h5 object (when --h5-in is specified)
+              or path to the file where the mask will be written into""",
     )
     parser.add_argument(
         "--rna-segment",
@@ -180,18 +252,6 @@ def get_segment_parser():
         help="""Performs segmentation based on local RNA density pseudoimages from sequencing data,
               instead of using a staining image. 
               This assumes coordinates in microns (can be transformed with --rna-segment-input-resolution)""",
-    )
-    parser.add_argument(
-        "--output-mask",
-        type=str,
-        required=True,
-        help="Path to the output file where the mask will be stored",
-    )
-    parser.add_argument(
-        "--adata",
-        type=str,
-        default="",
-        help="When specified, staining image is loaded from adata (from --image-in), and segmentation is saved there (to --output-mask)",
     )
 
     # Cellpose
@@ -237,9 +297,11 @@ def get_segment_parser():
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
     parser.add_argument(
-        "--gpu",
-        action="store_true",
-        help="When specified, a GPU will be used for prediction",
+        "--device",
+        type=str,
+        default="cpu",
+        choices=["cpu", "cuda"],
+        help="Device used to run the segmentation model. Can be ['cpu', 'cuda']",
     )
 
     # Postprocessing
@@ -248,7 +310,7 @@ def get_segment_parser():
         type=int,
         help="Pixels the outlines of the segmentation mask will be extended",
         required=False,
-        default=0,
+        default=10,
     )
     parser.add_argument(
         "--outline-px",
@@ -281,7 +343,7 @@ def get_segment_parser():
         "--rna-segment-spatial-coord-key",
         type=str,
         default="obsm/spatial",
-        help="Path to the spatial coordinates inside the AnnData object (e.g., 'obsm/spatial')",
+        help="Path to the spatial coordinates inside the spatial object (e.g., 'obsm/spatial')",
     )
     parser.add_argument(
         "--rna-segment-input-resolution",
@@ -318,7 +380,7 @@ def get_segment_parser():
         default=-1,
     )
     parser.add_argument(
-        "--metadata-out",
+        "--metadata",
         type=str,
         default="",
         help="""Path where the metadata will be stored.
@@ -332,7 +394,7 @@ def setup_segment_parser(parent_parser):
     """setup_segment_parser"""
     parser = parent_parser.add_parser(
         "segment",
-        help="segmentation of Open-ST imaging data with cellpose",
+        help=SEGMENT_HELP,
         parents=[get_segment_parser()],
     )
     parser.set_defaults(func=cmd_run_segment)
@@ -346,6 +408,7 @@ def cmd_run_segment(args):
     _run_segment(args)
 
 
+SEGMENT_MERGE_HELP = "Merge two segmentation masks into one"
 def get_segment_merge_parser():
     """
     Parse command-line arguments.
@@ -354,7 +417,7 @@ def get_segment_merge_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="segmentation of Open-ST imaging data with cellpose",
+        description=SEGMENT_MERGE_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -372,10 +435,11 @@ def get_segment_merge_parser():
         help="Path (file or h5) where the merged mask will be saved",
     )
     parser.add_argument(
-        "--adata",
+        "--h5-in",
         type=str,
         default="",
-        help="When specified, masks are loaded from adata (--mask-in), and segmentation is saved there (to --mask-out)",
+        help="""When specified, masks are loaded from the Open-ST h5 object (key in --mask-in),
+             and segmentation is saved there (to the key under --mask-out)""",
     )
     parser.add_argument(
         "--chunk-size",
@@ -408,7 +472,7 @@ def setup_segment_merge_parser(parent_parser):
     """setup_segment_merge_parser"""
     parser = parent_parser.add_parser(
         "segment_merge",
-        help="merge segmentations from Open-ST data",
+        help=SEGMENT_MERGE_HELP,
         parents=[get_segment_merge_parser()],
     )
     parser.set_defaults(func=cmd_run_segment_merge)
@@ -422,22 +486,23 @@ def cmd_run_segment_merge(args):
     _run_segment_merge(args)
 
 
+IMAGE_STITCH_HELP = "Stitching image tiles (FOVs) into a single image; wrapper for ImageJ"
 def get_image_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         add_help=False,
-        description="stitching various image tiles into a single image (wrapper for ImageJ)",
+        description=IMAGE_STITCH_HELP,
     )
 
     parser.add_argument(
-        "--input-dir",
+        "--image-indir",
         type=str,
         help="path to collection of images",
         required=True,
     )
 
     parser.add_argument(
-        "--output-image",
+        "--image-out",
         type=str,
         help="path where to save the image (must be a filename)",
         required=True,
@@ -466,7 +531,7 @@ def get_image_stitch_parser():
     )
 
     parser.add_argument(
-        "--metadata-out",
+        "--metadata",
         type=str,
         default="",
         help="Path where the metadata will be stored. If not specified, metadata is not saved.",
@@ -488,7 +553,7 @@ def setup_image_stitch_parser(parent_parser):
     """setup_image_stitch_parser"""
     parser = parent_parser.add_parser(
         "image_stitch",
-        help="stitching image tiles into a single image (wrapper for ImageJ)",
+        help=IMAGE_STITCH_HELP,
         parents=[get_image_stitch_parser()],
     )
     parser.set_defaults(func=cmd_run_image_stitch)
@@ -502,10 +567,11 @@ def cmd_run_image_stitch(args):
     _run_image_stitch(args)
 
 
+SPATIAL_STITCH_HELP = "Stitching Open-ST tile objects into a single spatial object using a global coordinate system"
 def get_spatial_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="stitching spatial transcriptomics tiles into a common global coordinate system",
+        description=SPATIAL_STITCH_HELP,
         add_help=False,
     )
 
@@ -513,7 +579,14 @@ def get_spatial_stitch_parser():
         "--tiles",
         type=str,
         nargs="+",
-        help="path to spatial.h5ad AnnData file, one per tile",
+        help="Path to h5 file, one per tile - separated by space",
+        required=True,
+    )
+
+    parser.add_argument(
+        "--tile-coordinates",
+        type=str,
+        help="Path to the coordinate system file",
         required=True,
     )
 
@@ -521,36 +594,32 @@ def get_spatial_stitch_parser():
         "--tile-id",
         type=str,
         nargs="+",
-        help="list of tile id for the input files, same order as tiles."
-        + "Must be specified when the filenames do not contain a tile id that can be parsed with --tile-id-regex",
+        help="""(Mandatory if --tile-id-regex is not specified)
+              Per tile file specified in --tiles, each entry in --tile-id maps a tile file to the
+              tile IDs under the first column of the --tile-coordinates file.""",
         default=None,
-    )
-
-    parser.add_argument(
-        "--tile-coordinates",
-        type=str,
-        help="name of tile collection",
-        required=True,
-    )
-
-    parser.add_argument(
-        "--output",
-        type=str,
-        help="path to output.h5ad AnnData file",
-        required=True,
     )
 
     parser.add_argument(
         "--tile-id-regex",
         type=str,
-        help="regex to find tile id in file names",
+        help="""(Mandatory if --tile-id is not specified)
+              "Regex to find tile id in file names, instead of specifying a list in --tile-id""",
         default=DEFAULT_REGEX_TILE_ID,
+    )
+
+    parser.add_argument(
+        "--h5-out",
+        type=str,
+        help="Where the stitched spatial object will be written to",
+        required=True,
     )
 
     parser.add_argument(
         "--tile-id-key",
         type=str,
-        help="name of .obs variable where tile id are (will be) stored",
+        help="""Key of the h5 file (under /obs) where tile IDs are stored.
+                If != 'tile_id', a new categorical column of this name will be generated for consistency.""",
         default="tile_id",
     )
 
@@ -574,22 +643,22 @@ def get_spatial_stitch_parser():
         "--no-reset-index",
         default=False,
         action="store_true",
-        help="""do not reset the obs_name index of the AnnData object
-        as 'obs_name:<tile_id_key>'; keep original 'obs_name'""",
+        help="""If set, do not reset the obs_name index of the combined spatial object
+                as 'obs_name:<tile_id_key>'; keep original 'obs_name'""",
     )
 
     parser.add_argument(
         "--no-transform",
         default=False,
         action="store_true",
-        help="do not transform the spatial coordinates of the AnnData object",
+        help="If set, spatial coordinates are not transformed - just combine tiles into a single spatial object",
     )
 
     parser.add_argument(
-        "--metadata-out",
+        "--metadata",
         type=str,
         default="",
-        help="Path where the metadata will be stored. If not specified, metadata is not saved.",
+        help="(Optional) Path where the metadata will be stored. If not specified, metadata is not saved.",
     )
 
     return parser
@@ -599,7 +668,7 @@ def setup_spatial_stitch_parser(parent_parser):
     """setup_spatial_stitch_parser"""
     parser = parent_parser.add_parser(
         "spatial_stitch",
-        help="stitching STS tiles into a global coordinate system",
+        help=SPATIAL_STITCH_HELP,
         parents=[get_spatial_stitch_parser()],
     )
     parser.set_defaults(func=cmd_run_spatial_stitch)
@@ -612,7 +681,7 @@ def cmd_run_spatial_stitch(args):
 
     _run_spatial_stitch(args)
 
-
+IMAGE_PREPROCESS_HELP = "Restoration of imaging data with CUT model (as in Open-ST paper)"
 def get_image_preprocess_parser():
     """
     Parse command-line arguments.
@@ -621,7 +690,7 @@ def get_image_preprocess_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="preprocess imaging data with CUT model (as in Open-ST paper)",
+        description=IMAGE_PREPROCESS_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -644,7 +713,7 @@ def setup_image_preprocess_parser(parent_parser):
     """setup_image_preprocess_parser"""
     parser = parent_parser.add_parser(
         "image_preprocess",
-        help="convert fastq files into spatial barcode files (sequence and coordinates)",
+        help=IMAGE_PREPROCESS_HELP,
         parents=[get_image_preprocess_parser()],
     )
     parser.set_defaults(func=cmd_run_image_preprocess)
@@ -657,7 +726,7 @@ def cmd_run_image_preprocess(args):
 
     _run_image_preprocess(args)
 
-
+BARCODE_PREPROCESSING_HELP = "Convert fastq files from first sequencing into spatial barcode files (sequence and coordinates)"
 def get_barcode_preprocessing_parser():
     """
     Parse command-line arguments.
@@ -668,47 +737,47 @@ def get_barcode_preprocessing_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         add_help=False,
-        description="convert fastq files into spatial barcode files (sequence and coordinates)",
+        description=BARCODE_PREPROCESSING_HELP,
     )
-    parser.add_argument("--in-fastq", type=str, required=True, help="path to the fastq file")
+    parser.add_argument("--fastq-in", type=str, required=True, help="Path to the fastq file")
     parser.add_argument(
-        "--out-path",
+        "--tilecoords-out",
         type=str,
         required=True,
-        help="folder where the output files will be generated",
+        help="Directory where output files will be written to",
     )
     parser.add_argument(
         "--out-suffix",
         type=str,
         required=True,
-        help="where to write the output file. it works as the suffix when multiple tiles are generated",
+        help="Suffix added to the name of the output files (i.e., extension)",
     )
     parser.add_argument(
         "--out-prefix",
         type=str,
         default="",
-        help="where to write the output file. it works as the prefix when multiple tiles are generated",
+        help="(Optional) Prefix added to the name of the output files",
     )
     parser.add_argument(
         "--crop-seq",
         type=str,
         default=":",
-        help="crop the input sequence, should be a valid python slice",
+        help=")Optional) A 'python-style' slice, used to crop input sequences",
     )
     parser.add_argument(
         "--rev-comp",
         action="store_true",
-        help="applies reverse complementary after sequence cropping",
+        help="(Optional) Apply reverse complementary after sequence cropping",
     )
     parser.add_argument(
         "--single-tile",
         action="store_true",
-        help="it is guarranteed that the input .fastq(.gz) file contains only a tile. Throw an error otherwise",
+        help="(Optional) set if it is guarranteed that the input .fastq(.gz) file contains only a tile",
     )
     parser.add_argument(
         "--unsorted",
         action="store_true",
-        help="supports that the file is unsorted respect to tiles. might be slower",
+        help="(Optional) set when file is unsorted respect to tiles; might be slower",
     )
 
     return parser
@@ -718,7 +787,7 @@ def setup_barcode_preprocessing_parser(parent_parser):
     """setup_barcode_preprocessing_parser"""
     parser = parent_parser.add_parser(
         "barcode_preprocessing",
-        help="convert fastq files into spatial barcode files (sequence and coordinates)",
+        help=BARCODE_PREPROCESSING_HELP,
         parents=[get_barcode_preprocessing_parser()],
     )
     parser.set_defaults(func=cmd_run_barcode_preprocessing)
@@ -731,7 +800,7 @@ def cmd_run_barcode_preprocessing(args):
 
     _run_barcode_preprocessing(args)
 
-
+REPORT_HELP = "openst report HTML generator from metadata files (json)"
 def get_report_parser():
     """
     Parse command-line arguments.
@@ -740,7 +809,7 @@ def get_report_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="openst report HTML generator from metadata files (json)",
+        description=REPORT_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -764,7 +833,7 @@ def setup_report_parser(parent_parser):
     """setup_report_parser"""
     parser = parent_parser.add_parser(
         "report",
-        help="openst report HTML generator from metadata files (json)",
+        help=REPORT_HELP,
         parents=[get_report_parser()],
     )
     parser.set_defaults(func=cmd_run_report)
@@ -777,56 +846,51 @@ def cmd_run_report(args):
 
     _run_report(args)
 
-
+TRANSCRIPT_ASSIGN_HELP = "openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask"
 def get_transcript_assign_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         add_help=False,
-        description="openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask",
+        description=TRANSCRIPT_ASSIGN_HELP,
     )
 
     parser.add_argument(
-        "--adata",
+        "--h5-in",
         type=str,
-        help="path to previously aligned spatial.h5ad AnnData file",
+        help="Path to an already aligned Open-ST h5 object",
         required=True,
     )
 
     parser.add_argument(
-        "--mask-in-adata",
-        default=False,
-        action="store_true",
-        help="When specified, the image mask is loaded from the adata, at the internal path specified by '--mask'",
-    )
-
-    parser.add_argument(
-        "--shuffle-umi",
-        default=False,
-        action="store_true",
-        help="When specified, UMI locations will be shuffled. This can be used as a baseline for feature selection.",
-    )
-
-    parser.add_argument(
-        "--mask",
+        "--mask-in",
         type=str,
-        help="""path to image mask; must be in same coordinates as the obsm['spatial'] in the AnnData file.
-        If --mask-in-adata, it is a path within the h5ad file""",
+        help="""Path to image mask - a key in the Open-ST h5 object.
+                Or, can be an image stored separately in the filesystem (when --mask-from-file is specified)
+                Image data and ST coordinates must be pairwise aligned
+                (implicit for the case of RNA-based segmentation)""",
         required=True,
     )
 
     parser.add_argument(
         "--spatial-key",
         type=str,
-        help="""obsm dataset for the aligned coordinates, e.g. 'spatial_pairwise_aligned_coarse'  or
-        'spatial_pairwise_aligned_fine' if the data has been aligned with openst pairwise_aligner""",
+        help="""Key in the Open-ST h5 object where the aligned coordinates are stored, 
+        e.g. 'spatial_pairwise_aligned_coarse' (after using 'openst pairwise_aligner')""",
         required=True,
     )
 
     parser.add_argument(
-        "--output",
+        "--h5-out",
         type=str,
-        help="path and filename for output file that will be generated",
+        help="Path where the segmented Open-ST h5 object will be written into",
         required=True,
+    )
+
+    parser.add_argument(
+        "--mask-from-file",
+        default=False,
+        action="store_true",
+        help="If set, the image mask is loaded from an external file",
     )
 
     parser.add_argument(
@@ -835,8 +899,16 @@ def get_transcript_assign_parser():
         default=933120000,
         help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
     )
+
     parser.add_argument(
-        "--metadata-out",
+        "--shuffle-umi",
+        default=False,
+        action="store_true",
+        help="If set, UMI locations will be shuffled. This can be used as a baseline for feature selection.",
+    )
+
+    parser.add_argument(
+        "--metadata",
         type=str,
         default="",
         help="""Path where the metadata will be stored.
@@ -851,7 +923,7 @@ def setup_transcript_assign_parser(parent_parser):
     """setup_transcript_assign_parser"""
     parser = parent_parser.add_parser(
         "transcript_assign",
-        help="assign transcripts into previously aligned segmentation mask",
+        help=TRANSCRIPT_ASSIGN_HELP,
         parents=[get_transcript_assign_parser()],
     )
     parser.set_defaults(func=cmd_run_transcript_assign)
@@ -864,7 +936,7 @@ def cmd_run_transcript_assign(args):
 
     _run_transcript_assign(args)
 
-
+MANUAL_PAIRWISE_ALIGNER_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
 def get_manual_pairwise_aligner_parser():
     """
     Parse command-line arguments.
@@ -873,12 +945,12 @@ def get_manual_pairwise_aligner_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
+        description=MANUAL_PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
         add_help=False,
     )
     parser.add_argument(
-        "--keypoints-json",
+        "--keypoints-in",
         type=str,
         required=True,
         help="Path to the json file containing keypoints",
@@ -893,25 +965,26 @@ def get_manual_pairwise_aligner_parser():
         "--h5-out",
         type=str,
         default="",
-        help="""Path where the h5ad file will be saved after alignment.
-        If not indicated, data is written in place at --h5-in""",
+        help="""(Optional) Path where to copy a new Open-ST h5 object file after coordinate transformation.
+        If not specified, data is written in place at --h5-in""",
     )
     parser.add_argument(
         "--per-tile",
         action="store_true",
-        help="If selected, individual transformations per tile are estimated from they keypoints",
+        help="""(Optional) If set, transformations are applied per tile, from their keypoints. 
+                Otherwise, a single transform is computed for all tiles.""",
     )
     parser.add_argument(
         "--spatial-key-in",
         type=str,
-        default="spatial_pairwise_aligned_coarse",
-        help="""The name of the `obsm` variable where the transformed coordinates will be read from""",
+        default="obsm/spatial_pairwise_aligned_coarse",
+        help="""Key of the Open-ST h5 object where the input spatial coordinates are read from""",
     )
     parser.add_argument(
         "--spatial-key-out",
         type=str,
-        default="spatial_pairwise_aligned_fine",
-        help="""The name of the `obsm` variable where the transformed coordinates will be written""",
+        default="obsm/spatial_pairwise_aligned_fine",
+        help="""Key of the Open-ST h5 object where the transformed spatial coordinates are written into""",
     )
     return parser
 
@@ -920,7 +993,7 @@ def setup_manual_pairwise_aligner_parser(parent_parser):
     """setup_manual_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner",
-        help="openst manual pairwise alignment of spatial transcriptomics and imaging data",
+        help=MANUAL_PAIRWISE_ALIGNER_HELP,
         parents=[get_manual_pairwise_aligner_parser()],
     )
     parser.set_defaults(func=cmd_run_manual_pairwise_aligner)
@@ -934,6 +1007,7 @@ def cmd_run_manual_pairwise_aligner(args):
     _run_manual_pairwise_aligner(args)
 
 
+MANUAL_PAIRWISE_ALIGNER_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
 def get_manual_pairwise_aligner_gui_parser():
     """
     Parse command-line arguments.
@@ -942,7 +1016,7 @@ def get_manual_pairwise_aligner_gui_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
+        description=MANUAL_PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -971,7 +1045,7 @@ def setup_manual_pairwise_aligner_gui_parser(parent_parser):
     """setup_manual_pairwise_aligner_gui_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner_gui",
-        help="GUI for openst manual pairwise alignment of spatial transcriptomics and imaging data",
+        help=MANUAL_PAIRWISE_ALIGNER_HELP,
         parents=[get_manual_pairwise_aligner_gui_parser()],
     )
     parser.set_defaults(func=cmd_run_manual_pairwise_aligner_gui)
@@ -984,7 +1058,7 @@ def cmd_run_manual_pairwise_aligner_gui(args):
 
     _run_manual_pairwise_aligner_gui(args)
 
-
+PAIRWISE_ALIGNER_HELP = "Automatic pairwise alignment of transcript locations to imaging data"
 def get_pairwise_aligner_parser():
     """
     Parse command-line arguments.
@@ -993,7 +1067,7 @@ def get_pairwise_aligner_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
+        description=PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -1011,7 +1085,7 @@ def get_pairwise_aligner_parser():
         help="Path to the input h5ad file containing spatial coordinates",
     )
     parser.add_argument(
-        "--metadata-out",
+        "--metadata",
         type=str,
         default="",
         help="Path where the metadata will be stored. If not specified, metadata is not saved.",
@@ -1021,11 +1095,6 @@ def get_pairwise_aligner_parser():
         type=str,
         required=True,
         help="Path where the h5ad file will be saved after alignment",
-    )
-    parser.add_argument(
-        "--save-image-in-h5",
-        action="store_true",
-        help="Whether the input image will be saved into the output h5ad file",
     )
     parser.add_argument(
         "--mask-tissue",
@@ -1187,7 +1256,7 @@ def setup_pairwise_aligner_parser(parent_parser):
     """setup_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "pairwise_aligner",
-        help="openst pairwise alignment of two-dimensional spatial transcriptomics and imaging data",
+        help=PAIRWISE_ALIGNER_HELP,
         parents=[get_pairwise_aligner_parser()],
     )
     parser.set_defaults(func=cmd_run_pairwise_aligner)
@@ -1200,7 +1269,7 @@ def cmd_run_pairwise_aligner(args):
 
     _run_pairwise_aligner(args)
 
-
+FROM_3D_REGISTRATION_HELP = "Convert Open-ST h5 objects for 3D registration of serial sections using STIM"
 def get_from_3d_registration_parser():
     """
     Parse command-line arguments.
@@ -1209,7 +1278,7 @@ def get_from_3d_registration_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="convert openst data for STIM (serial-section 3D registration); one file at a time",
+        description=FROM_3D_REGISTRATION_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -1245,14 +1314,14 @@ def get_from_3d_registration_parser():
         at the internal path specified by '--images'""",
     )
     parser.add_argument(
-        "--output-h5",
+        "--h5-out",
         type=str,
         required=True,
         help="""Path to output h5ad file that will be created.
         When --separate-images is specified, it will not contain images.""",
     )
     parser.add_argument(
-        "--output-image",
+        "--image-out",
         type=str,
         help="""Path to output h5ad file that will be created.
         When --separate-images is specified, it will not contain images.""",
@@ -1303,7 +1372,7 @@ def setup_from_3d_registration_parser(parent_parser):
     """setup_from_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "from_3d_registration",
-        help="convert STIM-registered data into h5ad files",
+        help=FROM_3D_REGISTRATION_HELP,
         parents=[get_from_3d_registration_parser()],
     )
     parser.set_defaults(func=cmd_run_from_3d_registration)
@@ -1316,7 +1385,8 @@ def cmd_run_from_3d_registration(args):
 
     _run_from_3d_registration(args)
 
-
+GET_3D_REGISTRATION_HELP = """Convert STIM output back to a single (aligned) Open-ST h5 object.
+                            If available, pairwise-aligned image data is transformed, too."""
 def get_to_3d_registration_parser():
     """
     Parse command-line arguments.
@@ -1325,7 +1395,7 @@ def get_to_3d_registration_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description="convert openst data for STIM (serial-section 3D registration); one file at a time",
+        description=GET_3D_REGISTRATION_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -1367,7 +1437,7 @@ def setup_to_3d_registration_parser(parent_parser):
     """setup_to_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "to_3d_registration",
-        help="convert h5ad files to native STIM-supported format",
+        help=GET_3D_REGISTRATION_HELP,
         parents=[get_to_3d_registration_parser()],
     )
     parser.set_defaults(func=cmd_run_to_3d_registration)
@@ -1387,31 +1457,49 @@ def cmdline_args():
         description="openst: computational tools of Open-ST",
     )
     parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
+    parent_parser.add_argument(
+    '--version',
+    action = 'store_true')
 
     # TODO: do this iteratively
+    setup_barcode_preprocessing_parser(parent_parser_subparsers)
+    
+    setup_image_stitch_parser(parent_parser_subparsers)
+    setup_image_preprocess_parser(parent_parser_subparsers)
+    setup_spatial_stitch_parser(parent_parser_subparsers)
+
     setup_pairwise_aligner_parser(parent_parser_subparsers)
     setup_manual_pairwise_aligner_parser(parent_parser_subparsers)
     setup_manual_pairwise_aligner_gui_parser(parent_parser_subparsers)
-    setup_report_parser(parent_parser_subparsers)
+
     setup_segment_parser(parent_parser_subparsers)
     setup_segment_merge_parser(parent_parser_subparsers)
-    setup_spatial_stitch_parser(parent_parser_subparsers)
-    setup_image_preprocess_parser(parent_parser_subparsers)
-    setup_image_stitch_parser(parent_parser_subparsers)
     setup_transcript_assign_parser(parent_parser_subparsers)
+    
     setup_to_3d_registration_parser(parent_parser_subparsers)
     setup_from_3d_registration_parser(parent_parser_subparsers)
-    setup_barcode_preprocessing_parser(parent_parser_subparsers)
+    
+    setup_merge_modalities_parser(parent_parser_subparsers)
     setup_pseudoimage_parser(parent_parser_subparsers)
     setup_preview_parser(parent_parser_subparsers)
+    setup_report_parser(parent_parser_subparsers)
 
     return parent_parser, parent_parser.parse_args()
 
 
 def cmdline_main():
+    import importlib.metadata
     parser, args = cmdline_args()
 
+    if args.version and args.subcommand is None:
+        print(importlib.metadata.version('openst'))
+        return 0
+    else:
+        del args.version
+
     if "func" in args:
+        logging.info(f"openst {args.subcommand} - running with the following parameters:")
+        logging.info(args.__dict__)
         args.func(args)
     else:
         parser.print_help()

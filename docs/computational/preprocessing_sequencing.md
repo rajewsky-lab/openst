@@ -48,8 +48,8 @@ encoded in the `bcl` and `fastq` files. To obtain per-tile barcodes and coordina
 
 ```sh
 openst barcode_preprocessing \
-    --in-fastq <fastq_of_tile> \
-    --out-path <out_path> \
+    --fastq-in <fastq_of_tile> \
+    --tilecoords-out <out_path> \
     --out-suffix <out_suffix> \
     --out-prefix <out_prefix> \
     --crop-seq <len_int> \
@@ -65,7 +65,7 @@ files will be written; `<out_suffix>` and `<out_prefix>` are suffixes and prefix
 must be written into the `csv` as their reverse-complementary; `--single-tile` argument is provided when the `fastq` file only contains data for
 a single tile (**our recommendation**).
 
-The code above will generate a file in `<out_path` per tile. Only a single fastq file can be provided at a time via `--in-fastq`. To
+The code above will generate a file in `<out_path` per tile. Only a single fastq file can be provided at a time via `--fastq-in`. To
 process this in parallel, you can run the following snippets (in Linux, assuming you start from the `fastq` files). We assume that
 you have a file `lanes_and_tiles.txt`, that contains the tile identifiers that you want to process; you can generate this file with:
 
@@ -77,11 +77,10 @@ where `RunInfo.xml` is a file contained in the basecalls directory. *We don't en
 this code snippet works* 🙈. Then, you can process various `fastq` files in the basecalls directory as follows:
 
 ```sh
-cat lanes_and_tiles.txt | xargs xargs -n 1 -P <parallel_processes> -I {} \
+cat lanes_and_tiles.txt | xargs -n 1 -P <parallel_processes> -I {} \
     sh -c 'openst barcode_preprocessing \
-                --in-fastq <fastq_dir>/{}/Undetermined_S0_R1_001.fastq.gz \
-                --in-fastq <fastq_of_tile> \
-                --out-path <out_path> \
+                --fastq-in <fastq_dir>/{}/Undetermined_S0_R1_001.fastq.gz \
+                --tilecoords-out <out_path> \
                 --out-suffix .txt \
                 --out-prefix <out_prefix>"{}" \
                 --crop-seq <len_int> \
@@ -99,14 +98,13 @@ Otherwise, if you start from `bcl` files (raw basecalls), you can run demultiple
 simultaneously to generating the barcode spatial coordinate file:
 
 ```sh
-cat lanes_and_tiles.txt | xargs xargs -n 1 -P <parallel_processes> -I {} \
+cat lanes_and_tiles.txt | xargs -n 1 -P <parallel_processes> -I {} \
     sh -c 'bcl2fastq -R <bcl_in> --no-lane-splitting \
                 -o <bcl_out>/"{}" --tiles s_"{}"; \
 
             openst barcode_preprocessing \
-                --in-fastq <bcl_out>/{}/Undetermined_S0_R1_001.fastq.gz \
-                --in-fastq <fastq_of_tile> \
-                --out-path <out_path> \
+                --fastq-in <bcl_out>/{}/Undetermined_S0_R1_001.fastq.gz \
+                --tilecoords-out <out_path> \
                 --out-suffix .txt \
                 --out-prefix <out_prefix>"{}" \
                 --crop-seq <len_int> \
@@ -161,7 +159,7 @@ To manually create 'puck_collection' files, you can run the following in a termi
 openst spatial_stitch \
     --tiles <space_separated_list_or_wildcards_to_h5ad> \
     --tile-coordinates <path_to_coordinate_system> \
-    --output <output_puck_collection_h5ad>
+    --h5-out <output_puck_collection_h5ad>
 ```
 
 This program has additional arguments that are explained when running `openst spatial_stitch --help`. Make sure to replace

@@ -19,9 +19,6 @@ def generate_html_report(json_data, template_file):
 
 
 def _run_report(args):
-    logging.info("openst report - running with the following parameters:")
-    logging.info(args.__dict__)
-
     # Check input and output data
     check_file_exists(args.metadata)
 

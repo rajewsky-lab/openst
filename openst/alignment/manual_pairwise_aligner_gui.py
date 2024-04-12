@@ -297,12 +297,19 @@ class ImageRenderer(QThread):
         image_pair = {}
 
         self.update_text.emit(f"Rendering '{self.layer}'")
-
+        min_lim, max_lim = in_coords.min(axis=0).astype(int), in_coords.max(axis=0).astype(int)
+        x_all_min, y_all_min = min_lim
+        x_all_max, y_all_max = max_lim
+        
         # Preparing images and preprocessing routines
         _i_counts_above_threshold = total_counts > self.threshold_counts
         sts_coords = in_coords[_i_counts_above_threshold]
 
-        # TODO: if no coordinate is inside of the image, perform recentering automatically
+        # We keep the limits also when filtering by UMI (avoid issues with offsets)
+        sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
+                                                           [x_all_min, y_all_min]])])
+        print(sts_coords)
+
         if not self.recenter_coarse:
             _i_sts_coords_coarse_within_image_bounds = np.where(
                 (sts_coords[:, 0] > 0)
@@ -319,7 +326,6 @@ class ImageRenderer(QThread):
         # TODO: instead of this, we plot specific sections...
         if self.layer == "all_tiles_coarse":
             staining_image_rescaled = staining_image[:: self.rescale_factor_coarse, :: self.rescale_factor_coarse]
-            
             sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],
                 self.pseudoimg_size,
@@ -601,8 +607,8 @@ class ImageAlignmentApp(QMainWindow):
         # Fields: loading settings
         self._collapse_box_imagerender = CollapsibleBox("Rendering settings")
         lay = QVBoxLayout()
-        self._sidebar_checkbox_offset_coarse = QCheckBox("Recenter global")
-        self._sidebar_checkbox_offset_coarse.setChecked(True)
+        self._sidebar_checkbox_offset_coarse = QCheckBox("Is unaligned data")
+        self._sidebar_checkbox_offset_coarse.setChecked(False)
         self._sidebar_checkbox_offset_coarse.stateChanged.connect(self._update_imagerender_params)
         lay.addWidget(self._sidebar_checkbox_offset_coarse)
 
