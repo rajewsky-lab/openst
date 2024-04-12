@@ -116,7 +116,8 @@ def read_tiles_to_list(
     if tile_id is not None and type(tile_id) is str:
         tile_id = [tile_id]
     elif type(tile_id) is list and len(tile_id) != len(f):
-        raise ValueError(f"Dimensions for f ({len(f)}) and tile_id ({len(tile_id)}) are not compatible")
+        raise ValueError(f"""You must provide {len(tile_id)} items in --tile-id,
+                           one per file in --tiles (currently provides {len(f)})""")
 
     tiles = []
 
