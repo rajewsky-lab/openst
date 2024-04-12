@@ -10,6 +10,8 @@ from dask_image.ndmeasure._utils._label import (
     )
 import dask.array as da
 from dask.diagnostics import ProgressBar
+import os
+import pathlib
 
 import numpy as np
 from PIL import Image
@@ -24,8 +26,26 @@ from openst.utils.pimage import mask_tissue
 from openst.utils.pseudoimage import create_unpaired_pseudoimage
 from skimage.segmentation import find_boundaries
 
-# TODO: implement gray_dilation
+# Models pretrained by the Rajewsky lab
+OPENST_MODEL_NAMES = [
+    "HE_cellpose_rajewsky"
+]
 
+# adapted from cellpose
+MODEL_DIR = pathlib.Path.home().joinpath(".cellpose", "models")
+_MODEL_URL = "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models"
+
+def cache_model_path(basename):
+    MODEL_DIR.mkdir(parents=True, exist_ok=True)
+    url = f"{_MODEL_URL}/{basename}"
+    cached_file = os.fspath(MODEL_DIR.joinpath(basename))
+    if not os.path.exists(cached_file):
+        from cellpose.utils import download_url_to_file
+        logging.info('Downloading: "{}" to {}\n'.format(url, cached_file))
+        download_url_to_file(url, cached_file, progress=True)
+    return cached_file
+
+# TODO: implement gray_dilation
 def assemble_from_tiles(tiles, width: int, height: int, channels: int, tile_size: int = 512):
     """
     Assemble an image from a list of tiles.
@@ -194,11 +214,13 @@ def _cellpose_segment(im, args):
     if args.device == 'cuda':
         _gpu = True
 
-    if args.model != "" and args.model not in models.MODEL_NAMES:
+    if args.model in OPENST_MODEL_NAMES:
         check_file_exists(args.model)
         model = models.CellposeModel(gpu=_gpu, pretrained_model=args.model)
     elif args.model in models.MODEL_NAMES:
         model = models.Cellpose(gpu=_gpu, model_type=args.model).cp
+    elif check_file_exists(args.model):
+        model = models.CellposeModel(gpu=_gpu, pretrained_model=args.model)
     else:
         raise FileNotFoundError(f"Cellpose model {args.model} was not found")
 
