@@ -215,14 +215,14 @@ def _cellpose_segment(im, args):
         _gpu = True
 
     if args.model in OPENST_MODEL_NAMES:
-        check_file_exists(args.model)
-        model = models.CellposeModel(gpu=_gpu, pretrained_model=args.model)
+        _model_path = cache_model_path(args.model)
+        model = models.CellposeModel(gpu=_gpu, pretrained_model=_model_path)
     elif args.model in models.MODEL_NAMES:
         model = models.Cellpose(gpu=_gpu, model_type=args.model).cp
     elif check_file_exists(args.model):
         model = models.CellposeModel(gpu=_gpu, pretrained_model=args.model)
     else:
-        raise FileNotFoundError(f"Cellpose model {args.model} was not found")
+        raise ValueError(f"Cellpose model {args.model} was not found")
 
     if args.chunked:
         logging.info("Loading images into chunks")
