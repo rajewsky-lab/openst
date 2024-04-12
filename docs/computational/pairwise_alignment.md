@@ -56,7 +56,7 @@ spots.
 [h5ad]: https://anndata.readthedocs.io/en/latest/fileformat-prose.html
 
 ## Automated workflow
-If you want to save time (😉), we provide a script that performs coarse and fine steps of alignment 
+If you want to save time, we provide a script that performs coarse and fine steps of alignment 
 automatically, by leveraging computer vision algorithms. To do so, make sure that you have the [necessary
 input data](#required-input-data); then, open a termina, type and run the following command (just an example):
 
