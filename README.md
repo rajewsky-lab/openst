@@ -10,7 +10,7 @@
   class="dark-light" align="right" width="350" alt="image"
 />
 
-# Open-ST: democratizing spatial transcriptomics
+# Open-ST: open-source spatial transcriptomics
 Open-ST is an open-source [spatial transcriptomics](https://en.wikipedia.org/wiki/Spatial_transcriptomics) method 
 with efficient whole-transcriptome capture at sub-cellular resolution (0.6 μm) at low cost 
 (<150 Euro library preparation per 12 mm^2).
