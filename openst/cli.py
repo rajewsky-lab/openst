@@ -936,8 +936,8 @@ def cmd_run_transcript_assign(args):
 
     _run_transcript_assign(args)
 
-MANUAL_PAIRWISE_ALIGNER_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
-def get_manual_pairwise_aligner_parser():
+APPLY_TRANSFORM_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
+def get_apply_transform_parser():
     """
     Parse command-line arguments.
 
@@ -945,7 +945,7 @@ def get_manual_pairwise_aligner_parser():
         argparse.Namespace: Parsed command-line arguments.
     """
     parser = argparse.ArgumentParser(
-        description=MANUAL_PAIRWISE_ALIGNER_HELP,
+        description=APPLY_TRANSFORM_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -989,26 +989,26 @@ def get_manual_pairwise_aligner_parser():
     return parser
 
 
-def setup_manual_pairwise_aligner_parser(parent_parser):
-    """setup_manual_pairwise_aligner_parser"""
+def setup_apply_transform_parser(parent_parser):
+    """setup_apply_transform_parser"""
     parser = parent_parser.add_parser(
-        "manual_pairwise_aligner",
-        help=MANUAL_PAIRWISE_ALIGNER_HELP,
-        parents=[get_manual_pairwise_aligner_parser()],
+        "apply_transform",
+        help=APPLY_TRANSFORM_HELP,
+        parents=[get_apply_transform_parser()],
     )
-    parser.set_defaults(func=cmd_run_manual_pairwise_aligner)
+    parser.set_defaults(func=cmd_run_apply_transform)
 
     return parser
 
 
-def cmd_run_manual_pairwise_aligner(args):
-    from openst.alignment.manual_pairwise_aligner import _run_manual_pairwise_aligner
+def cmd_run_apply_transform(args):
+    from repos.openst.openst.alignment.apply_transform import _run_apply_transform
 
-    _run_manual_pairwise_aligner(args)
+    _run_apply_transform(args)
 
 
-MANUAL_PAIRWISE_ALIGNER_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
-def get_manual_pairwise_aligner_gui_parser():
+MANUAL_PAIRWISE_ALIGNER_HELP = "GUI for manual alignment of Open-ST data"
+def get_manual_pairwise_aligner_parser():
     """
     Parse command-line arguments.
 
@@ -1041,22 +1041,22 @@ def get_manual_pairwise_aligner_gui_parser():
     return parser
 
 
-def setup_manual_pairwise_aligner_gui_parser(parent_parser):
-    """setup_manual_pairwise_aligner_gui_parser"""
+def setup_manual_pairwise_aligner_parser(parent_parser):
+    """setup_manual_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
-        "manual_pairwise_aligner_gui",
+        "manual_pairwise_aligner",
         help=MANUAL_PAIRWISE_ALIGNER_HELP,
-        parents=[get_manual_pairwise_aligner_gui_parser()],
+        parents=[get_manual_pairwise_aligner_parser()],
     )
-    parser.set_defaults(func=cmd_run_manual_pairwise_aligner_gui)
+    parser.set_defaults(func=cmd_run_manual_pairwise_aligner)
 
     return parser
 
 
-def cmd_run_manual_pairwise_aligner_gui(args):
-    from openst.alignment.manual_pairwise_aligner_gui import _run_manual_pairwise_aligner_gui
+def cmd_run_manual_pairwise_aligner(args):
+    from repos.openst.openst.alignment.manual_pairwise_aligner import _run_manual_pairwise_aligner
 
-    _run_manual_pairwise_aligner_gui(args)
+    _run_manual_pairwise_aligner(args)
 
 PAIRWISE_ALIGNER_HELP = "Automatic pairwise alignment of transcript locations to imaging data"
 def get_pairwise_aligner_parser():
@@ -1469,8 +1469,8 @@ def cmdline_args():
     setup_spatial_stitch_parser(parent_parser_subparsers)
 
     setup_pairwise_aligner_parser(parent_parser_subparsers)
+    setup_apply_transform_parser(parent_parser_subparsers)
     setup_manual_pairwise_aligner_parser(parent_parser_subparsers)
-    setup_manual_pairwise_aligner_gui_parser(parent_parser_subparsers)
 
     setup_segment_parser(parent_parser_subparsers)
     setup_segment_merge_parser(parent_parser_subparsers)
