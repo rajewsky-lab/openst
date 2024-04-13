@@ -133,6 +133,7 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 
     ``` sh
     # Use the GUI to select the keypoints.json file
+    # For per-tile alignment, select keypoints per tile (see video below)
     openst manual_pairwise_aligner
 
     # Compute a rigid transformation from keypoints.json and apply it to the data

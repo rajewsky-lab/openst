@@ -157,16 +157,18 @@ To manually create 'puck_collection' files, you can run the following in a termi
 
 ```sh
 openst spatial_stitch \
-    --tiles <space_separated_list_or_wildcards_to_h5ad> \
-    --tile-coordinates <path_to_coordinate_system> \
-    --h5-out <output_puck_collection_h5ad>
+    --tiles dge.fc_1_tile_2267.h5ad dge.fc_1_tile_2268.h5ad \
+    --tile-id fc_1_tile_2267 fc_1_tile_2268 \
+    --tile-coordinates fc_1_coordinate_system.csv \
+    --h5-out spatial_stitched_spots.h5ad
 ```
 
-This program has additional arguments that are explained when running `openst spatial_stitch --help`. Make sure to replace
-the placeholders (`<...>`); for example, `<space_separated_list_or_wildcards_to_h5ad>` is a space-separated list or a
-implicit (wildcards) path to all h5ad of tiles for a single sample, from spacemake (at the automatically generated `dge` folder).
-The `<path_to_coordinate_system>` is a path to the `csv` file containing the relative offsets of tiles; and, `<output_puck_collection_h5ad>`
-is the name (full or relative path) of the file that will be generated.
+This program has additional arguments that are explained when running `openst spatial_stitch --help`. 
+Make sure to populate the arguments with the proper values. In this example, `--tiles` refer to two h5ad files
+for two tiles (would need to be changed to your specific spacemake folder configuration and file names);
+`--tile-id` are the tile identifiers for each tile in `--tiles`, in order. These tile IDs must correspond to the first
+column of the `--tile-coordinates` file - here, we use fc_1 provided in the examples, but you might need to adapt this
+to your own flow cell. Lastly, `--h5-out` is specified for consistency with the following steps. 
 
 ## Expected output
 
