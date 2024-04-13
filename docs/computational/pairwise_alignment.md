@@ -97,7 +97,7 @@ openst report --metadata=alignment_metadata.json --html-out=alignment_report.htm
 Alternatively, you can visualize the images & ST data interactively using the GUI.
 - With the GUI:
 ```sh
-openst manual_pairwise_aligner_gui
+openst manual_pairwise_aligner
 ```
 
 We provide a Graphical User Interface (GUI) for selecting keypoints between imaging & ST modalities, 
@@ -118,10 +118,10 @@ for full manual alignment or refinement of automatic results. This GUI requires 
         --image-in Image_Stitched_Composite.tif
 
     # Use the GUI to select the keypoints.json file
-    openst manual_pairwise_aligner_gui
+    openst manual_pairwise_aligner
 
     # Compute a rigid transformation from keypoints.json and apply it to the data
-    openst manual_pairwise_aligner \
+    openst apply_transform \
         --keypoints-in keypoints.json \
         --h5-in spatial_stitched_spots.h5ad \
         --spatial-key-in 'obsm/spatial' \
@@ -133,10 +133,10 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 
     ``` sh
     # Use the GUI to select the keypoints.json file
-    openst manual_pairwise_aligner_gui
+    openst manual_pairwise_aligner
 
     # Compute a rigid transformation from keypoints.json and apply it to the data
-    openst manual_pairwise_aligner \
+    openst apply_transform \
         --keypoints-in keypoints.json \
         --h5-in spatial_stitched_spots.h5ad \
         --spatial-key-in 'obsm/spatial_pairwise_aligned_fine' \

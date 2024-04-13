@@ -97,7 +97,7 @@ def load_keypoints_from_json(fname: str):
 
     return keypoints_json_to_dict(keypoints_json)
 
-def _run_manual_pairwise_aligner(args):
+def _run_apply_transform(args):
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
@@ -151,6 +151,6 @@ def _run_manual_pairwise_aligner(args):
     logging.info(f"Output {args.h5_out} file was written. Finished!")
 
 if __name__ == "__main__":
-    from openst.cli import get_manual_pairwise_aligner_parser
-    args = get_manual_pairwise_aligner_parser().parse_args()
-    _run_manual_pairwise_aligner(args)
+    from openst.cli import get_apply_transform_parser
+    args = get_apply_transform_parser().parse_args()
+    _run_apply_transform(args)
