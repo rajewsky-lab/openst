@@ -62,6 +62,7 @@ SMK_IMAGES_RAW = os.path.join(SMK_PROJECT, SMK_SAMPLE_RAW, 'images')
 
 SMK_MULTIMODAL_PROCESSED = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'multimodal')
 SMK_MULTIMODAL_PROCESSED_DGE = os.path.join(SMK_MULTIMODAL_PROCESSED, 'stitched_spots.h5ad')
+SMK_MULTIMODAL_PROCESSED_DGE_SEGMENTED = os.path.join(SMK_MULTIMODAL_PROCESSED, 'stitched_segmented.h5ad')
 
 class SpacemakeError(Exception):
     def __init__(self, msg=None):
@@ -146,6 +147,23 @@ def get_stitched_dge(sample_config, sample_metadata, check_exists=False):
     _file = SMK_MULTIMODAL_PROCESSED_DGE.format(project_id=sample_metadata['project_id'],
                                         sample_id=sample_metadata['sample_id'])
     
+    if not check_directory_exists(_file):
+        _parent_dir = os.path.dirname(_file)
+        logging.info(f"Creating directory at {_parent_dir}")
+        os.mkdir(_parent_dir)
+
+    check_file_exists(_file, exception=check_exists)
+    return _file
+
+def get_stitched_segmented_dge(sample_config, sample_metadata, check_exists=False):
+    _file = SMK_MULTIMODAL_PROCESSED_DGE_SEGMENTED.format(project_id=sample_metadata['project_id'],
+                                        sample_id=sample_metadata['sample_id'])
+    
+    if not check_directory_exists(_file):
+        _parent_dir = os.path.dirname(_file)
+        logging.info(f"Creating directory at {_parent_dir}")
+        os.mkdir(_parent_dir)
+
     check_file_exists(_file, exception=check_exists)
     return _file
 
@@ -161,29 +179,88 @@ def get_stitched_image_path(sample_config, sample_metadata, check_exists=False):
     _file = SMK_IMAGES_PROCESSED_STITCHED.format(project_id=sample_metadata['project_id'],
                                                  sample_id=sample_metadata['sample_id'])
     
+    if not check_directory_exists(_file):
+        _parent_dir = os.path.dirname(_file)
+        logging.info(f"Creating directory at {_parent_dir}")
+        os.mkdir(_parent_dir)
+
     check_file_exists(_file, exception=check_exists)
     return _file
 
 def _run_spatial_stitch(sample_config, sample_metadata):
-    from openst.cli import get_spatial_stitch_parser
     puck_dges, puck_ids = get_all_tiles_dge_path(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--tiles"] + puck_dges + ["--tile-id"] + puck_ids
+    output_file = get_stitched_dge(sample_config, sample_metadata)
+    required_arguments += ["--h5-out", output_file]
+
+    return required_arguments
+
+def _run_image_stitch(sample_config, sample_metadata):
+    raw_image_dir = get_raw_image_dir_path(sample_config, sample_metadata, check_exists=True)
+    image_out = get_stitched_image_path(sample_config, sample_metadata)
+    required_arguments = ["--image-indir", raw_image_dir, "--image-out", image_out]
+
+    return required_arguments
+
+def _run_segment(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--image-in", 'uns/spatial/staining_image', "--h5-in"] + [stitched_dge]
+    required_arguments += ["--mask-out", 'uns/spatial/staining_image_mask']
+
+    return required_arguments
+
+def _run_transcript_assign(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_segmented_dge = get_stitched_segmented_dge(sample_config, sample_metadata)
+    required_arguments = ["--mask-in", 'uns/spatial/staining_image_mask', "--h5-in"] + [stitched_dge]
+    required_arguments += ["--h5-out", stitched_segmented_dge]
+
+    return required_arguments
+
+def _run_merge_modalities(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    image_out = get_stitched_image_path(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge, "--image-in", image_out]
+
+    return required_arguments
+
+def _run_manual_pairwise_aligner(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
+
+    return required_arguments
+
+def _run_apply_transform(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
+
+    return required_arguments
+
+def _run_pseudoimage(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
+
+    return required_arguments
+
+def _run_preview(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
 
 
 SUBPARSER_ACTIONS = {
-    'image_stitch': None,
+    'image_stitch': _run_image_stitch,
     'spatial_stitch': _run_spatial_stitch,
     'pairwise_aligner': None,
-    'apply_transform': None,
-    'manual_pairwise_aligner': None,
-    'segment': None,
+    'apply_transform': _run_apply_transform,
+    'manual_pairwise_aligner': _run_manual_pairwise_aligner,
+    'segment': _run_segment,
     'segment_merge': None,
-    'transcript_assign': None,
-    'merge_modalities': None,
-    'pseudoimage': None,
-    'preview': None
+    'transcript_assign': _run_transcript_assign,
+    'merge_modalities': _run_merge_modalities,
+    'pseudoimage': _run_pseudoimage,
+    'preview': _run_preview
 }
 
 def _run_from_spacemake(parser, args, unknown_args):
