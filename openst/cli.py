@@ -1002,7 +1002,7 @@ def setup_apply_transform_parser(parent_parser):
 
 
 def cmd_run_apply_transform(args):
-    from repos.openst.openst.alignment.apply_transform import _run_apply_transform
+    from openst.alignment.apply_transform import _run_apply_transform
 
     _run_apply_transform(args)
 
@@ -1054,7 +1054,7 @@ def setup_manual_pairwise_aligner_parser(parent_parser):
 
 
 def cmd_run_manual_pairwise_aligner(args):
-    from repos.openst.openst.alignment.manual_pairwise_aligner import _run_manual_pairwise_aligner
+    from openst.alignment.manual_pairwise_aligner import _run_manual_pairwise_aligner
 
     _run_manual_pairwise_aligner(args)
 

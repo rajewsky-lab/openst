@@ -46,7 +46,7 @@ from PyQt5.QtCore import (
 from PyQt5.QtGui import QBrush, QColor, QStandardItemModel, QStandardItem, QIntValidator
 from skimage.transform import warp
 
-from repos.openst.openst.alignment.apply_transform import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
+from openst.alignment.apply_transform import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
 from openst.utils.pseudoimage import create_paired_pseudoimage
 
 def h5_to_dict(val):
