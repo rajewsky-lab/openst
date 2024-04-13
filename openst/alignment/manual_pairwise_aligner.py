@@ -4,7 +4,6 @@ import h5py
 import shutil
 
 import numpy as np
-from anndata import read_h5ad
 from skimage.transform import estimate_transform as ski_estimate_transform
 
 from openst.alignment.transformation import apply_transform
@@ -16,10 +15,10 @@ def estimate_transform(model: str, src: np.ndarray, dst: np.ndarray):
     TODO: write documentation
     returns sklearn transform and True/False depending on whether flip needs to be applied to the src points before tform
     """
-    tform_points = ski_estimate_transform("similarity", src, dst)
+    tform_points = ski_estimate_transform(model, src, dst)
 
     src_flip = np.array([src[:, 0], (src[:, 1]*-1) - ((src[:, 1]*-1).min() - (src[:, 1]).min())]).T
-    tform_points_flip = ski_estimate_transform("similarity", src_flip, dst)
+    tform_points_flip = ski_estimate_transform(model, src_flip, dst)
 
     _distance_defa = np.mean(np.linalg.norm(tform_points(src) - dst, axis=1))
     _distance_flip = np.mean(np.linalg.norm(tform_points_flip(src_flip) - dst, axis=1))
@@ -34,7 +33,7 @@ def apply_transform_to_coords(
     tile_id: np.ndarray,
     keypoints: dict,
     check_bounds: bool = False,
-) -> (np.ndarray, np.ndarray):
+) -> np.ndarray:
     """
     Perform manual registration of spatial transcriptomics (STS) data with a staining image.
 
@@ -46,8 +45,7 @@ def apply_transform_to_coords(
                  are aligned separately. Recommended for flow-cell based STS.
 
     Returns:
-        tuple: A tuple containing four elements:
-            - sts_coords_transformed (np.ndarray): Registered STS coordinates after coarse registration
+        sts_coords_transformed (np.ndarray): Registered STS coordinates after coarse registration
     """
     sts_coords_transformed = in_coords.copy()
     if tile_id is None:

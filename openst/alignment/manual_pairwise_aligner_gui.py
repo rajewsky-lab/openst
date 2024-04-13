@@ -1,4 +1,3 @@
-import argparse
 import json
 import sys
 import h5py
@@ -276,23 +275,20 @@ class ImageRenderer(QThread):
         total_counts: np.ndarray,
         tile_id: np.ndarray,
         staining_image: np.ndarray,
-    ) -> (np.ndarray, np.ndarray):
+    ) -> dict:
         """
         Perform manual registration of spatial transcriptomics (STS) data with a staining image.
 
         Args:
             in_coords (np.ndarray): Input STS coordinates.
             total_counts (np.ndarray): Total UMI counts for each STS coordinate.
-            tile_id: Identifier for each STS coordinate. During the fine registration,
+            tile_id (np.ndarray): Identifier for each STS coordinate. During the fine registration,
                     this 'tile_id' is used to aggregate the coordinates into buckets that
                     are aligned separately. Recommended for flow-cell based STS.
             staining_image (np.ndarray): Staining image for registration.
 
         Returns:
-            tuple: A tuple containing four elements:
-                - out_coords_output_coarse (np.ndarray): Registered STS coordinates after coarse registration
-                - out_coords_output_fine (np.ndarray): Registered STS coordinates after fine registration
-                - registered_staining_image (np.ndarray): Staining image after registration.
+            image_pair (dict): Dictionary containing the pseudoimages, cropping and scaling limits, rendering scale.
         """
         image_pair = {}
 
@@ -308,7 +304,6 @@ class ImageRenderer(QThread):
         # We keep the limits also when filtering by UMI (avoid issues with offsets)
         sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
                                                            [x_all_min, y_all_min]])])
-        print(sts_coords)
 
         if not self.recenter_coarse:
             _i_sts_coords_coarse_within_image_bounds = np.where(
@@ -317,6 +312,11 @@ class ImageRenderer(QThread):
                 & (sts_coords[:, 1] > 0)
                 & (sts_coords[:, 1] < staining_image.shape[0])
             )
+
+            if len(_i_sts_coords_coarse_within_image_bounds[0]) < 10:
+                raise ValueError("There are no spatial coordinates falling inside the image data.\n"+
+                                 "Maybe spatial coordinates were never aligned to the image data.\n"+
+                                 "Try enabling 'Is unaligned data' under 'Rendering settings' and render again.")
             sts_coords = sts_coords[_i_sts_coords_coarse_within_image_bounds]
 
         # if sts_coords.max(axis=0).max() > 10 * staining_image.shape.max():
@@ -336,14 +336,14 @@ class ImageRenderer(QThread):
 
             #sts_coords_to_transform = sts_pseudoimage["coords_rescaled"] * sts_pseudoimage["rescaling_factor"]
             #min_lim, max_lim = sts_coords_to_transform.min(axis=0).astype(int), sts_coords_to_transform.max(axis=0).astype(int)
-            min_lim, max_lim = sts_coords.min(axis=0).astype(int), sts_coords.max(axis=0).astype(int)
-            x_min, y_min = min_lim
-            x_max, y_max = max_lim
+            # min_lim, max_lim = sts_coords.min(axis=0).astype(int), sts_coords.max(axis=0).astype(int)
+            # x_min, y_min = min_lim
+            # x_max, y_max = max_lim
 
             image_pair = {
                 "imageA": staining_image_rescaled,
                 "imageB": sts_pseudoimage["pseudoimage"],
-                "lims": [x_min, x_max, y_min, y_max],
+                "lims": [0, 0, 0, 0], #[x_min, x_max, y_min, y_max],
                 "factor_rescale": self.rescale_factor_coarse,
                 "rescale_factor": sts_pseudoimage["rescale_factor"],
                 "rescaling_factor": sts_pseudoimage["rescaling_factor"],
@@ -782,10 +782,18 @@ class ImageAlignmentApp(QMainWindow):
             xA_0, yA_0 = _current_point_pairs[keypoint_i]
             xB_0, yB_0 = _current_point_pairs[keypoint_i + 1]
 
+            bounding_rect_A = pointA.boundingRect()
+            bounding_rect_B = pointB.boundingRect()
+
+            width_A = bounding_rect_A.width()
+            radius_A = width_A/2
+            width_B = bounding_rect_B.width()
+            radius_B = width_B/2
+
             xA, yA = pointA.pos().x(), pointA.pos().y()
             xB, yB = pointB.pos().x(), pointB.pos().y()
-            _t_mkpts0[i] = np.array([xA+xA_0, yA+yA_0])
-            _t_mkpts1[i] = np.array([xB+xB_0, yB+yB_0])
+            _t_mkpts0[i] = np.array([xA+xA_0+radius_A, yA+yA_0+radius_A])
+            _t_mkpts1[i] = np.array([xB+xB_0+radius_B, yB+yB_0+radius_B])
 
         _t_image_B = self.imageB
         _t_matrix, needs_flip = estimate_transform("similarity", _t_mkpts1[:, ::-1], _t_mkpts0[:, ::-1])
@@ -970,7 +978,7 @@ class ImageAlignmentApp(QMainWindow):
         self.renderer.start()
 
     def handle_render_exception(self, exception):
-        QMessageBox.warning(self, "Rendering exception", repr(exception))
+        QMessageBox.warning(self, "Rendering exception", str(exception))
 
     def display_images(self, image_pair=None):
         if image_pair is None:
@@ -1088,6 +1096,14 @@ class ImageAlignmentApp(QMainWindow):
                 pointA = self.points_on_image[k][i]
                 pointB = self.points_on_image[k][i + 1]
 
+                bounding_rect_A = pointA.boundingRect()
+                bounding_rect_B = pointB.boundingRect()
+
+                width_A = bounding_rect_A.width()
+                radius_A = width_A/2
+                width_B = bounding_rect_B.width()
+                radius_B = width_B/2
+
                 xA_0, yA_0 = self.point_pairs[k][i]
                 xB_0, yB_0 = self.point_pairs[k][i + 1]
 
@@ -1102,20 +1118,20 @@ class ImageAlignmentApp(QMainWindow):
                 points_to_write["points"].append(
                     {
                         "layer": k,
-                        "point_src": [f"{(xA+xA_0):.2f}", f"{(yA+yA_0):.2f}"],
-                        "point_dst": [f"{(xB+xB_0):.2f}", f"{(yB+yB_0):.2f}"],
+                        "point_src": [f"{(xA+xA_0+radius_A):.2f}", f"{(yA+yA_0+radius_A):.2f}"],
+                        "point_dst": [f"{(xB+xB_0+radius_B):.2f}", f"{(yB+yB_0+radius_B):.2f}"],
                         "lims": _lims,
                         "factor_rescale": _rescale,
                         "offset_factor": _ofs_factor,
                         "point_src_offset_rescaled": [
-                            f"{((((xA+xA_0)+_lims[0]-_ofs_factor[1])*_rescale)):.2f}",
-                            f"{((((yA+yA_0)+_lims[2]-_ofs_factor[0])*_rescale)):.2f}",
+                            f"{((((xA+xA_0+radius_A)+_lims[0])*_rescale)):.2f}",
+                            f"{((((yA+yA_0+radius_A)+_lims[2])*_rescale)):.2f}",
                         ],
                         "point_dst_offset_rescaled": [
                             # f"{((((xB+xB_0)+_lims[0])*_rescale*_scale)+_ofs_factor[1]):.2f}",
                             # f"{((((yB+yB_0)+_lims[2])*_rescale*_scale)+_ofs_factor[0]):.2f}",
-                            f"{(((xB+xB_0)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_ofs_factor[0]+_lims[0]):.2f}",
-                            f"{(((yB+yB_0)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_ofs_factor[1]+_lims[2]):.2f}"
+                            f"{(((xB+xB_0+radius_B)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_lims[0]+_ofs_factor[0]):.2f}",
+                            f"{(((yB+yB_0+radius_B)/(v['rescaling_factor']*v['scale']))*v['rescale_factor']+_lims[2]+_ofs_factor[1]):.2f}"
                         ],
                     }
                 )
