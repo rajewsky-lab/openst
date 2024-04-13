@@ -1223,7 +1223,7 @@ class ImageAlignmentApp(QMainWindow):
             )
 
 
-def _run_manual_pairwise_aligner_gui(args):
+def _run_manual_pairwise_aligner(args):
     app = QApplication(sys.argv)
     window = ImageAlignmentApp(args)
     window.setWindowTitle("Manual Pairwise Alignment (Open-ST)")
@@ -1241,5 +1241,6 @@ def _run_manual_pairwise_aligner_gui(args):
     sys.exit(app.exec_())
 
 if __name__ == "__main__":
-    args = get_manual_pairwise_aligner_gui_parser().parse_args()
-    _run_manual_pairwise_aligner_gui(args)
+    from openst.cli import get_manual_pairwise_aligner_parser
+    args = get_manual_pairwise_aligner_parser().parse_args()
+    _run_manual_pairwise_aligner(args)
