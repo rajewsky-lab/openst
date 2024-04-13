@@ -486,7 +486,7 @@ def cmd_run_segment_merge(args):
     _run_segment_merge(args)
 
 
-IMAGE_STITCH_HELP = "Stitching image tiles (FOVs) into a single image; wrapper for ImageJ"
+IMAGE_STITCH_HELP = "Stitch image fields of view into a single image"
 def get_image_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -567,7 +567,7 @@ def cmd_run_image_stitch(args):
     _run_image_stitch(args)
 
 
-SPATIAL_STITCH_HELP = "Stitching Open-ST tile objects into a single spatial object using a global coordinate system"
+SPATIAL_STITCH_HELP = "Stitch Open-ST h5 tile objects into a single Open-ST h5 object"
 def get_spatial_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -726,7 +726,7 @@ def cmd_run_image_preprocess(args):
 
     _run_image_preprocess(args)
 
-BARCODE_PREPROCESSING_HELP = "Convert fastq files from first sequencing into spatial barcode files (sequence and coordinates)"
+BARCODE_PREPROCESSING_HELP = "Convert spatial barcode raw data into tabular files with barcodes and spatial coordinates"
 def get_barcode_preprocessing_parser():
     """
     Parse command-line arguments.
@@ -800,7 +800,7 @@ def cmd_run_barcode_preprocessing(args):
 
     _run_barcode_preprocessing(args)
 
-REPORT_HELP = "openst report HTML generator from metadata files (json)"
+REPORT_HELP = "Generate HTML reports from metadata files (json)"
 def get_report_parser():
     """
     Parse command-line arguments.
@@ -846,7 +846,7 @@ def cmd_run_report(args):
 
     _run_report(args)
 
-TRANSCRIPT_ASSIGN_HELP = "openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask"
+TRANSCRIPT_ASSIGN_HELP = "Aggregate transcripts into segmented cells"
 def get_transcript_assign_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
