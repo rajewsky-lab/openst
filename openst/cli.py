@@ -5,12 +5,6 @@ DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
 PSEUDOIMAGE_HELP = "Generate pseudoimages of Open-ST RNA data and visualize using napari"
 def get_pseudoimage_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PSEUDOIMAGE_HELP,
         allow_abbrev=False,
@@ -60,7 +54,6 @@ def get_pseudoimage_parser():
 
 
 def setup_pseudoimage_parser(parent_parser):
-    """setup_pseudoimage_parser"""
     parser = parent_parser.add_parser(
         "pseudoimage",
         help=PSEUDOIMAGE_HELP,
@@ -79,12 +72,6 @@ def cmd_run_pseudoimage_visualizer(args):
 
 PREVIEW_HELP = "Preview locations (as points) and images of Open-ST data"
 def get_preview_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PREVIEW_HELP,
         allow_abbrev=False,
@@ -140,7 +127,6 @@ def get_preview_parser():
 
 
 def setup_preview_parser(parent_parser):
-    """setup_preview_parser"""
     parser = parent_parser.add_parser(
         "preview",
         help=PREVIEW_HELP,
@@ -158,12 +144,6 @@ def cmd_run_preview(args):
 
 MERGE_MODALITIES_HELP = "merge_modalities locations (as points) and images of Open-ST data"
 def get_merge_modalities_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=MERGE_MODALITIES_HELP,
         allow_abbrev=False,
@@ -196,7 +176,6 @@ def get_merge_modalities_parser():
 
 
 def setup_merge_modalities_parser(parent_parser):
-    """setup_merge_modalities_parser"""
     parser = parent_parser.add_parser(
         "merge_modalities",
         help=MERGE_MODALITIES_HELP,
@@ -214,12 +193,6 @@ def cmd_run_merge_modalities(args):
 
 SEGMENT_HELP = "Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension"
 def get_segment_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=SEGMENT_HELP,
         allow_abbrev=False,
@@ -391,7 +364,6 @@ def get_segment_parser():
 
 
 def setup_segment_parser(parent_parser):
-    """setup_segment_parser"""
     parser = parent_parser.add_parser(
         "segment",
         help=SEGMENT_HELP,
@@ -410,12 +382,6 @@ def cmd_run_segment(args):
 
 SEGMENT_MERGE_HELP = "Merge two segmentation masks into one"
 def get_segment_merge_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=SEGMENT_MERGE_HELP,
         allow_abbrev=False,
@@ -469,7 +435,6 @@ def get_segment_merge_parser():
 
 
 def setup_segment_merge_parser(parent_parser):
-    """setup_segment_merge_parser"""
     parser = parent_parser.add_parser(
         "segment_merge",
         help=SEGMENT_MERGE_HELP,
@@ -550,7 +515,6 @@ def get_image_stitch_parser():
 
 
 def setup_image_stitch_parser(parent_parser):
-    """setup_image_stitch_parser"""
     parser = parent_parser.add_parser(
         "image_stitch",
         help=IMAGE_STITCH_HELP,
@@ -665,7 +629,6 @@ def get_spatial_stitch_parser():
 
 
 def setup_spatial_stitch_parser(parent_parser):
-    """setup_spatial_stitch_parser"""
     parser = parent_parser.add_parser(
         "spatial_stitch",
         help=SPATIAL_STITCH_HELP,
@@ -683,12 +646,6 @@ def cmd_run_spatial_stitch(args):
 
 IMAGE_PREPROCESS_HELP = "Restoration of imaging data with CUT model (as in Open-ST paper)"
 def get_image_preprocess_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=IMAGE_PREPROCESS_HELP,
         allow_abbrev=False,
@@ -710,7 +667,6 @@ def get_image_preprocess_parser():
 
 
 def setup_image_preprocess_parser(parent_parser):
-    """setup_image_preprocess_parser"""
     parser = parent_parser.add_parser(
         "image_preprocess",
         help=IMAGE_PREPROCESS_HELP,
@@ -728,12 +684,6 @@ def cmd_run_image_preprocess(args):
 
 BARCODE_PREPROCESSING_HELP = "Convert spatial barcode raw data into tabular files with barcodes and spatial coordinates"
 def get_barcode_preprocessing_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         add_help=False,
@@ -784,7 +734,6 @@ def get_barcode_preprocessing_parser():
 
 
 def setup_barcode_preprocessing_parser(parent_parser):
-    """setup_barcode_preprocessing_parser"""
     parser = parent_parser.add_parser(
         "barcode_preprocessing",
         help=BARCODE_PREPROCESSING_HELP,
@@ -802,12 +751,6 @@ def cmd_run_barcode_preprocessing(args):
 
 REPORT_HELP = "Generate HTML reports from metadata files (json)"
 def get_report_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=REPORT_HELP,
         allow_abbrev=False,
@@ -830,7 +773,6 @@ def get_report_parser():
 
 
 def setup_report_parser(parent_parser):
-    """setup_report_parser"""
     parser = parent_parser.add_parser(
         "report",
         help=REPORT_HELP,
@@ -920,7 +862,6 @@ def get_transcript_assign_parser():
 
 
 def setup_transcript_assign_parser(parent_parser):
-    """setup_transcript_assign_parser"""
     parser = parent_parser.add_parser(
         "transcript_assign",
         help=TRANSCRIPT_ASSIGN_HELP,
@@ -938,12 +879,6 @@ def cmd_run_transcript_assign(args):
 
 APPLY_TRANSFORM_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
 def get_apply_transform_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=APPLY_TRANSFORM_HELP,
         allow_abbrev=False,
@@ -990,7 +925,6 @@ def get_apply_transform_parser():
 
 
 def setup_apply_transform_parser(parent_parser):
-    """setup_apply_transform_parser"""
     parser = parent_parser.add_parser(
         "apply_transform",
         help=APPLY_TRANSFORM_HELP,
@@ -1009,12 +943,6 @@ def cmd_run_apply_transform(args):
 
 MANUAL_PAIRWISE_ALIGNER_HELP = "GUI for manual alignment of Open-ST data"
 def get_manual_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=MANUAL_PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
@@ -1042,7 +970,6 @@ def get_manual_pairwise_aligner_parser():
 
 
 def setup_manual_pairwise_aligner_parser(parent_parser):
-    """setup_manual_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner",
         help=MANUAL_PAIRWISE_ALIGNER_HELP,
@@ -1060,12 +987,6 @@ def cmd_run_manual_pairwise_aligner(args):
 
 PAIRWISE_ALIGNER_HELP = "Automatic pairwise alignment of transcript locations to imaging data"
 def get_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
@@ -1253,7 +1174,6 @@ def get_pairwise_aligner_parser():
 
 
 def setup_pairwise_aligner_parser(parent_parser):
-    """setup_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "pairwise_aligner",
         help=PAIRWISE_ALIGNER_HELP,
@@ -1271,12 +1191,6 @@ def cmd_run_pairwise_aligner(args):
 
 FROM_3D_REGISTRATION_HELP = "Convert Open-ST h5 objects for 3D registration of serial sections using STIM"
 def get_from_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=FROM_3D_REGISTRATION_HELP,
         allow_abbrev=False,
@@ -1369,7 +1283,6 @@ def get_from_3d_registration_parser():
 
 
 def setup_from_3d_registration_parser(parent_parser):
-    """setup_from_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "from_3d_registration",
         help=FROM_3D_REGISTRATION_HELP,
@@ -1388,12 +1301,6 @@ def cmd_run_from_3d_registration(args):
 GET_3D_REGISTRATION_HELP = """Convert STIM output back to a single (aligned) Open-ST h5 object.
                             If available, pairwise-aligned image data is transformed, too."""
 def get_to_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=GET_3D_REGISTRATION_HELP,
         allow_abbrev=False,
@@ -1434,7 +1341,6 @@ def get_to_3d_registration_parser():
 
 
 def setup_to_3d_registration_parser(parent_parser):
-    """setup_to_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "to_3d_registration",
         help=GET_3D_REGISTRATION_HELP,
@@ -1450,11 +1356,70 @@ def cmd_run_to_3d_registration(args):
 
     _run_to_3d_registration(args)
 
+FROM_SPACEMAKE_HELP = """Run openst commands using spacemake file structure"""
+def get_from_spacemake_parser():
+    parser = argparse.ArgumentParser(
+        description=FROM_SPACEMAKE_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    parser.add_argument(
+        "--project-id",
+        type=str,
+        required=True,
+        help="From spacemake's project_df, this is the project_id string",
+    )
+    parser.add_argument(
+        "--sample-id",
+        type=str,
+        required=True,
+        help="From spacemake's project_df, this is the sample_id string",
+    )
+    parser.add_argument(
+        "--run-mode",
+        type=str,
+        default="",
+        help="When a sample has multiple run_mode(s), you must specify one",
+    )
+    return parser
+
+
+def setup_from_spacemake_parser(parent_parser, from_spacemake_parser):
+    parser = parent_parser.add_parser(
+        "from_spacemake",
+        help=FROM_SPACEMAKE_HELP,
+        parents=[from_spacemake_parser],
+    )
+    parser.set_defaults(func=cmd_run_from_spacemake)
+
+    return parser
+
+def cmd_run_from_spacemake(parser, args, unknown_args):
+    from openst.utils.from_spacemake import _run_from_spacemake
+
+    _run_from_spacemake(parser, args, unknown_args)
+
+
+def setup_from_spacemake_subparsers(from_spacemake_subparsers):
+    setup_image_stitch_parser(from_spacemake_subparsers)
+    setup_spatial_stitch_parser(from_spacemake_subparsers)
+
+    setup_pairwise_aligner_parser(from_spacemake_subparsers)
+    setup_apply_transform_parser(from_spacemake_subparsers)
+    setup_manual_pairwise_aligner_parser(from_spacemake_subparsers)
+
+    setup_segment_parser(from_spacemake_subparsers)
+    setup_segment_merge_parser(from_spacemake_subparsers)
+    setup_transcript_assign_parser(from_spacemake_subparsers)
+    
+    setup_merge_modalities_parser(from_spacemake_subparsers)
+    setup_pseudoimage_parser(from_spacemake_subparsers)
+    setup_preview_parser(from_spacemake_subparsers)
 
 def cmdline_args():
     parent_parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="openst: computational tools of Open-ST",
+        description="Computational tools for Open-ST data",
     )
     parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
     parent_parser.add_argument(
@@ -1484,12 +1449,18 @@ def cmdline_args():
     setup_preview_parser(parent_parser_subparsers)
     setup_report_parser(parent_parser_subparsers)
 
-    return parent_parser, parent_parser.parse_args()
+    # TODO: add subparser for from_spacemake
+    from_spacemake_parser = get_from_spacemake_parser()
+    setup_from_spacemake_parser(parent_parser_subparsers, from_spacemake_parser)
+
+    known, unknown = parent_parser.parse_known_args()
+
+    return parent_parser, from_spacemake_parser, known, unknown
 
 
 def cmdline_main():
     import importlib.metadata
-    parser, args = cmdline_args()
+    parser, from_spacemake_parser, args, unknown_args = cmdline_args()
 
     if args.version and args.subcommand is None:
         print(importlib.metadata.version('openst'))
@@ -1497,11 +1468,20 @@ def cmdline_main():
     else:
         del args.version
 
-    if "func" in args:
+    if "func" in args and args.subcommand != "from_spacemake":
         logging.info(f"openst {args.subcommand} - running with the following parameters:")
         logging.info(args.__dict__)
         args.func(args)
+    elif args.subcommand == "from_spacemake":
+        logging.info(f"openst {args.subcommand} - running from spacemake directory")
+        logging.info(args.__dict__)
+        args.func(from_spacemake_parser, args, unknown_args)
     else:
+        # TODO: fix
+        # We add this so we can see the usage for the subcommand in the from_spacemake subparser
+        from_spacemake_subparsers = from_spacemake_parser.add_subparsers(help="sub-command help", dest="subcommand")
+        setup_from_spacemake_subparsers(from_spacemake_subparsers)
+
         parser.print_help()
         return 0
 
