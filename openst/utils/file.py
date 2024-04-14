@@ -3,11 +3,6 @@ import os
 import pickle
 import shutil
 from pathlib import Path
-from typing import Union
-
-import h5py
-from anndata import AnnData
-from anndata._io.specs import read_elem
 
 
 def save_pickle(obj, file_path):
@@ -60,7 +55,7 @@ def check_file_exists(f, exception=True):
     return True
 
 
-def check_directory_exists(path):
+def check_directory_exists(path, exception=False):
     """
     Check if a file exists, or if its parent directory exists.
 
@@ -70,42 +65,49 @@ def check_directory_exists(path):
     Returns:
         bool: True if the parent directory exists or if the file exists, False otherwise.
     """
+    _ret_val = False
     if os.path.isdir(path):
-        return os.path.exists(path)
+        _ret_val = os.path.exists(path)
     else:
-        parent_directory = os.path.dirname(path)
+        path = os.path.dirname(path)
         # handle file created in the same directory
-        if parent_directory == "":
-            return True
-        return os.path.exists(parent_directory)
+        if path == "":
+            _ret_val = True
+        _ret_val = os.path.exists(path)
+    
+    if exception and not _ret_val:
+        raise FileNotFoundError(f"The directory '{path}' does not exist")
+    
+    return _ret_val
 
 
 def check_adata_structure(f):
     """
-    Check the validity of the input AnnData file.
+    Check the validity of the input Open-ST h5 object.
 
     Args:
-        f (str): Path to the input AnnData file.
+        f (str): Path to the input Open-ST h5 object.
 
     Raises:
         KeyError: If required properties are not found in the file.
     """
+    import h5py
 
     with h5py.File(f, "r") as file:
         if "obsm/spatial" not in file:
-            raise KeyError("The AnnData file does not have the 'obsm/spatial' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obsm/spatial' property.")
 
         if "obs/tile_id" not in file:
-            raise KeyError("The AnnData file does not have the 'obs/tile_id' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obs/tile_id' property.")
 
         if "obs/total_counts" not in file:
-            raise KeyError("The AnnData file does not have the 'obs/total_counts' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obs/total_counts' property.")
 
         if "spatial_aligned" in file:
-            logging.warn("The AnnData file has a 'spatial_aligned' layer")
+            logging.warn("The Open-ST h5 object has a 'spatial_aligned' layer")
 
 
-def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm/spatial"], backed: bool=False) -> dict:
+def load_properties_from_adata(f, properties: list = ["obsm/spatial"], backed: bool=False) -> dict:
     """
     Load specified properties from an AnnData file (h5py format).
 
@@ -125,6 +127,9 @@ def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm
         - The 'properties' list should consist of property paths within the file.
         - Returns a dictionary where keys are property paths and values are the loaded data.
     """
+    import h5py
+    from anndata import AnnData
+    from anndata._io.specs import read_elem
 
     parsed_properties = {}
 
@@ -146,7 +151,7 @@ def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm
     return parsed_properties
 
 
-def check_obs_unique(adata: AnnData, obs_key: str = "tile_id") -> bool:
+def check_obs_unique(adata, obs_key: str = "tile_id") -> bool:
     """
     Check if the values in a specified observation key in an AnnData object are unique.
 
