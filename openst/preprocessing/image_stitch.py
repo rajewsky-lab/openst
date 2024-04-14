@@ -69,9 +69,6 @@ def _image_stitch_imagej_keyence(
     GRIDX = int(binascii.hexlify(imgdata)[16:18], 16)
     GRIDY = int(binascii.hexlify(imgdata)[24:26], 16)
 
-    if os.path.exists(image_out) and os.path.getsize(image_out) > 0:
-        raise FileExistsError("The file {image_out} was already generated. Will not run!")
-
     logging.info(f"Grid size: X = {GRIDX}, Y = {GRIDY}")
     logging.info(f"Running macro {macro_keyence_path} with ImageJ at {imagej_bin}")
 
@@ -106,6 +103,10 @@ def _run_image_stitch(args):
 
     if not check_directory_exists(args.image_out):
         raise FileNotFoundError("Parent directory for --output-mask does not exist")
+    
+    if os.path.exists(args.image_out) and os.path.getsize(args.image_out) > 0 and not args.rerun:
+        logging.info(f"The file {args.image_out} was generated. Specify '--rerun' to run again.")
+        exit(0)
 
     if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
