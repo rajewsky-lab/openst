@@ -107,6 +107,9 @@ def create_paired_pseudoimage(
         sts_pseudoimage = cv2.resize(_sts_pseudoimage, target_size[:2][::-1], interpolation=cv2.INTER_NEAREST)
     else:
         raise NotImplementedError(f"The resize method '{resize_method}' was not implemented")
+    
+    sts_pseudoimage = sts_pseudoimage - sts_pseudoimage.min()
+    sts_pseudoimage = ((sts_pseudoimage / sts_pseudoimage.max()) * 255).astype(np.uint8)
 
     # calculate scaling ratio from the initially transformed points;
     # use these points for applying the transform matrix (not integer)

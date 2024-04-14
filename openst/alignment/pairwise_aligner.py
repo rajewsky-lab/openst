@@ -26,11 +26,9 @@ from itertools import product
 import cv2
 import numpy as np
 import h5py
-from PIL import Image
-from scipy import ndimage
 from skimage.color import rgb2gray, rgb2hsv
 from skimage.exposure import equalize_adapthist
-from skimage.filters import gaussian, threshold_otsu
+from skimage.filters import gaussian
 from skimage.transform import estimate_transform, rescale, rotate
 from threadpoolctl import threadpool_limits
 
@@ -111,16 +109,15 @@ def prepare_image_for_feature_matching(
         raise ValueError("The 'crop' argument should be a list with four elements [x_min, x_max, y_min, y_max].")
 
     image = transform_image(image, flip, crop, rotation)
-    hsv_image = rgb2hsv(image)
-
+    
     if mask_tissue:
-        image_out, hsv_image_out = p_mask_tissue(image, hsv_image,
+        image_out, hsv_image_out = p_mask_tissue(image,
                                                keep_black_background,
                                                mask_gaussian_blur,
                                                return_hsv=True)
     else:
         image_out = image
-        hsv_image_out = hsv_image
+        hsv_image_out = rgb2hsv(image)
 
     prepared_images = [gaussian((equalize_adapthist(rgb2gray(image_out))), gaussian_blur)]
     prepared_images += [gaussian((equalize_adapthist(im)), gaussian_blur) for im in hsv_image_out.transpose(2, 0, 1)]
@@ -217,7 +214,7 @@ def run_registration(
     tile_id: np.ndarray,
     staining_image: np.ndarray,
     args,
-) -> (np.ndarray, np.ndarray, PairwiseAlignmentMetadata):
+) -> (np.ndarray, np.ndarray, np.ndarray, PairwiseAlignmentMetadata): 
     """
     Perform registration of spatial transcriptomics (STS) data with a staining image.
 
@@ -445,19 +442,24 @@ def run_registration(
             _t_mkpts0 = np.concatenate([_t_mkpts0_fiducial, _t_mkpts0], axis=1)
             _t_mkpts1 = np.concatenate([_t_mkpts1_fiducial, _t_mkpts1], axis=1)
 
-        # Compute similarity matrix and compute point transformation
-        _t_tform_points = estimate_transform("similarity", _t_mkpts0, _t_mkpts1)
-
         # Apply the same transformation to the tiles
         _t_sts_coords_fine_to_transform = sts_coords_coarse[_t_tile_id] / args.rescale_factor_fine
         _t_sts_coords_fine_to_transform = (_t_sts_coords_fine_to_transform - np.array([[y_min, x_min]]))[:, ::-1]
 
-        _t_sts_coords_fine_transformed = apply_transform(
-            _t_sts_coords_fine_to_transform, _t_tform_points, check_bounds=True
-        )
+        # Compute similarity matrix and compute point transformation
+        if len(_t_mkpts0) > args.fine_min_matches:
+            _t_tform_points = estimate_transform("similarity", _t_mkpts0, _t_mkpts1)
+
+            _t_sts_coords_fine_transformed = apply_transform(
+                _t_sts_coords_fine_to_transform, _t_tform_points, check_bounds=True
+            )[:, :-1]
+        else:
+            logging.warning(f"There were not enough matching points ({len(_t_mkpts0)} out of selected {args.fine_min_matches})")
+            _t_sts_coords_fine_transformed = _t_sts_coords_fine_to_transform[:, ::-1]
+            
 
         # Rescale points to original HE dimensions
-        _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed[:, :-1] + np.array([[y_min, x_min]])
+        _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed + np.array([[y_min, x_min]])
         _t_sts_coords_fine_transformed = _t_sts_coords_fine_transformed * args.rescale_factor_fine
 
         out_coords_output_fine[_t_tile_id] = _t_sts_coords_fine_transformed[:, ::-1]
@@ -488,28 +490,19 @@ def run_pairwise_aligner(args):
     # Check input and output data
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
-    check_file_exists(args.image_in)
 
     if args.fiducial_model != "" and check_file_exists(args.fiducial_model, exception=False):
         raise NotImplementedError("Fiducial marker refinement is not implemented yet")
 
-    if not check_directory_exists(args.h5_out):
-        raise FileNotFoundError("Parent directory for --h5-out does not exist")
-
     if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
-
-    if args.h5_out == args.h5_in:
-        raise ValueError("The path to the output file cannot be the same as the input file")
-
-    # Set maximum image size to support large HE
-    Image.MAX_IMAGE_PIXELS = args.max_image_pixels
 
     # Loading the spatial transcriptomics data
     sts = load_properties_from_adata(args.h5_in, properties=["obsm/spatial", "obs/total_counts", "obs/tile_id"])
 
     # Loading image data
-    staining_image = np.array(Image.open(args.image_in))
+    with h5py.File(args.h5_in, 'r') as adata:
+        staining_image = adata[args.image_in][:]
 
     # Running registration
     sts_aligned_coarse, sts_aligned_fine, staining_image_aligned, metadata = run_registration(
@@ -528,6 +521,7 @@ def run_pairwise_aligner(args):
     logging.info(f"Updating {args.h5_in} in place")
     with h5py.File(args.h5_in, 'r+') as adata:
         # TODO: to this with a function, instead
+        # TODO: do not save image because we assume it is already there!
         if "uns/spatial_pairwise_aligned/staining_image" in adata:
             del adata["uns/spatial_pairwise_aligned/staining_image"]
         adata["uns/spatial_pairwise_aligned/staining_image"] = staining_image
