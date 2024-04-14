@@ -261,7 +261,7 @@ def get_segment_parser():
     parser.add_argument(
         "--chunked",
         action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+        help="If set, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
     )
     parser.add_argument(
         "--max-image-pixels",
@@ -404,7 +404,7 @@ def get_segment_merge_parser():
         "--h5-in",
         type=str,
         default="",
-        help="""When specified, masks are loaded from the Open-ST h5 object (key in --mask-in),
+        help="""If set, masks are loaded from the Open-ST h5 object (key in --mask-in),
              and segmentation is saved there (to the key under --mask-out)""",
     )
     parser.add_argument(
@@ -416,7 +416,7 @@ def get_segment_merge_parser():
     parser.add_argument(
         "--chunked",
         action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+        help="If set, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
     )
     parser.add_argument(
         "--max-image-pixels",
@@ -492,7 +492,14 @@ def get_image_stitch_parser():
         "--no-run",
         default=False,
         action="store_true",
-        help="When specified, do not run ImageJ, but return the command line",
+        help="If set, do not run ImageJ, but return the command line",
+    )
+
+    parser.add_argument(
+        "--rerun",
+        default=False,
+        action="store_true",
+        help="If set, runs stitching even when the output file exists",
     )
 
     parser.add_argument(
@@ -993,177 +1000,180 @@ def get_pairwise_aligner_parser():
         add_help=False,
     )
 
-    parser.add_argument(
-        "--image-in",
-        type=str,
-        required=True,
-        help="Path to the input image. This is treated as the 'destination' image during pairwise alignment",
-    )
-    parser.add_argument(
+    required = parser.add_argument_group('Data (required)')
+    required.add_argument(
         "--h5-in",
         type=str,
         required=True,
-        help="Path to the input h5ad file containing spatial coordinates",
+        help="Path to the merged Open-ST h5 object containing spatial coordinates and images",
     )
-    parser.add_argument(
+
+    optional_data = parser.add_argument_group('Data (optional)')
+    optional_data.add_argument(
+        "--image-in",
+        type=str,
+        default="uns/spatial/staining_image",
+        help="Key to the image used as the 'destination' during pairwise alignment",
+    )
+    optional_data.add_argument(
         "--metadata",
         type=str,
         default="",
         help="Path where the metadata will be stored. If not specified, metadata is not saved.",
     )
-    parser.add_argument(
-        "--h5-out",
-        type=str,
-        required=True,
-        help="Path where the h5ad file will be saved after alignment",
-    )
-    parser.add_argument(
-        "--mask-tissue",
-        action="store_true",
-        help="Tissue (imaging modality) is masked from the background for the feature detection",
-    )
-    parser.add_argument(
+
+    coarse_params = parser.add_argument_group('Coarse registration parameters')
+    coarse_params.add_argument(
         "--only-coarse",
         action="store_true",
         help="If selected, only the coarse alignment stage will run",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--rescale-factor-coarse",
         type=int,
         default=20,
         help="Rescaling factor for the input image (1:factor), used during coarse pairwise alignment",
     )
-    parser.add_argument(
-        "--rescale-factor-fine",
-        type=int,
-        default=5,
-        help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
-    )
-    parser.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
-    )
-    parser.add_argument(
-        "--fine-registration-gaussian-sigma",
-        type=int,
-        default=2,
-        help="Gaussian blur used on all modalities during fine registration",
-    )
-    parser.add_argument(
-        "--keep-black-background",
-        action="store_true",
-        help="Whether to set the background of the imaging modalities to white, after tissue masking",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--threshold-counts-coarse",
         type=int,
         default=1,
         help="""Only spatial coordinates with counts larger than this number
         will be kept for pseudoimage rendering during coarse alignment""",
     )
-    parser.add_argument(
-        "--threshold-counts-fine",
-        type=int,
-        default=0,
-        help="""Only spatial coordinates with counts larger than this number
-        will be kept for pseudoimage rendering during fine alignment""",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--pseudoimage-size-coarse",
         type=int,
-        default=4000,
+        default=500,
         help="Size (in pixels) of the pseudoimage during coarse alignment.",
     )
-    parser.add_argument(
-        "--pseudoimage-size-fine",
-        type=int,
-        default=6000,
-        help="Size (in pixels) of the pseudoimage during fine alignment.",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-min-samples",
         type=int,
         default=3,
         help="'min_samples' parameter of RANSAC, during coarse registration",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-residual-threshold",
         type=float,
         default=2,
         help="'residual_threshold' parameter of RANSAC, during coarse registration",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-max-trials",
         type=int,
-        default=50,
+        default=2,
         help="Times RANSAC will run (x1000 iterations) during coarse registration",
     )
-    parser.add_argument(
-        "--ransac-fine-min-samples",
-        type=int,
-        default=3,
-        help="'min_samples' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-residual-threshold",
-        type=float,
-        default=2,
-        help="'residual_threshold' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-max-trials",
-        type=int,
-        default=50,
-        help="Times RANSAC will run (x1000 iterations) during fine registration",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--n-threads",
-        type=int,
-        default=1,
-        help="Number of CPU threads for parallel processing",
-    )
-    parser.add_argument(
-        "--feature-matcher",
-        type=str,
-        default="LoFTR",
-        choices=["LoFTR", "SIFT", "KeyNet"],
-        help="Feature matching algorithm",
-    )
-    parser.add_argument(
-        "--fine-min-matches",
-        type=int,
-        default=50,
-        help="Minimum number of matching keypoints between modalities during fine alignment",
-    )
-    parser.add_argument(
-        "--fiducial-model",
-        type=str,
-        default="",
-        help="Path to a object detection model (YOLO) to detect fiducial markers",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--genes-coarse",
         nargs="+",
         type=str,
         default=None,
         help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
     )
-    parser.add_argument(
+
+    fine_params = parser.add_argument_group('Fine registration parameters')
+    fine_params.add_argument(
+        "--rescale-factor-fine",
+        type=int,
+        default=5,
+        help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
+    )
+    fine_params.add_argument(
+        "--tissue-masking-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
+    )
+    fine_params.add_argument(
+        "--fine-registration-gaussian-sigma",
+        type=int,
+        default=2,
+        help="Gaussian blur used on all modalities during fine registration",
+    )
+    fine_params.add_argument(
+        "--threshold-counts-fine",
+        type=int,
+        default=0,
+        help="""Only spatial coordinates with counts larger than this number
+        will be kept for pseudoimage rendering during fine alignment""",
+    )
+    
+    fine_params.add_argument(
+        "--pseudoimage-size-fine",
+        type=int,
+        default=2000,
+        help="Size (in pixels) of the pseudoimage during fine alignment.",
+    )
+    
+    fine_params.add_argument(
+        "--ransac-fine-min-samples",
+        type=int,
+        default=3,
+        help="'min_samples' parameter of RANSAC, during fine registration",
+    )
+    fine_params.add_argument(
+        "--ransac-fine-residual-threshold",
+        type=float,
+        default=2,
+        help="'residual_threshold' parameter of RANSAC, during fine registration",
+    )
+    fine_params.add_argument(
+        "--ransac-fine-max-trials",
+        type=int,
+        default=1,
+        help="Times RANSAC will run (x1000 iterations) during fine registration",
+    )
+    fine_params.add_argument(
+        "--fine-min-matches",
+        type=int,
+        default=50,
+        help="Minimum number of matching keypoints between modalities during fine alignment",
+    )
+    fine_params.add_argument(
         "--genes-fine",
         nargs="+",
         type=str,
         default=None,
         help="Genes used for plotting the pseudoimage during the fine alignment phase.",
     )
-    parser.add_argument(
+
+    image_preproc = parser.add_argument_group('Image preprocessing parameters')
+    image_preproc.add_argument(
+        "--mask-tissue",
+        action="store_true",
+        help="Tissue (imaging modality) is masked from the background for the feature detection",
+    )
+    image_preproc.add_argument(
+        "--keep-black-background",
+        action="store_true",
+        help="Whether to set the background of the imaging modalities to white, after tissue masking",
+    )
+    
+    model_params = parser.add_argument_group('Feature model parameters')
+    model_params.add_argument(
+        "--feature-matcher",
+        type=str,
+        default="LoFTR",
+        choices=["LoFTR", "SIFT", "KeyNet"],
+        help="Feature matching algorithm",
+    )
+    model_params.add_argument(
+        "--fiducial-model",
+        type=str,
+        default="",
+        help="Path to a object detection model (YOLO) to detect fiducial markers",
+    )
+
+    compu_params = parser.add_argument_group('Computational parameters')
+    compu_params.add_argument(
+        "--n-threads",
+        type=int,
+        default=1,
+        help="Number of CPU threads for parallel processing",
+    )
+    compu_params.add_argument(
         "--device",
         type=str,
         default="cpu",
@@ -1224,7 +1234,7 @@ def get_from_3d_registration_parser():
         "--images-in-adata",
         default=False,
         action="store_true",
-        help="""When specified, the pairwise-aligned image is loaded from the adata,
+        help="""If set, the pairwise-aligned image is loaded from the adata,
         at the internal path specified by '--images'""",
     )
     parser.add_argument(
