@@ -51,14 +51,14 @@ SMK_DGE_TYPES = {
 
 SMK_PROJECT = 'projects/{project_id}'
 SMK_SAMPLE_PROCESSED = 'processed_data/{sample_id}'
-SMK_SAMPLE_RAW = 'raw_data/{sample_id}'
+SMK_RAW = 'raw_data'
 
 SMK_DGE = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'illumina/complete_data/dge')
 SMK_DGE_FILE = os.path.join(SMK_DGE, 'dge{dge_type}{dge_cleaned}{polyA_adapter_trimmed}{mm_included}.spatial_beads{tile}.h5ad')
 
 SMK_IMAGES_PROCESSED = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'images')
 SMK_IMAGES_PROCESSED_STITCHED = os.path.join(SMK_IMAGES_PROCESSED, 'Image_Stitched_Composite.tif')
-SMK_IMAGES_RAW = os.path.join(SMK_PROJECT, SMK_SAMPLE_RAW, 'images')
+SMK_IMAGES_RAW = os.path.join(SMK_PROJECT, SMK_RAW, 'images')
 
 SMK_MULTIMODAL_PROCESSED = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'multimodal')
 SMK_MULTIMODAL_PROCESSED_DGE = os.path.join(SMK_MULTIMODAL_PROCESSED, 'stitched_spots.h5ad')
@@ -248,11 +248,17 @@ def _run_preview(sample_config, sample_metadata):
 
     return required_arguments
 
+def _run_pairwise_aligner(sample_config, sample_metadata):
+    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
+
+    return required_arguments
+
 
 SUBPARSER_ACTIONS = {
     'image_stitch': _run_image_stitch,
     'spatial_stitch': _run_spatial_stitch,
-    'pairwise_aligner': None,
+    'pairwise_aligner': _run_pairwise_aligner,
     'apply_transform': _run_apply_transform,
     'manual_pairwise_aligner': _run_manual_pairwise_aligner,
     'segment': _run_segment,
@@ -289,7 +295,7 @@ def _run_from_spacemake(parser, args, unknown_args):
     
     # In the unknown_args, there will be the subcommand (because it was not added yet)
     required_arguments = SUBPARSER_ACTIONS[subcommand](sample_config, sample_metadata)
-    args = parser.parse_args(arguments_list + unknown_args + required_arguments)
+    args = parser.parse_args(arguments_list + [subcommand] + required_arguments + unknown_args[1:])
 
     logging.info(f"openst {args.subcommand} - running with the following parameters:")
     logging.info(args.__dict__)
