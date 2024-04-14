@@ -85,7 +85,10 @@ def shuffle_umi(adata, spatial_key='spatial'):
 
 
 def _run_transcript_assign(args):
-    """_run_transcript_assign."""
+    """_run_transcript_assign
+    
+    This one uses AnnData instead of h5py, so the obsm/ and uns/ keys must be parsed 
+    """
     # TODO: load with dask if it is too large
 
     Image.MAX_IMAGE_PIXELS = args.max_image_pixels
@@ -100,29 +103,35 @@ def _run_transcript_assign(args):
 
     if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
+    
+    if not args.spatial_key.startswith("obsm/"):
+        raise ValueError("The '--spatial-key' must start with 'obsm/'")
+    
+    spatial_key = "/".join(args.spatial_key.split("/")[1:])
 
-    logging.info("Loading image mask")
     if not args.mask_from_file:
+        logging.info(f"Loading image mask from Open-ST h5 object at '{args.mask_in}'")
         mask = load_properties_from_adata(args.h5_in, [args.mask_in])[args.mask_in]
     else:
+        logging.info(f"Loading image mask from file at '{args.mask_in}'")
         mask = np.array(Image.open(args.mask_in))
 
     assert_valid_mask(mask)
 
-    logging.info("Loading adata")
+    logging.info("Parsing Open-ST h5 object as AnnData")
     adata = read_h5ad(args.h5_in)
 
     if args.shuffle_umi:
         logging.info("Spatially shuffling UMIs")
-        adata = shuffle_umi(adata, spatial_key=args.spatial_key)
+        adata = shuffle_umi(adata, spatial_key=spatial_key)
 
-    logging.info("Subsetting adata coordinates to mask")
-    adata, props_filter = subset_adata_to_mask(mask, adata, args.spatial_key)
+    logging.info("Subsetting Open-ST AnnData coordinates to mask")
+    adata, props_filter = subset_adata_to_mask(mask, adata, spatial_key)
 
-    logging.info("Assigning transcripts to cells in mask")
+    logging.info("Assigning transcripts to segmented cells")
     adata_by_cell = transfer_segmentation(adata, props_filter)
 
-    logging.info(f"Writing output to {args.h5_out}")
+    logging.info(f"Writing Open-ST AnnData by segmented cells to {args.h5_out}")
     adata_by_cell.write_h5ad(args.h5_out)
 
 
