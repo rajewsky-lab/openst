@@ -22,9 +22,9 @@ single [h5ad] file containing all the [barcoded tiles](preprocessing_sequencing.
 (see [Preprocessing of sequencing](preprocessing_sequencing.md)). 
 
 !!! warning
-    Remember that spacemake generates one file per [barcoded tile], 
-    and it will be necessary to perform [stitching of tiles] to
-    obtain a single file with all tiles for a sample.
+    Remember that spacemake generates one file per [barcoded tile](preprocessing_sequencing.md#flow-cell-related-terms), 
+    and it will be necessary to perform [stitching of tiles](preprocessing_sequencing.md) to
+    obtain a single file with all tiles for a sample. This is done with `openst spatial_stitch`.
 
 ### Image modality
 The expected input for the image modality is a single tiff file of the whole tile-scan.
@@ -99,6 +99,20 @@ alignment [yourself](#manual-workflow)), you can specify the argument `--only-co
         - `--threshold-counts-coarse` or `--threshold-counts-fine`: the highest, the less spots there will be on the image
     
     These allow to increase the number of matches and possibly the number of RANSAC inliers. There are other RANSAC-specific parameters that can be changed, such as `--ransac-coarse-residual-threshold`, `--ransac-coarse-max-trials` and `--ransac-fine-min-samples`. For more parameters, check `openst pairwise_aligner --help`.
+
+!!! warning
+    In some environments, the following error might happen:
+    
+    ```sh
+    qt.qpa.plugin: Could not load the Qt platform plugin "xcb" in "/home/user/miniconda3/envs/openst/lib/python3.11/site-packages/cv2/qt/plugins" even though it was found.
+
+    This application failed to start because no Qt platform plugin could be initialized. Reinstalling the application may fix this problem.
+
+    Available platform plugins are: xcb, eglfs, linuxfb, minimal, minimalegl, offscreen, vnc, wayland-egl, wayland, wayland-xcomposite-egl, wayland-xcomposite-glx, webgl.
+    ```
+
+    This can be solved by removing the files inside `/home/user/miniconda3/envs/openst/lib/python3.11/site-packages/cv2/qt/plugins`, e.g. see this [StackOverflow thread](https://stackoverflow.com/questions/71029300/python-pyqt-xcb-plugin-with-thread-error)
+    
 
 ### Visual assessment with report
 You can generate an HTML report that contains a qualitative summary of the alignment (images, parameters...)
