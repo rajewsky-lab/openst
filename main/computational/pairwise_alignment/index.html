@@ -1595,9 +1595,9 @@ single <a href="https://anndata.readthedocs.io/en/latest/fileformat-prose.html">
 (see <a href="../preprocessing_sequencing/">Preprocessing of sequencing</a>). </p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
-<p>Remember that spacemake generates one file per [barcoded tile], 
-and it will be necessary to perform [stitching of tiles] to
-obtain a single file with all tiles for a sample.</p>
+<p>Remember that spacemake generates one file per <a href="../preprocessing_sequencing/#flow-cell-related-terms">barcoded tile</a>, 
+and it will be necessary to perform <a href="../preprocessing_sequencing/">stitching of tiles</a> to
+obtain a single file with all tiles for a sample. This is done with <code>openst spatial_stitch</code>.</p>
 </div>
 <h3 id="image-modality">Image modality<a class="headerlink" href="#image-modality" title="Permanent link">&para;</a></h3>
 <p>The expected input for the image modality is a single tiff file of the whole tile-scan.
@@ -1670,13 +1670,24 @@ The most important ones are:
     - <code>--threshold-counts-coarse</code> or <code>--threshold-counts-fine</code>: the highest, the less spots there will be on the image</p>
 <p>These allow to increase the number of matches and possibly the number of RANSAC inliers. There are other RANSAC-specific parameters that can be changed, such as <code>--ransac-coarse-residual-threshold</code>, <code>--ransac-coarse-max-trials</code> and <code>--ransac-fine-min-samples</code>. For more parameters, check <code>openst pairwise_aligner --help</code>.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In some environments, the following error might happen:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>qt.qpa.plugin:<span class="w"> </span>Could<span class="w"> </span>not<span class="w"> </span>load<span class="w"> </span>the<span class="w"> </span>Qt<span class="w"> </span>platform<span class="w"> </span>plugin<span class="w"> </span><span class="s2">&quot;xcb&quot;</span><span class="w"> </span><span class="k">in</span><span class="w"> </span><span class="s2">&quot;/home/user/miniconda3/envs/openst/lib/python3.11/site-packages/cv2/qt/plugins&quot;</span><span class="w"> </span>even<span class="w"> </span>though<span class="w"> </span>it<span class="w"> </span>was<span class="w"> </span>found.
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>This<span class="w"> </span>application<span class="w"> </span>failed<span class="w"> </span>to<span class="w"> </span>start<span class="w"> </span>because<span class="w"> </span>no<span class="w"> </span>Qt<span class="w"> </span>platform<span class="w"> </span>plugin<span class="w"> </span>could<span class="w"> </span>be<span class="w"> </span>initialized.<span class="w"> </span>Reinstalling<span class="w"> </span>the<span class="w"> </span>application<span class="w"> </span>may<span class="w"> </span>fix<span class="w"> </span>this<span class="w"> </span>problem.
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a>
+</span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a>Available<span class="w"> </span>platform<span class="w"> </span>plugins<span class="w"> </span>are:<span class="w"> </span>xcb,<span class="w"> </span>eglfs,<span class="w"> </span>linuxfb,<span class="w"> </span>minimal,<span class="w"> </span>minimalegl,<span class="w"> </span>offscreen,<span class="w"> </span>vnc,<span class="w"> </span>wayland-egl,<span class="w"> </span>wayland,<span class="w"> </span>wayland-xcomposite-egl,<span class="w"> </span>wayland-xcomposite-glx,<span class="w"> </span>webgl.
+</span></code></pre></div>
+<p>This can be solved by removing the files inside <code>/home/user/miniconda3/envs/openst/lib/python3.11/site-packages/cv2/qt/plugins</code>, e.g. see this <a href="https://stackoverflow.com/questions/71029300/python-pyqt-xcb-plugin-with-thread-error">StackOverflow thread</a></p>
+</div>
 <h3 id="visual-assessment-with-report">Visual assessment with report<a class="headerlink" href="#visual-assessment-with-report" title="Permanent link">&para;</a></h3>
 <p>You can generate an HTML report that contains a qualitative summary of the alignment (images, parameters...)</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>alignment_metadata.json<span class="w"> </span>--html-out<span class="o">=</span>alignment_report.html
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>alignment_metadata.json<span class="w"> </span>--html-out<span class="o">=</span>alignment_report.html
 </span></code></pre></div>
 <h3 id="visual-assessment-with-gui">Visual assessment with GUI<a class="headerlink" href="#visual-assessment-with-gui" title="Permanent link">&para;</a></h3>
 <p>Alternatively, you can visualize the images &amp; ST data interactively using the GUI.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>manual_pairwise_aligner
 </span></code></pre></div>
 <p>We provide a Graphical User Interface (GUI) for selecting keypoints between imaging &amp; ST modalities, 
 for visualization and refinement of automatic results. This GUI requires a single Open-ST h5 object,
@@ -1688,35 +1699,35 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 <div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="manualsemiautomatic-workflow-fully-manual-alignment" name="__tabbed_2" type="radio" /><input id="manualsemiautomatic-workflow-semiautomatic-alignment" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="manualsemiautomatic-workflow-fully-manual-alignment">Fully manual alignment</label><label for="manualsemiautomatic-workflow-semiautomatic-alignment">Semiautomatic alignment</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a><span class="c1"># Add the image data to the Open-ST h5 object</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
-</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>openst<span class="w"> </span>manual_pairwise_aligner
-</span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
-</span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial&#39;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-14"><a id="__codelineno-3-14" name="__codelineno-3-14" href="#__codelineno-3-14"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_manual_transformed&#39;</span>
-</span><span id="__span-3-15"><a id="__codelineno-3-15" name="__codelineno-3-15" href="#__codelineno-3-15"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Add the image data to the Open-ST h5 object</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a>openst<span class="w"> </span>manual_pairwise_aligner
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-12"><a id="__codelineno-4-12" name="__codelineno-4-12" href="#__codelineno-4-12"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-13"><a id="__codelineno-4-13" name="__codelineno-4-13" href="#__codelineno-4-13"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-14"><a id="__codelineno-4-14" name="__codelineno-4-14" href="#__codelineno-4-14"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_manual_transformed&#39;</span>
+</span><span id="__span-4-15"><a id="__codelineno-4-15" name="__codelineno-4-15" href="#__codelineno-4-15"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
 </span></code></pre></div>
 </div>
 <div class="tabbed-block">
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># For per-tile alignment, select keypoints per tile (see video below)</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>openst<span class="w"> </span>manual_pairwise_aligner
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_fine&#39;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_refined&#39;</span>
-</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="c1"># For per-tile alignment, select keypoints per tile (see video below)</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a>openst<span class="w"> </span>manual_pairwise_aligner
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_fine&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_refined&#39;</span>
+</span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
 </span></code></pre></div>
 </div>
 </div>

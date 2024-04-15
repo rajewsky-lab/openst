@@ -1601,19 +1601,28 @@ we are going to omit <code>(spacemake) user@computer:/home/user/openst_e13_mouse
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>spacemake<span class="w"> </span>config<span class="w"> </span>add_species<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">   </span>--name<span class="w"> </span>mouse<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">   </span>--reference<span class="w"> </span>genome<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">   </span>--sequence<span class="w"> </span>&lt;path_to_genome.fa&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">   </span>--annotation<span class="w"> </span>&lt;path_to_genome_annotation.gtf&gt;
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">   </span>--sequence<span class="w"> </span>GRCm39vM30.genome.fa<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">   </span>--annotation<span class="w"> </span>gencodevM30.annotation.gtf
 </span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a>
 </span><span id="__span-5-7"><a id="__codelineno-5-7" name="__codelineno-5-7" href="#__codelineno-5-7"></a>spacemake<span class="w"> </span>config<span class="w"> </span>add_species<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-8"><a id="__codelineno-5-8" name="__codelineno-5-8" href="#__codelineno-5-8"></a><span class="w">   </span>--name<span class="w"> </span>mouse<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-9"><a id="__codelineno-5-9" name="__codelineno-5-9" href="#__codelineno-5-9"></a><span class="w">   </span>--reference<span class="w"> </span>rRNA<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">   </span>--sequence<span class="w"> </span>&lt;path_to_rRNA_sequences.fa&gt;
+</span><span id="__span-5-10"><a id="__codelineno-5-10" name="__codelineno-5-10" href="#__codelineno-5-10"></a><span class="w">   </span>--sequence<span class="w"> </span>mouse.rRNA.fa
 </span><span id="__span-5-11"><a id="__codelineno-5-11" name="__codelineno-5-11" href="#__codelineno-5-11"></a>
 </span><span id="__span-5-12"><a id="__codelineno-5-12" name="__codelineno-5-12" href="#__codelineno-5-12"></a>spacemake<span class="w"> </span>config<span class="w"> </span>add_species<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-13"><a id="__codelineno-5-13" name="__codelineno-5-13" href="#__codelineno-5-13"></a><span class="w">   </span>--name<span class="w"> </span>mouse<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-5-14"><a id="__codelineno-5-14" name="__codelineno-5-14" href="#__codelineno-5-14"></a><span class="w">   </span>--reference<span class="w"> </span>phiX<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">   </span>--sequence<span class="w"> </span>&lt;path_to_phiX_genome.fa&gt;
+</span><span id="__span-5-15"><a id="__codelineno-5-15" name="__codelineno-5-15" href="#__codelineno-5-15"></a><span class="w">   </span>--sequence<span class="w"> </span>phiX.fa
 </span></code></pre></div>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>The <code>.fa</code> and <code>.gtf</code> files for mouse are available for http download under the <a href="../../datasets/">example datasets</a> page.
+For instance, you can run:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a><span class="c1"># for the mouse genome sequence</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/GRCm39vM30.genome.fa&quot;</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="c1"># etc...</span>
+</span></code></pre></div>
+</div>
 <h3 id="adding-sample">Adding sample<a class="headerlink" href="#adding-sample" title="Permanent link">&para;</a></h3>
 <p>Now you need to add the sample data and metadata to <code>spacemake</code>. For this, you will also need the puck (tile) barcode files, which <a href="../../../computational/preprocessing_sequencing/#computing-barcodes-and-spatial-coordinates-of-all-tiles">can be
 generated</a> with the <code>openst</code> package.</p>
@@ -1623,34 +1632,51 @@ for the Illumina flow cell</a> that was used to generate the capture area of thi
 into this folder. Also, move the coordinate file to the <code>puck_data</code> folder in the <code>spacemake</code> directory.</p>
 <p>Remember! You need to be in the <code>/home/user/openst_e13_mouse_head_demo/spacemake</code> directory (or similar, depending on what you created);
 then run the following command:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>spacemake<span class="w"> </span>projects<span class="w"> </span>add_sample<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>--project_id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--sample_id<span class="w"> </span>openst_demo_e13_mouse_head_mouse<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>--R1<span class="w"> </span>&lt;path_to_R1.fastq.gz&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span>--R2<span class="w"> </span>&lt;path_to_R2.fastq.gz&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span>--species<span class="w"> </span>mouse<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>--puck<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-8"><a id="__codelineno-6-8" name="__codelineno-6-8" href="#__codelineno-6-8"></a><span class="w">    </span>--run_mode<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-9"><a id="__codelineno-6-9" name="__codelineno-6-9" href="#__codelineno-6-9"></a><span class="w">    </span>--barcode_flavor<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-10"><a id="__codelineno-6-10" name="__codelineno-6-10" href="#__codelineno-6-10"></a><span class="w">    </span>--puck_barcode_file<span class="w"> </span>tiles/*.txt.gz<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-6-11"><a id="__codelineno-6-11" name="__codelineno-6-11" href="#__codelineno-6-11"></a><span class="w">    </span>--map_strategy<span class="w"> </span><span class="s2">&quot;bowtie2:phiX-&gt;bowtie2:rRNA-&gt;STAR:genome:final&quot;</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="c1"># downloading R1 and R2 sequences</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R1_001.fastq.gz&quot;</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R2_001.fastq.gz&quot;</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="c1"># downloading R1 and R2 (reseq) sequences</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R1_001.fastq.gz&quot;</span>
+</span><span id="__span-7-7"><a id="__codelineno-7-7" name="__codelineno-7-7" href="#__codelineno-7-7"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R2_001.fastq.gz&quot;</span>
+</span><span id="__span-7-8"><a id="__codelineno-7-8" name="__codelineno-7-8" href="#__codelineno-7-8"></a>
+</span><span id="__span-7-9"><a id="__codelineno-7-9" name="__codelineno-7-9" href="#__codelineno-7-9"></a><span class="c1"># downloading the spatial barcode sequences</span>
+</span><span id="__span-7-10"><a id="__codelineno-7-10" name="__codelineno-7-10" href="#__codelineno-7-10"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_tiles.tar.xz&quot;</span>
+</span><span id="__span-7-11"><a id="__codelineno-7-11" name="__codelineno-7-11" href="#__codelineno-7-11"></a>tar<span class="w"> </span>-xvf<span class="w"> </span>e13_mouse_head_tiles.tar.xz
+</span><span id="__span-7-12"><a id="__codelineno-7-12" name="__codelineno-7-12" href="#__codelineno-7-12"></a>
+</span><span id="__span-7-13"><a id="__codelineno-7-13" name="__codelineno-7-13" href="#__codelineno-7-13"></a>spacemake<span class="w"> </span>projects<span class="w"> </span>add_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-14"><a id="__codelineno-7-14" name="__codelineno-7-14" href="#__codelineno-7-14"></a><span class="w">    </span>--project_id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-15"><a id="__codelineno-7-15" name="__codelineno-7-15" href="#__codelineno-7-15"></a><span class="w">    </span>--sample_id<span class="w"> </span>openst_demo_e13_mouse_head_mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-16"><a id="__codelineno-7-16" name="__codelineno-7-16" href="#__codelineno-7-16"></a><span class="w">    </span>--R1<span class="w"> </span>e13_mouse_head_R1_001.fastq.gz<span class="w"> </span>e13_mouse_head_reseq_R1_001.fastq.gz<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-17"><a id="__codelineno-7-17" name="__codelineno-7-17" href="#__codelineno-7-17"></a><span class="w">    </span>--R2<span class="w"> </span>e13_mouse_head_R2_001.fastq.gz<span class="w"> </span>e13_mouse_head_reseq_R2_001.fastq.gz<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-18"><a id="__codelineno-7-18" name="__codelineno-7-18" href="#__codelineno-7-18"></a><span class="w">    </span>--species<span class="w"> </span>mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-19"><a id="__codelineno-7-19" name="__codelineno-7-19" href="#__codelineno-7-19"></a><span class="w">    </span>--puck<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-20"><a id="__codelineno-7-20" name="__codelineno-7-20" href="#__codelineno-7-20"></a><span class="w">    </span>--run_mode<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-21"><a id="__codelineno-7-21" name="__codelineno-7-21" href="#__codelineno-7-21"></a><span class="w">    </span>--barcode_flavor<span class="w"> </span>openst<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-22"><a id="__codelineno-7-22" name="__codelineno-7-22" href="#__codelineno-7-22"></a><span class="w">    </span>--puck_barcode_file<span class="w"> </span>e13_mouse_head_tiles/*.txt.gz<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-23"><a id="__codelineno-7-23" name="__codelineno-7-23" href="#__codelineno-7-23"></a><span class="w">    </span>--map_strategy<span class="w"> </span><span class="s2">&quot;bowtie2:phiX-&gt;bowtie2:rRNA-&gt;STAR:genome:final&quot;</span>
 </span></code></pre></div>
 <p>You can specify the coordinate system by modifying the <code>openst</code> run mode in the <code>config.yaml</code> file that is created
 after you run the <code>spacemake init</code> command (see above). Modify the following lines from this:</p>
-<div class="language-yaml highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a><span class="nt">openst</span><span class="p">:</span>
-</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">    </span><span class="nt">coordinate_system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">puck_id/openst_coordinates.csv</span>
-</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">    </span><span class="nt">spot_diameter_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.6</span>
-</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">    </span><span class="nt">width_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200</span>
-</span></code></pre></div>
-<p>into this:</p>
 <div class="language-yaml highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a><span class="nt">openst</span><span class="p">:</span>
-</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">coordinate_system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">puck_id/openst_demo_e13_mouse_head_brain_coordinate_system.csv</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">    </span><span class="nt">coordinate_system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">puck_id/openst_coordinates.csv</span>
 </span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">    </span><span class="nt">spot_diameter_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.6</span>
 </span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">    </span><span class="nt">width_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200</span>
 </span></code></pre></div>
+<p>into this:</p>
+<div class="language-yaml highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a><span class="nt">openst</span><span class="p">:</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">    </span><span class="nt">coordinate_system</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">puck_id/fc_1_coordinate_system.csv</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">    </span><span class="nt">spot_diameter_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">0.6</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">    </span><span class="nt">width_um</span><span class="p">:</span><span class="w"> </span><span class="l l-Scalar l-Scalar-Plain">1200</span>
+</span></code></pre></div>
+<p>You can download the coordinate system file from the Open-ST website, for example:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-10-1"><a id="__codelineno-10-1" name="__codelineno-10-1" href="#__codelineno-10-1"></a><span class="c1"># download the coordinate system</span>
+</span><span id="__span-10-2"><a id="__codelineno-10-2" name="__codelineno-10-2" href="#__codelineno-10-2"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordinate_system.csv&quot;</span>
+</span><span id="__span-10-3"><a id="__codelineno-10-3" name="__codelineno-10-3" href="#__codelineno-10-3"></a>cp<span class="w"> </span>fc_1_coordinate_system.csv<span class="w"> </span>puck_data/.
+</span></code></pre></div>
 <h3 id="running-spacemake">Running <code>spacemake</code><a class="headerlink" href="#running-spacemake" title="Permanent link">&para;</a></h3>
 <p>That's all you need to configure! Now, you can run spacemake with the following:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>spacemake<span class="w"> </span>run<span class="w"> </span>--cores<span class="w"> </span><span class="m">32</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-11-1"><a id="__codelineno-11-1" name="__codelineno-11-1" href="#__codelineno-11-1"></a>spacemake<span class="w"> </span>run<span class="w"> </span>--cores<span class="w"> </span><span class="m">32</span>
 </span></code></pre></div>
 <p>You can modify the number of <code>--cores</code> depending on your local machine; also, you can specify additional
 arguments to <code>spacemake run</code> - refer to the official documentation.</p>

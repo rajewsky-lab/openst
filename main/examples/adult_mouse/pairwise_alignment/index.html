@@ -1479,16 +1479,31 @@ from <code>spacemake</code>, or you followed the <a href="../preprocessing_seque
 1. You have an environment where the <code>openst</code> package is installed (we recommend doing this
 in an environment different to the one used for <code>spacemake</code>).
 1. You are in the <code>/home/user/openst_adult_demo</code> folder (or similar, depending on your system, username...)</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>alignment/adult_mouse_hippocampus.tif<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--h5-out<span class="w"> </span>alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--save-image-in-h5<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span>--only-coarse<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span>--device<span class="w"> </span>cuda
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>alignment
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>cp<span class="w"> </span>projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># download the image data</span>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif&quot;</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span>--image-in<span class="w"> </span>adult_mouse_hippocampus.tif
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
+</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span>--only-coarse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span>--device<span class="w"> </span>cuda
 </span></code></pre></div>
-<p>This will create the file <code>alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad</code>, that hopefully contains a
-proper coarse alignment of the two modalities (at low resolution).</p>
+<p>This will create the file <code>alignment/spatial_beads_adult_mouse.h5ad</code>, that hopefully contains a proper coarse alignment of the two modalities (at low resolution). </p>
+<div class="admonition note">
+<p class="admonition-title">Note</p>
+<p>For this image data, and the spatial coordinates after alignment, the conversion factor to physical distance is <strong>1 pixel = 0.345 µm</strong>.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>From <code>openst&gt;=0.0.7</code>, there is <code>openst from_spacemake</code> to populate the data input/output arguments automatically, and keep the processing inside the <code>spacemake</code> folder structure. You can read more in the <a href="../../../computational/from_spacemake/">tutorial</a>.</p>
+</div>
 <h2 id="fine-alignment-manual">Fine alignment (manual)<a class="headerlink" href="#fine-alignment-manual" title="Permanent link">&para;</a></h2>
 <p>You will now visually asses it and refine the previous coarse alignment using the provided GUI tool. 
 From the terminal, run:</p>
@@ -1496,7 +1511,7 @@ From the terminal, run:</p>
 </span></code></pre></div>
 <p>Then, follow these instructions on the GUI, by pressing the <em>buttons</em>:</p>
 <ol>
-<li>Click on <em>Load h5ad</em> and browse to the location where the <code>openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad</code> file
+<li>Click on <em>Load h5ad</em> and browse to the location where the <code>spatial_beads_adult_mouse.h5ad</code> file
 is located. Select it and click <em>Open</em>. </li>
 <li>Go to <em>Data properties</em>, then click under <em>Image data</em>, and select from the tree <code>uns&gt;spatial_pairwise_aligned&gt;staining_image_transformed</code>. Click <em>Ok</em>.</li>
 <li>Click under <em>Spatial coordinates</em>, and select from the tree <code>obsm/spatial_pairwise_aligned_coarse</code>. Click <em>Ok</em>.</li>
@@ -1516,11 +1531,11 @@ the spatial trancriptome and image modalities. </p>
 coarse alignment, and the keypoints file, to perform the fine alignment:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>alignment/openst_adult_demo_fine_keypoints.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--per-tile
 </span></code></pre></div>
 <p>After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing
-<code>openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad</code> file.</p>
+<code>spatial_beads_adult_mouse.h5ad</code> file.</p>
 <p>That's it! Now you're ready to go to the next step.</p>
 
 
