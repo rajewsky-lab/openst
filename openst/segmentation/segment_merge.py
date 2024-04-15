@@ -37,35 +37,23 @@ def _run_segment_merge(args):
         FileNotFoundError: If input or output directories do not exist.
     """
     # Check input and output data
-    mask_a, mask_b = None, None
-    if args.h5_in != '':
-        check_file_exists(args.h5_in)
-        adata = h5py.File(args.h5_in, 'r+')
-        mask_a = adata[args.mask_in[0]]
-        mask_b = adata[args.mask_in[1]]
-        if args.chunked:
-            mask_a = da.from_array(mask_a)
-            mask_b = da.from_array(mask_b)
-        else:
-            mask_a = mask_a[:]
-            mask_b = mask_b[:]
+    check_file_exists(args.h5_in)
+    adata = h5py.File(args.h5_in, 'r+')
+    mask_a = adata[args.mask_in[0]]
+    mask_b = adata[args.mask_in[1]]
+    if args.chunked:
+        mask_a = da.from_array(mask_a)
+        mask_b = da.from_array(mask_b)
     else:
-        check_file_exists(args.mask_in[0])
-        check_file_exists(args.mask_in[1])
-        if not check_directory_exists(args.mask_out):
-            raise FileNotFoundError("Parent directory for --mask-out does not exist")
+        mask_a = mask_a[:]
+        mask_b = mask_b[:]
     
     _num_workers = 1
     if args.num_workers > 0:
         _num_workers = args.num_workers
 
-    Image.MAX_IMAGE_PIXELS = args.max_image_pixels
-
     if args.chunked:
         logging.info("Loading images into chunks")
-        if mask_a is None or mask_b is None:
-            mask_a = dask_image.imread.imread(args.mask_in[0])[0]
-            mask_b = dask_image.imread.imread(args.mask_in[1])[0]
 
         # rechunk both images
         mask_a = mask_a.rechunk({0: args.chunk_size, 1: args.chunk_size})
