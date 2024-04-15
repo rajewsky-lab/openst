@@ -1458,7 +1458,43 @@ def cmdline_args():
         allow_abbrev=False,
         description="Computational tools for Open-ST data",
     )
-    parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
+
+    description = """
+    Flow cell preprocessing
+        barcode_preprocessing
+                        Convert spatial barcode raw data into tabular files with barcodes and spatial coordinates
+    
+    Sample preprocessing
+        image_stitch        Stitch image fields of view into a single image
+        image_preprocess    Restoration of imaging data with CUT model (as in Open-ST paper)
+        spatial_stitch      Stitch Open-ST h5 tile objects into a single Open-ST h5 object
+    
+    Pairwise alignment
+        merge_modalities    merge_modalities locations (as points) and images of Open-ST data
+        pairwise_aligner    Automatic pairwise alignment of transcript locations to imaging data
+        apply_transform     Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object
+        manual_pairwise_aligner
+                            GUI for manual alignment of Open-ST data
+        
+    Segmentation & DGE creation    
+        segment             Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension
+        segment_merge       Merge two segmentation masks into one
+        transcript_assign   Aggregate transcripts into segmented cells
+    
+    3D reconstruction
+        to_3d_registration  Convert STIM output back to a single (aligned) Open-ST h5 object. If available, pairwise-aligned image data is
+                            transformed, too.
+        from_3d_registration
+                            Convert Open-ST h5 objects for 3D registration of serial sections using STIM
+    
+    Visualization and extra                        
+        pseudoimage         Generate pseudoimages of Open-ST RNA data and visualize using napari
+        preview             Preview locations (as points) and images of Open-ST data
+        report              Generate HTML reports from metadata files (json)        
+        from_spacemake      Run openst commands using spacemake file structure
+    """
+
+    parent_parser_subparsers = parent_parser.add_subparsers(title="commands", dest="subcommand")
     parent_parser.add_argument(
     '--version',
     action = 'store_true')
@@ -1470,6 +1506,7 @@ def cmdline_args():
     setup_image_preprocess_parser(parent_parser_subparsers)
     setup_spatial_stitch_parser(parent_parser_subparsers)
 
+    setup_merge_modalities_parser(parent_parser_subparsers)
     setup_pairwise_aligner_parser(parent_parser_subparsers)
     setup_apply_transform_parser(parent_parser_subparsers)
     setup_manual_pairwise_aligner_parser(parent_parser_subparsers)
@@ -1481,7 +1518,6 @@ def cmdline_args():
     setup_to_3d_registration_parser(parent_parser_subparsers)
     setup_from_3d_registration_parser(parent_parser_subparsers)
     
-    setup_merge_modalities_parser(parent_parser_subparsers)
     setup_pseudoimage_parser(parent_parser_subparsers)
     setup_preview_parser(parent_parser_subparsers)
     setup_report_parser(parent_parser_subparsers)
@@ -1514,11 +1550,6 @@ def cmdline_main():
         logging.info(args.__dict__)
         args.func(from_spacemake_parser, args, unknown_args)
     else:
-        # TODO: fix
-        # We add this so we can see the usage for the subcommand in the from_spacemake subparser
-        from_spacemake_subparsers = from_spacemake_parser.add_subparsers(help="sub-command help", dest="subcommand")
-        setup_from_spacemake_subparsers(from_spacemake_subparsers)
-
         parser.print_help()
         return 0
 
