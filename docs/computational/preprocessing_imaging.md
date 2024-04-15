@@ -32,7 +32,7 @@ and the `.bcl` file with metadata (in the case of _keyence_ microscope).
 
 !!! question
      If you don't know how to specify the `<path_to_fiji_or_imagej>`, please follow the official instructions provided
-     for [Running Headless](https://imagej.net/learn/headless). For example, nux you can download it using
+     for [Running Headless](https://imagej.net/learn/headless). For example, under linux you can download it using
 
      ```bash
      cd ~
@@ -58,6 +58,8 @@ imaging settings, sample type, sample width... **Always look at your images** so
 In our publication, we leveraged a [CUT](https://github.com/taesungp/contrastive-unpaired-translation) model that allowed us
 to homogeneize the *style* of the whole tile-scan - that is, reduce possible biases in illumination, noise and focus - across the entire
 tile-scan. You can run this by running the following command on the stitched image.
+
+![CUT restoration showcased in the paper](../static/img/compu_image_preprocessing/preprocessing_CUT.webp){ loading=lazy }
 
 ```bash
 openst image_preprocess \
