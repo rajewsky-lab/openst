@@ -55,6 +55,7 @@ SMK_RAW = 'raw_data'
 
 SMK_DGE = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'illumina/complete_data/dge')
 SMK_DGE_FILE = os.path.join(SMK_DGE, 'dge{dge_type}{dge_cleaned}{polyA_adapter_trimmed}{mm_included}.spatial_beads{tile}.h5ad')
+SMK_STITCHED_DGE = os.path.join(SMK_DGE, 'dge{dge_type}{dge_cleaned}{polyA_adapter_trimmed}{mm_included}.spatial_beads_puck_collection.h5ad')
 
 SMK_IMAGES_PROCESSED = os.path.join(SMK_PROJECT, SMK_SAMPLE_PROCESSED, 'images')
 SMK_IMAGES_PROCESSED_STITCHED = os.path.join(SMK_IMAGES_PROCESSED, 'Image_Stitched_Composite.tif')
@@ -151,10 +152,24 @@ def get_all_tiles_dge_path(sample_config, sample_metadata, check_exists=False):
 
     return puck_dges, puck_ids
 
-def get_stitched_dge(sample_config, sample_metadata, check_exists=False):
+
+def get_multimodal_dge(sample_config, sample_metadata, check_exists=False):
     _file = SMK_MULTIMODAL_PROCESSED_DGE.format(project_id=sample_metadata['project_id'],
                                         sample_id=sample_metadata['sample_id'])
     
+    if not check_directory_exists(_file):
+        _parent_dir = os.path.dirname(_file)
+        logging.info(f"Creating directory at {_parent_dir}")
+        os.mkdir(_parent_dir)
+
+    check_file_exists(_file, exception=check_exists)
+    return _file
+
+def get_stitched_dge(sample_config, sample_metadata, check_exists=False):
+    _file = SMK_STITCHED_DGE.format(project_id=sample_metadata['project_id'],
+                                    sample_id=sample_metadata['sample_id'],
+                                    **sample_config['run_mode'])
+
     if not check_directory_exists(_file):
         _parent_dir = os.path.dirname(_file)
         logging.info(f"Creating directory at {_parent_dir}")
@@ -196,6 +211,8 @@ def get_stitched_image_path(sample_config, sample_metadata, check_exists=False):
     return _file
 
 def _run_spatial_stitch(sample_config, sample_metadata):
+    SMK_STITCHED_DGE
+
     puck_dges, puck_ids = get_all_tiles_dge_path(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--tiles"] + puck_dges + ["--tile-id"] + puck_ids
     output_file = get_stitched_dge(sample_config, sample_metadata)
@@ -210,15 +227,22 @@ def _run_image_stitch(sample_config, sample_metadata):
 
     return required_arguments
 
+def _run_segment_merge(sample_config, sample_metadata):
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
+    required_arguments = ["--h5-in", stitched_dge]
+    required_arguments += ["--mask-out", 'uns/spatial/staining_image_mask_merged']
+
+    return required_arguments
+
 def _run_segment(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--image-in", 'uns/spatial/staining_image', "--h5-in"] + [stitched_dge]
     required_arguments += ["--mask-out", 'uns/spatial/staining_image_mask']
 
     return required_arguments
 
 def _run_transcript_assign(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     stitched_segmented_dge = get_stitched_segmented_dge(sample_config, sample_metadata)
     required_arguments = ["--mask-in", 'uns/spatial/staining_image_mask', "--h5-in"] + [stitched_dge]
     required_arguments += ["--h5-out", stitched_segmented_dge]
@@ -233,31 +257,31 @@ def _run_merge_modalities(sample_config, sample_metadata):
     return required_arguments
 
 def _run_manual_pairwise_aligner(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
 
 def _run_apply_transform(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
 
 def _run_pseudoimage(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
 
 def _run_preview(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
 
 def _run_pairwise_aligner(sample_config, sample_metadata):
-    stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
+    stitched_dge = get_multimodal_dge(sample_config, sample_metadata, check_exists=True)
     required_arguments = ["--h5-in", stitched_dge]
 
     return required_arguments
@@ -270,7 +294,7 @@ SUBPARSER_ACTIONS = {
     'apply_transform': _run_apply_transform,
     'manual_pairwise_aligner': _run_manual_pairwise_aligner,
     'segment': _run_segment,
-    'segment_merge': None,
+    'segment_merge': _run_segment_merge,
     'transcript_assign': _run_transcript_assign,
     'merge_modalities': _run_merge_modalities,
     'pseudoimage': _run_pseudoimage,
@@ -300,6 +324,10 @@ def _run_from_spacemake(parser, args, unknown_args):
         if key in ['subcommand', 'func']:
             continue
         arguments_list.extend([f"--{key.replace('_', '-')}", str(value)])
+
+    if subcommand not in SUBPARSER_ACTIONS.keys():
+        logging.error(f"Could not find subcommand '{subcommand}'. Please choose one of: {SUBPARSER_ACTIONS.keys()}")
+        exit(1)
     
     # In the unknown_args, there will be the subcommand (because it was not added yet)
     required_arguments = SUBPARSER_ACTIONS[subcommand](sample_config, sample_metadata)
