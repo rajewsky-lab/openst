@@ -85,6 +85,14 @@ def get_preview_parser():
         help="Necessary to create the pseudoimage",
     )
 
+    # Check file structure
+    parser.add_argument(
+        "--file-structure",
+        default=False,
+        action="store_true",
+        help="If set, will not open a visualization screen but will return the tree structure of the h5 file",
+    )
+
     # RNA density-based pseudoimage
     parser.add_argument(
         "--spatial-coord-keys",
@@ -105,6 +113,16 @@ def get_preview_parser():
               Can be one or many (separated by space)""",
     )
 
+    parser.add_argument(
+        "--pseudoimage-keys",
+        type=str,
+        nargs="+",
+        default=None,
+        help="""Path to the spatial coordinates inside the 
+              spatial object to visualize as pseudoimage.
+              Can be one or many (separated by space)""",
+    )
+
     # Resampling before previsualizing
     parser.add_argument(
         "--spatial-coord-resampling",
@@ -120,6 +138,15 @@ def get_preview_parser():
         nargs="+",
         default=[1],
         help="""Will load every n-th pixel. Can be one (same for all images)
+                or many (1-to-1 mapping to the image list)""",
+    )
+    parser.add_argument(
+        "--pseudoimage-units-to-um",
+        type=float,
+        nargs="+",
+        default=[1.0],
+        help="""Conversion factor from spatial units to micron,
+        before rendering the pseudoimage. Can be one (same for all images)
                 or many (1-to-1 mapping to the image list)""",
     )
 
@@ -1077,7 +1104,7 @@ def get_pairwise_aligner_parser():
     fine_params.add_argument(
         "--rescale-factor-fine",
         type=int,
-        default=5,
+        default=10,
         help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
     )
     fine_params.add_argument(
