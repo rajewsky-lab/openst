@@ -80,6 +80,8 @@ def get_sample_metadata(pdf, project_id, sample_id):
     _sample = pdf[(pdf['project_id'] == project_id) & (pdf['sample_id'] == sample_id)]
     if len(_sample) > 1:
         raise SpacemakeError(f"Entry project_id='{project_id}' and sample_id='{sample_id}' is duplicated")
+    elif len(_sample) == 0:
+        raise SpacemakeError(f"Entry project_id='{project_id}' and sample_id='{sample_id}' not found")
     
     _sample = _sample.iloc[0].apply(lambda x: ast.literal_eval(x) if isinstance(x, str) and "[" in x else x)
     return _sample.to_dict()
@@ -109,25 +111,31 @@ def load_config():
 
     return config
 
-def get_config_from_sample(sample_metadata, config, run_mode=None):
+def get_key_or_default(config, category='run_modes', name='default', key='count_intronic_reads'):
+    if key in config[category][name].keys():
+        return config[category][name][key]
+    else:
+        return config[category]['default'][key]
+
+def get_config_from_sample(sample_metadata, config, run_mode=""):
     sample_config = {}
 
     # Puck
     sample_config['puck'] = config['pucks'][sample_metadata['puck']]
 
     # Run mode options
-    if run_mode is None and len(sample_metadata['run_mode']) > 1:
+    if run_mode is "" and len(sample_metadata['run_mode']) > 1:
         raise SpacemakeError(f"""There are various 'run_modes' for this sample:
                              \t{sample_metadata['run_mode']}
                               Specify only one using the '--run-mode' argument""")
-    elif run_mode is None:
+    elif run_mode is "":
         run_mode = sample_metadata['run_mode'][0]
 
     sample_config['run_mode'] = {}
-    sample_config['run_mode']['dge_type'] = ".all" if config['run_modes'][run_mode]['count_intronic_reads'] else ".exon"
-    sample_config['run_mode']['dge_cleaned'] = ".cleaned" if config['run_modes'][run_mode]['clean_dge'] else ""
-    sample_config['run_mode']['polyA_adapter_trimmed'] = ".polyA_adapter_trimmed" if config['run_modes'][run_mode]['polyA_adapter_trimming'] else ""
-    sample_config['run_mode']['mm_included'] = ".mm_included" if config['run_modes'][run_mode]['count_mm_reads'] else ""
+    sample_config['run_mode']['dge_type'] = ".all" if get_key_or_default(config, 'run_modes', run_mode, 'count_intronic_reads') else ".exon"
+    sample_config['run_mode']['dge_cleaned'] = ".cleaned" if get_key_or_default(config, 'run_modes', run_mode, 'clean_dge') else ""
+    sample_config['run_mode']['polyA_adapter_trimmed'] = ".polyA_adapter_trimmed" if get_key_or_default(config, 'run_modes', run_mode, 'polyA_adapter_trimming') else ""
+    sample_config['run_mode']['mm_included'] = ".mm_included" if get_key_or_default(config, 'run_modes', run_mode, 'count_mm_reads') else ""
     
     return sample_config
 
