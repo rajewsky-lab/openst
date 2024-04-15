@@ -91,6 +91,14 @@ alignment [yourself](#manual-workflow)), you can specify the argument `--only-co
     the tissue is overall well-aligned in both modalities, and that the fiducial markers are
     overlapping across all tiles.
 
+!!! tip
+    If the coarse (or fine) registration doesn't work, there are several parameters that you can change.
+    The most important ones are:
+        - `--rescale-factor-coarse` or `--rescale-factor-fine`: the highest, the lower resolution the image; thus, more _global_ features are used for registration
+        - `--threshold-counts-coarse` or `--threshold-counts-fine`: the highest, the less spots there will be on the image
+    
+    These allow to increase the number of matches and possibly the number of RANSAC inliers. There are other RANSAC-specific parameters that can be changed, such as `--ransac-coarse-residual-threshold`, `--ransac-coarse-max-trials` and `--ransac-fine-min-samples`. For more parameters, check `openst pairwise_aligner --help`.
+
 ### Visual assessment with report
 You can generate an HTML report that contains a qualitative summary of the alignment (images, parameters...)
 
