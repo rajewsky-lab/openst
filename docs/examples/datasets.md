@@ -38,4 +38,4 @@ Here we provide a single table with all the links, size and md5 checksums for th
 | GRCm39vM30.genome.fa | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/GRCm39vM30.genome.fa) | f7e956ab58169c9b457c93bc7ecca0a2 |
 | gencodevM30.gtf | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genome/gencodevM30.gtf) | de5e3b939daf633970582756f90c01df |
 | phiX.fa | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/phiX.fa) | 69a6c72e164d1a57c0f8cf375a246b0a |
-| rRNA.fa | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/mouse.rRNA.fa) | cbf1d516d570cf085c9d5a61ac1b97c5 |
+| mouse.rRNA.fa | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/mouse.rRNA.fa) | cbf1d516d570cf085c9d5a61ac1b97c5 |
