@@ -149,9 +149,9 @@ Otherwise, if these `puck_collection` files were not automatically generated, we
 of input file: (1) all the `h5ad` files generated for a single sample (can be specified implicitly, via a wildcard in Linux,
 or explicitly as a list separated by spaces); and (2) a coordinate system file, that specifies that is the relative offset,
 in units equivalent to `x_pos` and `y_pos`, of the tiles respect to their *column* and *swath*. These coordinate system files
-have a standardized format, and are provided in the [spacemake] and [openst] repos for the Illumina® NovaSeq 6000 S4 flow cell.
-If you have used other flow cell, you might need to generate these files following the same convention (feel free to open an
-issue in our [repo], and we can generate it for you).
+have a standardized format, and are provided in the [spacemake](https://github.com/rajewsky-lab/spacemake/blob/master/spacemake/data/puck_collection/openst_coordinate_system.csv) repo and [openst](https://rajewsky-lab.github.io/openst/latest/examples/datasets/) website for the Illumina® NovaSeq 6000 S4 flow cell.
+If you have used other flow cell, you might need to generate these files following the same convention. Feel free to open an
+issue in our [repo](https://github.com/rajewsky-lab/openst/issues/new?assignees=&labels=&template=bug-report.md&title=), and we can generate it for you.
 
 To manually create 'puck_collection' files, you can run the following in a terminal:
 
