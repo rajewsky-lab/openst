@@ -31,17 +31,18 @@ The expected input for the image modality is a single tiff file of the whole til
 Other formats, i.e., `jpeg` and `png` are also compatible. Make sure that the image is the full-resolution
 and not a downsampled version. As a rule of thumb, at least a few fiducial markers must be clearly distinguishable.
 
-=== "Good resolution"
+=== "Good visibility"
+    ![Good visibility](../static/img/compu_pairwise_align_fiducial_visibility/good_visibility.webp){ loading=lazy }
 
-    put image
+=== "_Fair_ visibility"
+    ![Fair visibility](../static/img/compu_pairwise_align_fiducial_visibility/fair_visibility.webp){ loading=lazy }
 
-=== "Bad resolution"
-
-    put image
+=== "_Poor_ visibility"
+    ![Poor visibility](../static/img/compu_pairwise_align_fiducial_visibility/poor_visibility.webp){ loading=lazy }
 
 ### Spatial transcriptomics modality
 The expected input for the spatial transcriptomics modality is a single [h5ad] file containing all
-the [barcoded tiles] of a sample. 
+the [barcoded tiles](preprocessing_sequencing.md#flow-cell-related-terms) of a sample. 
 
 !!! warning
     Remember that spacemake generates one file per [barcoded tile](preprocessing_sequencing.md#flow-cell-related-terms), and it will be necessary to perform
