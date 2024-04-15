@@ -375,7 +375,7 @@ def get_segment_parser():
     parser.add_argument(
         "--num-workers",
         type=int,
-        help="Number of parallel workers when --chunked is specified",
+        help="Number of CPU workers when --chunked is specified",
         required=False,
         default=-1,
     )
@@ -415,6 +415,14 @@ def get_segment_merge_parser():
         add_help=False,
     )
     parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        required=True,
+        help="""If set, masks are loaded from the Open-ST h5 object (key in --mask-in),
+             and segmentation is saved there (to the key under --mask-out)""",
+    )
+    parser.add_argument(
         "--mask-in",
         type=str,
         required=True,
@@ -428,13 +436,6 @@ def get_segment_merge_parser():
         help="Path (file or h5) where the merged mask will be saved",
     )
     parser.add_argument(
-        "--h5-in",
-        type=str,
-        default="",
-        help="""If set, masks are loaded from the Open-ST h5 object (key in --mask-in),
-             and segmentation is saved there (to the key under --mask-out)""",
-    )
-    parser.add_argument(
         "--chunk-size",
         type=int,
         default=512,
@@ -446,15 +447,9 @@ def get_segment_merge_parser():
         help="If set, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
     )
     parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
         "--num-workers",
         type=int,
-        help="Number of parallel workers when --chunked is specified",
+        help="Number of CPU workers when --chunked is specified",
         required=False,
         default=-1,
     )
@@ -1195,10 +1190,10 @@ def get_pairwise_aligner_parser():
 
     compu_params = parser.add_argument_group('Computational parameters')
     compu_params.add_argument(
-        "--n-threads",
+        "--num-workers",
         type=int,
         default=1,
-        help="Number of CPU threads for parallel processing",
+        help="Number of CPU workers for parallel processing",
     )
     compu_params.add_argument(
         "--device",
