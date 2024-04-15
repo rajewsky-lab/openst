@@ -73,7 +73,8 @@ def check_directory_exists(path, exception=False) -> bool:
         # handle file created in the same directory
         if path == "":
             _ret_val = True
-        _ret_val = os.path.exists(path)
+        else:
+            _ret_val = os.path.exists(path)
     
     if exception and not _ret_val:
         raise FileNotFoundError(f"The directory '{path}' does not exist")

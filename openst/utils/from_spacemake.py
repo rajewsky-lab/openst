@@ -261,9 +261,11 @@ def _run_merge_modalities(sample_config, sample_metadata):
         logging.info(f"Creating directory at {_parent_dir}")
         os.mkdir(_parent_dir)
 
-
-    logging.info(f"Copying {stitched_dge} into {merged_dge}")  
-    shutil.copy(stitched_dge, merged_dge)
+    if check_file_exists(merged_dge, exception=False):
+        logging.warn(f"No need to create {merged_dge} - it exists")  
+    else:
+        logging.info(f"Copying {stitched_dge} into {merged_dge}")  
+        shutil.copy(stitched_dge, merged_dge)
     
     required_arguments = ["--h5-in", merged_dge, "--image-in", image_out]
 
