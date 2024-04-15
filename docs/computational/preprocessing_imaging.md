@@ -25,7 +25,6 @@ openst image_stitch \
      --imagej-bin=<path_to_fiji_or_imagej> \
      --image-indir=<path_to_tiles> \
      --tiles-prefix=<to_read> \
-     --tmp-dir=<tmp_dir> \
      --image-out=<output_image>
 ```
 Make sure to replace the placeholders (`<...>`). For instance,

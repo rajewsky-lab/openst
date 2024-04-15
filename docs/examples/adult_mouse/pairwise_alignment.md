@@ -39,7 +39,7 @@ You will now visually asses it and refine the previous coarse alignment using th
 From the terminal, run:
 
 ```sh
-openst manual_pairwise_aligner_gui
+openst manual_pairwise_aligner
 ```
 
 Then, follow these instructions on the GUI, by pressing the *buttons*:
@@ -65,10 +65,10 @@ Now, you need to run a program that takes the `h5ad` file with the
 coarse alignment, and the keypoints file, to perform the fine alignment:
 
 ```sh
-openst manual_pairwise_aligner \
+openst apply_transform \
     --keypoints-in alignment/openst_adult_demo_fine_keypoints.json \
     --h5-in alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad \
-    --fine
+    --per-tile
 ```
 
 After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing

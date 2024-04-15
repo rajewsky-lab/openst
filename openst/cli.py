@@ -5,12 +5,6 @@ DEFAULT_REGEX_TILE_ID = "(L[1-4][a-b]_tile_[1-2][0-7][0-9][0-9])"
 
 PSEUDOIMAGE_HELP = "Generate pseudoimages of Open-ST RNA data and visualize using napari"
 def get_pseudoimage_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PSEUDOIMAGE_HELP,
         allow_abbrev=False,
@@ -60,7 +54,6 @@ def get_pseudoimage_parser():
 
 
 def setup_pseudoimage_parser(parent_parser):
-    """setup_pseudoimage_parser"""
     parser = parent_parser.add_parser(
         "pseudoimage",
         help=PSEUDOIMAGE_HELP,
@@ -79,12 +72,6 @@ def cmd_run_pseudoimage_visualizer(args):
 
 PREVIEW_HELP = "Preview locations (as points) and images of Open-ST data"
 def get_preview_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PREVIEW_HELP,
         allow_abbrev=False,
@@ -96,6 +83,14 @@ def get_preview_parser():
         type=str,
         required=True,
         help="Necessary to create the pseudoimage",
+    )
+
+    # Check file structure
+    parser.add_argument(
+        "--file-structure",
+        default=False,
+        action="store_true",
+        help="If set, will not open a visualization screen but will return the tree structure of the h5 file",
     )
 
     # RNA density-based pseudoimage
@@ -118,6 +113,16 @@ def get_preview_parser():
               Can be one or many (separated by space)""",
     )
 
+    parser.add_argument(
+        "--pseudoimage-keys",
+        type=str,
+        nargs="+",
+        default=None,
+        help="""Path to the spatial coordinates inside the 
+              spatial object to visualize as pseudoimage.
+              Can be one or many (separated by space)""",
+    )
+
     # Resampling before previsualizing
     parser.add_argument(
         "--spatial-coord-resampling",
@@ -135,12 +140,20 @@ def get_preview_parser():
         help="""Will load every n-th pixel. Can be one (same for all images)
                 or many (1-to-1 mapping to the image list)""",
     )
+    parser.add_argument(
+        "--pseudoimage-units-to-um",
+        type=float,
+        nargs="+",
+        default=[1.0],
+        help="""Conversion factor from spatial units to micron,
+        before rendering the pseudoimage. Can be one (same for all images)
+                or many (1-to-1 mapping to the image list)""",
+    )
 
     return parser
 
 
 def setup_preview_parser(parent_parser):
-    """setup_preview_parser"""
     parser = parent_parser.add_parser(
         "preview",
         help=PREVIEW_HELP,
@@ -158,12 +171,6 @@ def cmd_run_preview(args):
 
 MERGE_MODALITIES_HELP = "merge_modalities locations (as points) and images of Open-ST data"
 def get_merge_modalities_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=MERGE_MODALITIES_HELP,
         allow_abbrev=False,
@@ -196,7 +203,6 @@ def get_merge_modalities_parser():
 
 
 def setup_merge_modalities_parser(parent_parser):
-    """setup_merge_modalities_parser"""
     parser = parent_parser.add_parser(
         "merge_modalities",
         help=MERGE_MODALITIES_HELP,
@@ -214,12 +220,6 @@ def cmd_run_merge_modalities(args):
 
 SEGMENT_HELP = "Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension"
 def get_segment_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=SEGMENT_HELP,
         allow_abbrev=False,
@@ -288,7 +288,7 @@ def get_segment_parser():
     parser.add_argument(
         "--chunked",
         action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
+        help="If set, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
     )
     parser.add_argument(
         "--max-image-pixels",
@@ -375,7 +375,7 @@ def get_segment_parser():
     parser.add_argument(
         "--num-workers",
         type=int,
-        help="Number of parallel workers when --chunked is specified",
+        help="Number of CPU workers when --chunked is specified",
         required=False,
         default=-1,
     )
@@ -391,7 +391,6 @@ def get_segment_parser():
 
 
 def setup_segment_parser(parent_parser):
-    """setup_segment_parser"""
     parser = parent_parser.add_parser(
         "segment",
         help=SEGMENT_HELP,
@@ -410,16 +409,18 @@ def cmd_run_segment(args):
 
 SEGMENT_MERGE_HELP = "Merge two segmentation masks into one"
 def get_segment_merge_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=SEGMENT_MERGE_HELP,
         allow_abbrev=False,
         add_help=False,
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        required=True,
+        help="""If set, masks are loaded from the Open-ST h5 object (key in --mask-in),
+             and segmentation is saved there (to the key under --mask-out)""",
     )
     parser.add_argument(
         "--mask-in",
@@ -435,13 +436,6 @@ def get_segment_merge_parser():
         help="Path (file or h5) where the merged mask will be saved",
     )
     parser.add_argument(
-        "--h5-in",
-        type=str,
-        default="",
-        help="""When specified, masks are loaded from the Open-ST h5 object (key in --mask-in),
-             and segmentation is saved there (to the key under --mask-out)""",
-    )
-    parser.add_argument(
         "--chunk-size",
         type=int,
         default=512,
@@ -450,18 +444,12 @@ def get_segment_merge_parser():
     parser.add_argument(
         "--chunked",
         action="store_true",
-        help="When specified, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
+        help="If set, segmentation is computed at non-overlapping chunks of size '--chunk-size'",
     )
     parser.add_argument(
         "--num-workers",
         type=int,
-        help="Number of parallel workers when --chunked is specified",
+        help="Number of CPU workers when --chunked is specified",
         required=False,
         default=-1,
     )
@@ -469,7 +457,6 @@ def get_segment_merge_parser():
 
 
 def setup_segment_merge_parser(parent_parser):
-    """setup_segment_merge_parser"""
     parser = parent_parser.add_parser(
         "segment_merge",
         help=SEGMENT_MERGE_HELP,
@@ -486,7 +473,7 @@ def cmd_run_segment_merge(args):
     _run_segment_merge(args)
 
 
-IMAGE_STITCH_HELP = "Stitching image tiles (FOVs) into a single image; wrapper for ImageJ"
+IMAGE_STITCH_HELP = "Stitch image fields of view into a single image"
 def get_image_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -527,7 +514,14 @@ def get_image_stitch_parser():
         "--no-run",
         default=False,
         action="store_true",
-        help="When specified, do not run ImageJ, but return the command line",
+        help="If set, do not run ImageJ, but return the command line",
+    )
+
+    parser.add_argument(
+        "--rerun",
+        default=False,
+        action="store_true",
+        help="If set, runs stitching even when the output file exists",
     )
 
     parser.add_argument(
@@ -550,7 +544,6 @@ def get_image_stitch_parser():
 
 
 def setup_image_stitch_parser(parent_parser):
-    """setup_image_stitch_parser"""
     parser = parent_parser.add_parser(
         "image_stitch",
         help=IMAGE_STITCH_HELP,
@@ -567,7 +560,7 @@ def cmd_run_image_stitch(args):
     _run_image_stitch(args)
 
 
-SPATIAL_STITCH_HELP = "Stitching Open-ST tile objects into a single spatial object using a global coordinate system"
+SPATIAL_STITCH_HELP = "Stitch Open-ST h5 tile objects into a single Open-ST h5 object"
 def get_spatial_stitch_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -665,7 +658,6 @@ def get_spatial_stitch_parser():
 
 
 def setup_spatial_stitch_parser(parent_parser):
-    """setup_spatial_stitch_parser"""
     parser = parent_parser.add_parser(
         "spatial_stitch",
         help=SPATIAL_STITCH_HELP,
@@ -683,12 +675,6 @@ def cmd_run_spatial_stitch(args):
 
 IMAGE_PREPROCESS_HELP = "Restoration of imaging data with CUT model (as in Open-ST paper)"
 def get_image_preprocess_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=IMAGE_PREPROCESS_HELP,
         allow_abbrev=False,
@@ -710,7 +696,6 @@ def get_image_preprocess_parser():
 
 
 def setup_image_preprocess_parser(parent_parser):
-    """setup_image_preprocess_parser"""
     parser = parent_parser.add_parser(
         "image_preprocess",
         help=IMAGE_PREPROCESS_HELP,
@@ -726,14 +711,8 @@ def cmd_run_image_preprocess(args):
 
     _run_image_preprocess(args)
 
-BARCODE_PREPROCESSING_HELP = "Convert fastq files from first sequencing into spatial barcode files (sequence and coordinates)"
+BARCODE_PREPROCESSING_HELP = "Convert spatial barcode raw data into tabular files with barcodes and spatial coordinates"
 def get_barcode_preprocessing_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
         add_help=False,
@@ -784,7 +763,6 @@ def get_barcode_preprocessing_parser():
 
 
 def setup_barcode_preprocessing_parser(parent_parser):
-    """setup_barcode_preprocessing_parser"""
     parser = parent_parser.add_parser(
         "barcode_preprocessing",
         help=BARCODE_PREPROCESSING_HELP,
@@ -800,14 +778,8 @@ def cmd_run_barcode_preprocessing(args):
 
     _run_barcode_preprocessing(args)
 
-REPORT_HELP = "openst report HTML generator from metadata files (json)"
+REPORT_HELP = "Generate HTML reports from metadata files (json)"
 def get_report_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=REPORT_HELP,
         allow_abbrev=False,
@@ -830,7 +802,6 @@ def get_report_parser():
 
 
 def setup_report_parser(parent_parser):
-    """setup_report_parser"""
     parser = parent_parser.add_parser(
         "report",
         help=REPORT_HELP,
@@ -846,7 +817,7 @@ def cmd_run_report(args):
 
     _run_report(args)
 
-TRANSCRIPT_ASSIGN_HELP = "openst transfer of transcripts to single cells using a pairwise-aligned segmentation mask"
+TRANSCRIPT_ASSIGN_HELP = "Aggregate transcripts into segmented cells"
 def get_transcript_assign_parser():
     parser = argparse.ArgumentParser(
         allow_abbrev=False,
@@ -920,7 +891,6 @@ def get_transcript_assign_parser():
 
 
 def setup_transcript_assign_parser(parent_parser):
-    """setup_transcript_assign_parser"""
     parser = parent_parser.add_parser(
         "transcript_assign",
         help=TRANSCRIPT_ASSIGN_HELP,
@@ -936,16 +906,10 @@ def cmd_run_transcript_assign(args):
 
     _run_transcript_assign(args)
 
-MANUAL_PAIRWISE_ALIGNER_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
-def get_manual_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
+APPLY_TRANSFORM_HELP = "Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object"
+def get_apply_transform_parser():
     parser = argparse.ArgumentParser(
-        description=MANUAL_PAIRWISE_ALIGNER_HELP,
+        description=APPLY_TRANSFORM_HELP,
         allow_abbrev=False,
         add_help=False,
     )
@@ -989,8 +953,52 @@ def get_manual_pairwise_aligner_parser():
     return parser
 
 
+def setup_apply_transform_parser(parent_parser):
+    parser = parent_parser.add_parser(
+        "apply_transform",
+        help=APPLY_TRANSFORM_HELP,
+        parents=[get_apply_transform_parser()],
+    )
+    parser.set_defaults(func=cmd_run_apply_transform)
+
+    return parser
+
+
+def cmd_run_apply_transform(args):
+    from openst.alignment.apply_transform import _run_apply_transform
+
+    _run_apply_transform(args)
+
+
+MANUAL_PAIRWISE_ALIGNER_HELP = "GUI for manual alignment of Open-ST data"
+def get_manual_pairwise_aligner_parser():
+    parser = argparse.ArgumentParser(
+        description=MANUAL_PAIRWISE_ALIGNER_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="Path to the input h5ad file containing spatial coordinates",
+    )
+    parser.add_argument(
+        "--spatial-key",
+        type=str,
+        default="",
+        help="Path in the h5ad file to the spatial coordinates",
+    )
+    parser.add_argument(
+        "--image-key",
+        type=str,
+        default="",
+        help="Path in the h5ad file to the image",
+    )
+    return parser
+
+
 def setup_manual_pairwise_aligner_parser(parent_parser):
-    """setup_manual_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "manual_pairwise_aligner",
         help=MANUAL_PAIRWISE_ALIGNER_HELP,
@@ -1006,208 +1014,188 @@ def cmd_run_manual_pairwise_aligner(args):
 
     _run_manual_pairwise_aligner(args)
 
-MANUAL_PAIRWISE_ALIGNER_HELP = "GUI for openst manual pairwise alignment of spatial transcriptomics and imaging data"
-def setup_manual_pairwise_aligner_gui_parser(parent_parser):
-    """setup_manual_pairwise_aligner_gui_parser"""
-    parser = parent_parser.add_parser(
-        "manual_pairwise_aligner_gui",
-        help=MANUAL_PAIRWISE_ALIGNER_HELP,
-    )
-    parser.set_defaults(func=cmd_run_manual_pairwise_aligner_gui)
-
-    return parser
-
-
-def cmd_run_manual_pairwise_aligner_gui(args):
-    from openst.alignment.manual_pairwise_aligner_gui import _run_manual_pairwise_aligner_gui
-
-    _run_manual_pairwise_aligner_gui(args)
-
 PAIRWISE_ALIGNER_HELP = "Automatic pairwise alignment of transcript locations to imaging data"
 def get_pairwise_aligner_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=PAIRWISE_ALIGNER_HELP,
         allow_abbrev=False,
         add_help=False,
     )
 
-    parser.add_argument(
-        "--image-in",
-        type=str,
-        required=True,
-        help="Path to the input image. This is treated as the 'destination' image during pairwise alignment",
-    )
-    parser.add_argument(
+    required = parser.add_argument_group('Data (required)')
+    required.add_argument(
         "--h5-in",
         type=str,
         required=True,
-        help="Path to the input h5ad file containing spatial coordinates",
+        help="Path to the merged Open-ST h5 object containing spatial coordinates and images",
     )
-    parser.add_argument(
+
+    optional_data = parser.add_argument_group('Data (optional)')
+    optional_data.add_argument(
+        "--image-in",
+        type=str,
+        default="uns/spatial/staining_image",
+        help="Key to the image used as the 'destination' during pairwise alignment",
+    )
+    optional_data.add_argument(
         "--metadata",
         type=str,
         default="",
         help="Path where the metadata will be stored. If not specified, metadata is not saved.",
     )
-    parser.add_argument(
-        "--h5-out",
-        type=str,
-        required=True,
-        help="Path where the h5ad file will be saved after alignment",
-    )
-    parser.add_argument(
-        "--mask-tissue",
-        action="store_true",
-        help="Tissue (imaging modality) is masked from the background for the feature detection",
-    )
-    parser.add_argument(
+
+    coarse_params = parser.add_argument_group('Coarse registration parameters')
+    coarse_params.add_argument(
         "--only-coarse",
         action="store_true",
         help="If selected, only the coarse alignment stage will run",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--rescale-factor-coarse",
         type=int,
         default=20,
         help="Rescaling factor for the input image (1:factor), used during coarse pairwise alignment",
     )
-    parser.add_argument(
-        "--rescale-factor-fine",
-        type=int,
-        default=5,
-        help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
-    )
-    parser.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
-    )
-    parser.add_argument(
-        "--fine-registration-gaussian-sigma",
-        type=int,
-        default=2,
-        help="Gaussian blur used on all modalities during fine registration",
-    )
-    parser.add_argument(
-        "--keep-black-background",
-        action="store_true",
-        help="Whether to set the background of the imaging modalities to white, after tissue masking",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--threshold-counts-coarse",
         type=int,
         default=1,
         help="""Only spatial coordinates with counts larger than this number
         will be kept for pseudoimage rendering during coarse alignment""",
     )
-    parser.add_argument(
-        "--threshold-counts-fine",
-        type=int,
-        default=0,
-        help="""Only spatial coordinates with counts larger than this number
-        will be kept for pseudoimage rendering during fine alignment""",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--pseudoimage-size-coarse",
         type=int,
-        default=4000,
+        default=500,
         help="Size (in pixels) of the pseudoimage during coarse alignment.",
     )
-    parser.add_argument(
-        "--pseudoimage-size-fine",
-        type=int,
-        default=6000,
-        help="Size (in pixels) of the pseudoimage during fine alignment.",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-min-samples",
         type=int,
         default=3,
         help="'min_samples' parameter of RANSAC, during coarse registration",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-residual-threshold",
         type=float,
         default=2,
         help="'residual_threshold' parameter of RANSAC, during coarse registration",
     )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--ransac-coarse-max-trials",
         type=int,
-        default=50,
+        default=2,
         help="Times RANSAC will run (x1000 iterations) during coarse registration",
     )
-    parser.add_argument(
-        "--ransac-fine-min-samples",
-        type=int,
-        default=3,
-        help="'min_samples' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-residual-threshold",
-        type=float,
-        default=2,
-        help="'residual_threshold' parameter of RANSAC, during fine registration",
-    )
-    parser.add_argument(
-        "--ransac-fine-max-trials",
-        type=int,
-        default=50,
-        help="Times RANSAC will run (x1000 iterations) during fine registration",
-    )
-    parser.add_argument(
-        "--max-image-pixels",
-        type=int,
-        default=933120000,
-        help="Upper bound for number of pixels in the images (prevents exception when opening very large images)",
-    )
-    parser.add_argument(
-        "--n-threads",
-        type=int,
-        default=1,
-        help="Number of CPU threads for parallel processing",
-    )
-    parser.add_argument(
-        "--feature-matcher",
-        type=str,
-        default="LoFTR",
-        choices=["LoFTR", "SIFT", "KeyNet"],
-        help="Feature matching algorithm",
-    )
-    parser.add_argument(
-        "--fine-min-matches",
-        type=int,
-        default=50,
-        help="Minimum number of matching keypoints between modalities during fine alignment",
-    )
-    parser.add_argument(
-        "--fiducial-model",
-        type=str,
-        default="",
-        help="Path to a object detection model (YOLO) to detect fiducial markers",
-    )
-    parser.add_argument(
+    coarse_params.add_argument(
         "--genes-coarse",
         nargs="+",
         type=str,
         default=None,
         help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
     )
-    parser.add_argument(
+
+    fine_params = parser.add_argument_group('Fine registration parameters')
+    fine_params.add_argument(
+        "--rescale-factor-fine",
+        type=int,
+        default=10,
+        help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
+    )
+    fine_params.add_argument(
+        "--tissue-masking-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
+    )
+    fine_params.add_argument(
+        "--fine-registration-gaussian-sigma",
+        type=int,
+        default=2,
+        help="Gaussian blur used on all modalities during fine registration",
+    )
+    fine_params.add_argument(
+        "--threshold-counts-fine",
+        type=int,
+        default=0,
+        help="""Only spatial coordinates with counts larger than this number
+        will be kept for pseudoimage rendering during fine alignment""",
+    )
+    
+    fine_params.add_argument(
+        "--pseudoimage-size-fine",
+        type=int,
+        default=2000,
+        help="Size (in pixels) of the pseudoimage during fine alignment.",
+    )
+    
+    fine_params.add_argument(
+        "--ransac-fine-min-samples",
+        type=int,
+        default=3,
+        help="'min_samples' parameter of RANSAC, during fine registration",
+    )
+    fine_params.add_argument(
+        "--ransac-fine-residual-threshold",
+        type=float,
+        default=2,
+        help="'residual_threshold' parameter of RANSAC, during fine registration",
+    )
+    fine_params.add_argument(
+        "--ransac-fine-max-trials",
+        type=int,
+        default=1,
+        help="Times RANSAC will run (x1000 iterations) during fine registration",
+    )
+    fine_params.add_argument(
+        "--fine-min-matches",
+        type=int,
+        default=50,
+        help="Minimum number of matching keypoints between modalities during fine alignment",
+    )
+    fine_params.add_argument(
         "--genes-fine",
         nargs="+",
         type=str,
         default=None,
         help="Genes used for plotting the pseudoimage during the fine alignment phase.",
     )
-    parser.add_argument(
+
+    image_preproc = parser.add_argument_group('Image preprocessing parameters')
+    image_preproc.add_argument(
+        "--mask-tissue",
+        action="store_true",
+        help="Tissue (imaging modality) is masked from the background for the feature detection",
+    )
+    image_preproc.add_argument(
+        "--keep-black-background",
+        action="store_true",
+        help="Whether to set the background of the imaging modalities to white, after tissue masking",
+    )
+    
+    model_params = parser.add_argument_group('Feature model parameters')
+    model_params.add_argument(
+        "--feature-matcher",
+        type=str,
+        default="LoFTR",
+        choices=["LoFTR", "SIFT", "KeyNet"],
+        help="Feature matching algorithm",
+    )
+    model_params.add_argument(
+        "--fiducial-model",
+        type=str,
+        default="",
+        help="Path to a object detection model (YOLO) to detect fiducial markers",
+    )
+
+    compu_params = parser.add_argument_group('Computational parameters')
+    compu_params.add_argument(
+        "--num-workers",
+        type=int,
+        default=1,
+        help="Number of CPU workers for parallel processing",
+    )
+    compu_params.add_argument(
         "--device",
         type=str,
         default="cpu",
@@ -1218,7 +1206,6 @@ def get_pairwise_aligner_parser():
 
 
 def setup_pairwise_aligner_parser(parent_parser):
-    """setup_pairwise_aligner_parser"""
     parser = parent_parser.add_parser(
         "pairwise_aligner",
         help=PAIRWISE_ALIGNER_HELP,
@@ -1236,12 +1223,6 @@ def cmd_run_pairwise_aligner(args):
 
 FROM_3D_REGISTRATION_HELP = "Convert Open-ST h5 objects for 3D registration of serial sections using STIM"
 def get_from_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=FROM_3D_REGISTRATION_HELP,
         allow_abbrev=False,
@@ -1275,7 +1256,7 @@ def get_from_3d_registration_parser():
         "--images-in-adata",
         default=False,
         action="store_true",
-        help="""When specified, the pairwise-aligned image is loaded from the adata,
+        help="""If set, the pairwise-aligned image is loaded from the adata,
         at the internal path specified by '--images'""",
     )
     parser.add_argument(
@@ -1334,7 +1315,6 @@ def get_from_3d_registration_parser():
 
 
 def setup_from_3d_registration_parser(parent_parser):
-    """setup_from_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "from_3d_registration",
         help=FROM_3D_REGISTRATION_HELP,
@@ -1353,12 +1333,6 @@ def cmd_run_from_3d_registration(args):
 GET_3D_REGISTRATION_HELP = """Convert STIM output back to a single (aligned) Open-ST h5 object.
                             If available, pairwise-aligned image data is transformed, too."""
 def get_to_3d_registration_parser():
-    """
-    Parse command-line arguments.
-
-    Returns:
-        argparse.Namespace: Parsed command-line arguments.
-    """
     parser = argparse.ArgumentParser(
         description=GET_3D_REGISTRATION_HELP,
         allow_abbrev=False,
@@ -1399,7 +1373,6 @@ def get_to_3d_registration_parser():
 
 
 def setup_to_3d_registration_parser(parent_parser):
-    """setup_to_3d_registration_parser"""
     parser = parent_parser.add_parser(
         "to_3d_registration",
         help=GET_3D_REGISTRATION_HELP,
@@ -1415,13 +1388,108 @@ def cmd_run_to_3d_registration(args):
 
     _run_to_3d_registration(args)
 
+FROM_SPACEMAKE_HELP = """Run openst commands using spacemake file structure"""
+def get_from_spacemake_parser():
+    parser = argparse.ArgumentParser(
+        description=FROM_SPACEMAKE_HELP,
+        allow_abbrev=False,
+        add_help=False,
+    )
+    parser.add_argument(
+        "--project-id",
+        type=str,
+        required=True,
+        help="From spacemake's project_df, this is the project_id string",
+    )
+    parser.add_argument(
+        "--sample-id",
+        type=str,
+        required=True,
+        help="From spacemake's project_df, this is the sample_id string",
+    )
+    parser.add_argument(
+        "--run-mode",
+        type=str,
+        default="",
+        help="When a sample has multiple run_mode(s), you must specify one",
+    )
+    return parser
+
+
+def setup_from_spacemake_parser(parent_parser, from_spacemake_parser):
+    parser = parent_parser.add_parser(
+        "from_spacemake",
+        help=FROM_SPACEMAKE_HELP,
+        parents=[from_spacemake_parser],
+    )
+    parser.set_defaults(func=cmd_run_from_spacemake)
+
+    return parser
+
+def cmd_run_from_spacemake(parser, args, unknown_args):
+    from openst.utils.from_spacemake import _run_from_spacemake
+
+    _run_from_spacemake(parser, args, unknown_args)
+
+
+def setup_from_spacemake_subparsers(from_spacemake_subparsers):
+    setup_image_stitch_parser(from_spacemake_subparsers)
+    setup_spatial_stitch_parser(from_spacemake_subparsers)
+
+    setup_pairwise_aligner_parser(from_spacemake_subparsers)
+    setup_apply_transform_parser(from_spacemake_subparsers)
+    setup_manual_pairwise_aligner_parser(from_spacemake_subparsers)
+
+    setup_segment_parser(from_spacemake_subparsers)
+    setup_segment_merge_parser(from_spacemake_subparsers)
+    setup_transcript_assign_parser(from_spacemake_subparsers)
+    
+    setup_merge_modalities_parser(from_spacemake_subparsers)
+    setup_pseudoimage_parser(from_spacemake_subparsers)
+    setup_preview_parser(from_spacemake_subparsers)
 
 def cmdline_args():
     parent_parser = argparse.ArgumentParser(
         allow_abbrev=False,
-        description="openst: computational tools of Open-ST",
+        description="Computational tools for Open-ST data",
     )
-    parent_parser_subparsers = parent_parser.add_subparsers(help="sub-command help", dest="subcommand")
+
+    description = """
+    Flow cell preprocessing
+        barcode_preprocessing
+                        Convert spatial barcode raw data into tabular files with barcodes and spatial coordinates
+    
+    Sample preprocessing
+        image_stitch        Stitch image fields of view into a single image
+        image_preprocess    Restoration of imaging data with CUT model (as in Open-ST paper)
+        spatial_stitch      Stitch Open-ST h5 tile objects into a single Open-ST h5 object
+    
+    Pairwise alignment
+        merge_modalities    merge_modalities locations (as points) and images of Open-ST data
+        pairwise_aligner    Automatic pairwise alignment of transcript locations to imaging data
+        apply_transform     Apply a precomputed transformation matrix to the specified coordinates of an Open-ST h5 object
+        manual_pairwise_aligner
+                            GUI for manual alignment of Open-ST data
+        
+    Segmentation & DGE creation    
+        segment             Image (or pseudoimage)-based segmentation with cellpose and (optional) radial extension
+        segment_merge       Merge two segmentation masks into one
+        transcript_assign   Aggregate transcripts into segmented cells
+    
+    3D reconstruction
+        to_3d_registration  Convert STIM output back to a single (aligned) Open-ST h5 object. If available, pairwise-aligned image data is
+                            transformed, too.
+        from_3d_registration
+                            Convert Open-ST h5 objects for 3D registration of serial sections using STIM
+    
+    Visualization and extra                        
+        pseudoimage         Generate pseudoimages of Open-ST RNA data and visualize using napari
+        preview             Preview locations (as points) and images of Open-ST data
+        report              Generate HTML reports from metadata files (json)        
+        from_spacemake      Run openst commands using spacemake file structure
+    """
+
+    parent_parser_subparsers = parent_parser.add_subparsers(title="commands", dest="subcommand")
     parent_parser.add_argument(
     '--version',
     action = 'store_true')
@@ -1433,9 +1501,10 @@ def cmdline_args():
     setup_image_preprocess_parser(parent_parser_subparsers)
     setup_spatial_stitch_parser(parent_parser_subparsers)
 
+    setup_merge_modalities_parser(parent_parser_subparsers)
     setup_pairwise_aligner_parser(parent_parser_subparsers)
+    setup_apply_transform_parser(parent_parser_subparsers)
     setup_manual_pairwise_aligner_parser(parent_parser_subparsers)
-    setup_manual_pairwise_aligner_gui_parser(parent_parser_subparsers)
 
     setup_segment_parser(parent_parser_subparsers)
     setup_segment_merge_parser(parent_parser_subparsers)
@@ -1444,17 +1513,22 @@ def cmdline_args():
     setup_to_3d_registration_parser(parent_parser_subparsers)
     setup_from_3d_registration_parser(parent_parser_subparsers)
     
-    setup_merge_modalities_parser(parent_parser_subparsers)
     setup_pseudoimage_parser(parent_parser_subparsers)
     setup_preview_parser(parent_parser_subparsers)
     setup_report_parser(parent_parser_subparsers)
 
-    return parent_parser, parent_parser.parse_args()
+    # TODO: add subparser for from_spacemake
+    from_spacemake_parser = get_from_spacemake_parser()
+    setup_from_spacemake_parser(parent_parser_subparsers, from_spacemake_parser)
+
+    known, unknown = parent_parser.parse_known_args()
+
+    return parent_parser, from_spacemake_parser, known, unknown
 
 
 def cmdline_main():
     import importlib.metadata
-    parser, args = cmdline_args()
+    parser, from_spacemake_parser, args, unknown_args = cmdline_args()
 
     if args.version and args.subcommand is None:
         print(importlib.metadata.version('openst'))
@@ -1462,10 +1536,14 @@ def cmdline_main():
     else:
         del args.version
 
-    if "func" in args:
+    if "func" in args and args.subcommand != "from_spacemake":
         logging.info(f"openst {args.subcommand} - running with the following parameters:")
         logging.info(args.__dict__)
         args.func(args)
+    elif args.subcommand == "from_spacemake":
+        logging.info(f"openst {args.subcommand} - running from spacemake directory")
+        logging.info(args.__dict__)
+        args.func(from_spacemake_parser, args, unknown_args)
     else:
         parser.print_help()
         return 0

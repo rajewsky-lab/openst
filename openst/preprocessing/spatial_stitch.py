@@ -1,5 +1,6 @@
 import logging
 from typing import List, Union
+from tqdm import tqdm
 
 import numpy as np
 from anndata import AnnData, concat, read_h5ad
@@ -121,7 +122,7 @@ def read_tiles_to_list(
 
     tiles = []
 
-    for i, f in enumerate(f):
+    for i, f in tqdm(enumerate(f)):
         _f_obj = read_h5ad(f)
 
         if "spatial" not in _f_obj.obsm.keys():
@@ -234,6 +235,7 @@ def _run_spatial_stitch(args):
     if args.metadata != "" and not check_directory_exists(args.metadata):
         raise FileNotFoundError("Parent directory for the metadata does not exist")
 
+    logging.info(f"Loading {len(args.tiles)} tiles, correcting coordinates and merging")
     spatial_stitch = merge_tiles_to_collection(
         tiles=args.tiles,
         tile_id=args.tile_id,
@@ -246,6 +248,7 @@ def _run_spatial_stitch(args):
         join_output=args.join_output,
     )
 
+    logging.info(f"Writing merged tiles into {args.h5_out}")
     spatial_stitch.write_h5ad(args.h5_out)
 
 

@@ -64,7 +64,7 @@ You can run a terminal for `openst` by running
 docker run -it openst
 ```
 
-Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the `openst manual_pairwise_aligner_gui` tool).
+Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the `openst manual_pairwise_aligner` tool).
 Follow these steps:
 
 1. Install X Server on your host machine if not already installed.

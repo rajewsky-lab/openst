@@ -6,6 +6,7 @@ from dask_image.ndfilters import gaussian as dask_gaussian
 from scipy.ndimage import binary_dilation as scipy_binary_dilation
 from skimage.filters import threshold_otsu
 from skimage.filters import gaussian as skimage_gaussian
+from skimage.color import rgb2hsv as skimage_rgb2hsv
 
 HI_NUM_ITER = 100
 
@@ -132,7 +133,7 @@ def _prepare_colorarray(arr, channel_axis=-1):
     return arr.astype(float)
 
 
-def rgb2hsv(rgb, *, channel_axis=-1):
+def dask_rgb2hsv(rgb, *, channel_axis=-1):
     """RGB to HSV color space conversion.
 
     Parameters:
@@ -222,7 +223,10 @@ def mask_tissue(
     Returns:
         list: A list containing prepared images after applying the specified processing steps.
     """
-    hsv_image = rgb2hsv(image)
+    if isinstance(image, np.ndarray):
+        hsv_image = skimage_rgb2hsv(image)
+    elif isinstance(image, dask.array.Array):
+        hsv_image = dask_rgb2hsv(image)
 
     if type(image) is dask.array.Array:
         s_image_gaussian = dask_gaussian(hsv_image[..., 1], sigma=mask_gaussian_blur)
@@ -242,7 +246,6 @@ def mask_tissue(
     image_out = ((image_out / image_out.max()) * 255).astype(int)
     hsv_image_out = ((hsv_image_out / hsv_image_out.max()) * 255).astype(int)
 
-    print("background removal (optional)")
     if not keep_black_background:
         image_out = np.where(
             image_out == np.array([[0, 0, 0]]),

@@ -19,25 +19,20 @@ refer to the [cellpose](https://cellpose.readthedocs.io/en/latest/index.html) do
 
 ```sh
 openst segment \
-    --h5-in <path_to_aligned_h5ad> \
-    --image-in <image_in_path> \
-    --mask-out <mask_out_path> \
-    --model <path>/HE_cellpose_rajewsky
+    --h5-in spatial_stitched_spots.h5ad \ # after running the pairwise alignment
+    --image-in uns/spatial/staining_image \
+    --mask-out uns/spatial/staining_image_mask \
+    --model HE_cellpose_rajewsky
     # --device cuda \ # uses GPU for segmentation, if available
     # --chunked \ # specify if you run out of GPU memory - segments in chunks
 ```
 By default, segmentation is extended radially 10 pixels. This can be changed with the argument `--dilate-px`.
 
-Make sure to replace the placeholders (`<...>`). For instance,
-`<path_to_aligned_h5ad>` is the full path to the `h5ad` file [after pairwise alignment](pairwise_alignment.md#expected-output); 
-`<image_in_path>` is the path to the image - a path to a file, or a location inside the `h5ad` file,
-like `'uns/spatial_pairwise_aligned/staining_image_transformed'` (*our recommendation*).
-`<mask_out_path>` is the location where the segmentation mask will be saved - can be a file or a location in the `h5ad` file,
-like `uns/spatial_pairwise_aligned/mask_transformed_10px` (*our recommendation*). The `<model_path>` for the parameter `--model`
-is the name or location of the cellpose model weights.
-
-We recommend using the [model provided in our repo](https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky)
-for segmentation of H&E images The rest of parameters can be checked with `openst segment --help`.
+Make sure to populate the arguments with the values specific to your dataset. Here, we provide `--h5-in` consistent
+with the previous steps, `--image-in` and `--mask-out` will read and write the staining and mask inside the Open-ST h5 object,
+and `--model` is `HE_cellpose_rajewsky`, the default used in our manuscript. This is the model we recommend for H&E images, and
+weights are automatically downloaded. It is also [provided in our repo](https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky).
+The rest of parameters can be checked with `openst segment --help`.
 
 !!! tip
      **If your sample also contains very large cells** (e.g., adipocytes) that are not segmented with the previous parameters,
@@ -45,30 +40,26 @@ for segmentation of H&E images The rest of parameters can be checked with `opens
 
      ```sh
      openst segment \
-          --h5-in <path_to_aligned_h5ad> \
-          --image-in <image_in_path> \
-          --mask-out <mask_out_path_larger> \
-          --model <path>/HE_cellpose_rajewsky \
+          --h5-in spatial_stitched_spots.h5ad \
+          --image-in uns/spatial/staining_image \
+          --mask-out uns/spatial/staining_image_mask_large \
+          --model HE_cellpose_rajewsky \
           --dilate-px 50 \
           --diameter 50 # diameter for the larger cell type
      ```
 
-     Replace the placeholders (`<...>`) as before; in this case, the placeholder `<mask_out_path_larger>` must be different from the
-     `<mask_out_path>` provided above.
+     In this case, we changed `--mask-out` to a different key, so we can keep both masks inside the Open-ST h5 object.
      
-     And then, you can combine the segmentation masks of both diameter configurations.
+     Then, you can combine the segmentation masks of both diameter configurations.
      This command will apply an "AND" between all images, to only preserve mask of non-overlapping,
      with the hierarchy provided in the `--image-in` argument (first has higher priority).
 
      ```sh
      openst segment_merge \
-          --h5-in <path_to_aligned_h5ad> \
-          --mask-in <mask_a> <mask_b>
-          --mask-out <mask_combined>
+          --h5-in spatial_stitched_spots.h5ad \
+          --mask-in uns/spatial/staining_image_mask uns/spatial/staining_image_mask_large
+          --mask-out uns/spatial/staining_image_mask_combined
      ```
-
-     Replace the placeholders (`<...>`) as before; in this case, the placeholder `<mask_a>`, `<mask_b>`... must correspond
-     to the placeholders `<mask_out_path>`, `<mask_out_path_larger>`...
 
 ## Assigning transcripts to segmented cells
 Now, we aggregate the initial $N\times G$ matrix into an $M\times G$ matrix,
@@ -78,10 +69,10 @@ This step allows you to associate capture spots with segmented cells.
 
 ```sh
 openst transcript_assign \
-    --h5-in <path_to_aligned_h5ad> \
-    --spatial-key spatial_pairwise_aligned_fine \
-    --mask-in <mask_out_path> \
-    --h5-out <path_to_sc_h5ad>
+    --h5-in spatial_stitched_spots.h5ad \
+    --spatial-key obsm/spatial_pairwise_aligned_fine \
+    --mask-in uns/spatial/staining_image_mask \
+    --h5-out spatial_per_segmented_cell.h5ad
 ```
 
 Replace the placeholders (`<...>`) as before; in this case, the placeholder `<mask_in_path>` must be set to

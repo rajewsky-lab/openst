@@ -3,11 +3,6 @@ import os
 import pickle
 import shutil
 from pathlib import Path
-from typing import Union
-
-import h5py
-from anndata import AnnData
-from anndata._io.specs import read_elem
 
 
 def save_pickle(obj, file_path):
@@ -40,7 +35,7 @@ def load_pickle(file_path):
     return obj
 
 
-def check_file_exists(f, exception=True):
+def check_file_exists(f, exception=True) -> bool:
     """
     Check whether the file exists.
 
@@ -60,7 +55,7 @@ def check_file_exists(f, exception=True):
     return True
 
 
-def check_directory_exists(path):
+def check_directory_exists(path, exception=False) -> bool:
     """
     Check if a file exists, or if its parent directory exists.
 
@@ -70,42 +65,49 @@ def check_directory_exists(path):
     Returns:
         bool: True if the parent directory exists or if the file exists, False otherwise.
     """
+    _ret_val = False
     if os.path.isdir(path):
-        return os.path.exists(path)
+        _ret_val = os.path.exists(path)
     else:
-        parent_directory = os.path.dirname(path)
+        path = os.path.dirname(path)
         # handle file created in the same directory
-        if parent_directory == "":
-            return True
-        return os.path.exists(parent_directory)
+        if path == "":
+            _ret_val = True
+        _ret_val = os.path.exists(path)
+    
+    if exception and not _ret_val:
+        raise FileNotFoundError(f"The directory '{path}' does not exist")
+    
+    return _ret_val
 
 
 def check_adata_structure(f):
     """
-    Check the validity of the input AnnData file.
+    Check the validity of the input Open-ST h5 object.
 
     Args:
-        f (str): Path to the input AnnData file.
+        f (str): Path to the input Open-ST h5 object.
 
     Raises:
         KeyError: If required properties are not found in the file.
     """
+    import h5py
 
     with h5py.File(f, "r") as file:
         if "obsm/spatial" not in file:
-            raise KeyError("The AnnData file does not have the 'obsm/spatial' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obsm/spatial' property.")
 
         if "obs/tile_id" not in file:
-            raise KeyError("The AnnData file does not have the 'obs/tile_id' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obs/tile_id' property.")
 
         if "obs/total_counts" not in file:
-            raise KeyError("The AnnData file does not have the 'obs/total_counts' property.")
+            raise KeyError("The Open-ST h5 object does not have the 'obs/total_counts' property.")
 
         if "spatial_aligned" in file:
-            logging.warn("The AnnData file has a 'spatial_aligned' layer")
+            logging.warn("The Open-ST h5 object has a 'spatial_aligned' layer")
 
 
-def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm/spatial"], backed: bool=False) -> dict:
+def load_properties_from_adata(f, properties: list = ["obsm/spatial"], backed: bool=False) -> dict:
     """
     Load specified properties from an AnnData file (h5py format).
 
@@ -125,6 +127,9 @@ def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm
         - The 'properties' list should consist of property paths within the file.
         - Returns a dictionary where keys are property paths and values are the loaded data.
     """
+    import h5py
+    from anndata import AnnData
+    from anndata._io.specs import read_elem
 
     parsed_properties = {}
 
@@ -146,7 +151,7 @@ def load_properties_from_adata(f: Union[str, AnnData], properties: list = ["obsm
     return parsed_properties
 
 
-def check_obs_unique(adata: AnnData, obs_key: str = "tile_id") -> bool:
+def check_obs_unique(adata, obs_key: str = "tile_id") -> bool:
     """
     Check if the values in a specified observation key in an AnnData object are unique.
 
@@ -189,16 +194,20 @@ def copytree2(source: str, dest: str) -> str:
         shutil.copytree(source, dest_dir, dirs_exist_ok=True)
     return dest_dir
 
-def get_package_path():
-    """Get the absolute path of the directory containing the current Python package."""
+def get_package_path() -> str:
+    """Get the absolute path of the directory containing the current Python package.
+
+    Returns:
+        str: Absolute path of the directory containing the current Python package.
+    """
     import openst
     return os.path.dirname(os.path.abspath(openst.__file__))
 
-def get_absolute_package_path(relative_path):
+def get_absolute_package_path(relative_path) -> str:
     """
     Get the absolute path by concatenating the package path and the relative path.
 
-    Parameters:
+    Args:
         relative_path (str): Relative path from the package directory.
 
     Returns:
@@ -206,3 +215,34 @@ def get_absolute_package_path(relative_path):
     """
     package_path = get_package_path()
     return os.path.join(package_path, relative_path)
+
+def h5_to_dict(adata) -> dict:
+    """
+    Recursively converts an h5py.Group object and its nested datasets into a nested dictionary structure.
+
+    Parameters:
+        adata (h5py.Group): An h5py Group object to be converted.
+
+    Returns:
+        dict: A nested dictionary representing the structure of the h5py Group object.
+            Leaf nodes contain strings representing the type and shape (if applicable) of the datasets.
+            Non-leaf nodes contain nested dictionaries representing their child groups and datasets.
+
+    Notes:
+        - Leaf nodes in the resulting dictionary contain strings formatted as "{type}_{shape}".
+          If the dataset has no shape attribute (e.g., scalar dataset), shape will be None.
+          Example: "<class 'numpy.ndarray'>_(10,)"
+        - Non-leaf nodes in the resulting dictionary contain nested dictionaries
+          representing their child groups and datasets.
+    """
+    import h5py
+
+    result = {}
+    for key, value in adata.items():
+        if isinstance(value, h5py.Group):
+            result[key] = h5_to_dict(value)
+        else:
+            dataset_type = str(type(value))
+            dataset_shape = value.shape if hasattr(value, 'shape') else None
+            result[key] = f"{dataset_type}_{dataset_shape}"
+    return result

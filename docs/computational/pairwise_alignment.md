@@ -61,12 +61,17 @@ automatically, by leveraging computer vision algorithms. To do so, make sure tha
 input data](#required-input-data); then, open a termina, type and run the following command (just an example):
 
 ```bash
-openst pairwise_aligner \
-    --image-in Image_Stitched_Composite.tif \
+# Add the image data to the Open-ST h5 object
+openst merge_modalities \
     --h5-in spatial_stitched_spots.h5ad \
-    --metadata alignment_metadata.json \
+    --image-in Image_Stitched_Composite.tif
+
+# Run the automatic pairwise alignment
+openst pairwise_aligner \
+    --h5-in spatial_stitched_spots.h5ad \
+    --metadata alignment_metadata.json
     # --device cuda # by default, cpu. Only specify if you have cuda-compatible GPU
-    # --only-coarse # skips the fine fiducial registration, in case you want to do that manually
+    # --only-coarse # does not run the fine registration; can be done manually with the GUI
 ```
 
 Make sure to specify a path where the metadata output file 
@@ -95,14 +100,16 @@ openst report --metadata=alignment_metadata.json --html-out=alignment_report.htm
 
 ### Visual assessment with GUI
 Alternatively, you can visualize the images & ST data interactively using the GUI.
-- With the GUI:
+
 ```sh
-openst manual_pairwise_aligner_gui
+openst manual_pairwise_aligner
 ```
 
 We provide a Graphical User Interface (GUI) for selecting keypoints between imaging & ST modalities, 
 for visualization and refinement of automatic results. This GUI requires a single Open-ST h5 object,
 the output of `openst pairwise_aligner`.
+
+
 
 ## Manual/semiautomatic workflow
 We provide a Graphical User Interface (GUI) for selecting keypoints between imaging & ST modalities, 
@@ -118,10 +125,10 @@ for full manual alignment or refinement of automatic results. This GUI requires 
         --image-in Image_Stitched_Composite.tif
 
     # Use the GUI to select the keypoints.json file
-    openst manual_pairwise_aligner_gui
+    openst manual_pairwise_aligner
 
     # Compute a rigid transformation from keypoints.json and apply it to the data
-    openst manual_pairwise_aligner \
+    openst apply_transform \
         --keypoints-in keypoints.json \
         --h5-in spatial_stitched_spots.h5ad \
         --spatial-key-in 'obsm/spatial' \
@@ -133,10 +140,11 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 
     ``` sh
     # Use the GUI to select the keypoints.json file
-    openst manual_pairwise_aligner_gui
+    # For per-tile alignment, select keypoints per tile (see video below)
+    openst manual_pairwise_aligner
 
     # Compute a rigid transformation from keypoints.json and apply it to the data
-    openst manual_pairwise_aligner \
+    openst apply_transform \
         --keypoints-in keypoints.json \
         --h5-in spatial_stitched_spots.h5ad \
         --spatial-key-in 'obsm/spatial_pairwise_aligned_fine' \
