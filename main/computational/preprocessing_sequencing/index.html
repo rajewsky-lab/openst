@@ -1678,9 +1678,9 @@ subsequent steps of this tutorial, not the individual <code>h5ad</code> files.</
 of input file: (1) all the <code>h5ad</code> files generated for a single sample (can be specified implicitly, via a wildcard in Linux,
 or explicitly as a list separated by spaces); and (2) a coordinate system file, that specifies that is the relative offset,
 in units equivalent to <code>x_pos</code> and <code>y_pos</code>, of the tiles respect to their <em>column</em> and <em>swath</em>. These coordinate system files
-have a standardized format, and are provided in the [spacemake] and [openst] repos for the Illumina® NovaSeq 6000 S4 flow cell.
-If you have used other flow cell, you might need to generate these files following the same convention (feel free to open an
-issue in our [repo], and we can generate it for you).</p>
+have a standardized format, and are provided in the <a href="https://github.com/rajewsky-lab/spacemake/blob/master/spacemake/data/puck_collection/openst_coordinate_system.csv">spacemake</a> repo and <a href="https://rajewsky-lab.github.io/openst/latest/examples/datasets/">openst</a> website for the Illumina® NovaSeq 6000 S4 flow cell.
+If you have used other flow cell, you might need to generate these files following the same convention. Feel free to open an
+issue in our <a href="https://github.com/rajewsky-lab/openst/issues/new?assignees=&amp;labels=&amp;template=bug-report.md&amp;title=">repo</a>, and we can generate it for you.</p>
 <p>To manually create 'puck_collection' files, you can run the following in a terminal:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>spatial_stitch<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--tiles<span class="w"> </span>dge.fc_1_tile_2267.h5ad<span class="w"> </span>dge.fc_1_tile_2268.h5ad<span class="w"> </span><span class="se">\</span>
@@ -1774,7 +1774,7 @@ spatial coordinates of each barcoded spot. In the following sections, we will us
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023 Open-ST
+      Copyright &copy; 2024 Open-ST
     </div>
   
   

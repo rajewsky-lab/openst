@@ -1603,19 +1603,22 @@ obtain a single file with all tiles for a sample.</p>
 <p>The expected input for the image modality is a single tiff file of the whole tile-scan.
 Other formats, i.e., <code>jpeg</code> and <code>png</code> are also compatible. Make sure that the image is the full-resolution
 and not a downsampled version. As a rule of thumb, at least a few fiducial markers must be clearly distinguishable.</p>
-<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="image-modality-good-resolution" name="__tabbed_1" type="radio" /><input id="image-modality-bad-resolution" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="image-modality-good-resolution">Good resolution</label><label for="image-modality-bad-resolution">Bad resolution</label></div>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:3"><input checked="checked" id="image-modality-good-visibility" name="__tabbed_1" type="radio" /><input id="image-modality-fair-visibility" name="__tabbed_1" type="radio" /><input id="image-modality-poor-visibility" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="image-modality-good-visibility">Good visibility</label><label for="image-modality-fair-visibility"><em>Fair</em> visibility</label><label for="image-modality-poor-visibility"><em>Poor</em> visibility</label></div>
 <div class="tabbed-content">
 <div class="tabbed-block">
-<p>put image</p>
+<p><img alt="Good visibility" loading="lazy" src="../static/img/compu_pairwise_align_fiducial_visibility/good_visibility.webp" /></p>
 </div>
 <div class="tabbed-block">
-<p>put image</p>
+<p><img alt="Fair visibility" loading="lazy" src="../../static/img/compu_pairwise_align_fiducial_visibility/fair_visibility.webp" /></p>
+</div>
+<div class="tabbed-block">
+<p><img alt="Poor visibility" loading="lazy" src="../static/img/compu_pairwise_align_fiducial_visibility/poor_visibility.webp" /></p>
 </div>
 </div>
 </div>
 <h3 id="spatial-transcriptomics-modality">Spatial transcriptomics modality<a class="headerlink" href="#spatial-transcriptomics-modality" title="Permanent link">&para;</a></h3>
 <p>The expected input for the spatial transcriptomics modality is a single <a href="https://anndata.readthedocs.io/en/latest/fileformat-prose.html">h5ad</a> file containing all
-the [barcoded tiles] of a sample. </p>
+the <a href="../preprocessing_sequencing/#flow-cell-related-terms">barcoded tiles</a> of a sample. </p>
 <div class="admonition warning">
 <p class="admonition-title">Warning</p>
 <p>Remember that spacemake generates one file per <a href="../preprocessing_sequencing/#flow-cell-related-terms">barcoded tile</a>, and it will be necessary to perform
@@ -1803,7 +1806,7 @@ matrix that can be used in later downstream analysis.</p>
       <div class="md-copyright">
   
     <div class="md-copyright__highlight">
-      Copyright &copy; 2023 Open-ST
+      Copyright &copy; 2024 Open-ST
     </div>
   
   
