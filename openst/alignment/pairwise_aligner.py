@@ -391,9 +391,14 @@ def run_registration(
         x_min, y_min = min_lim
         x_max, y_max = max_lim
 
+        _fn_prepare_image_for_feature_matching = prepare_image_for_feature_matching
+
+        if is_grayscale(src):
+            _fn_prepare_image_for_feature_matching = prepare_image_for_feature_matching_grayscale
+
         # Preparing image and pseudoimage modalities for feature detection (imaging modality has optimal flip)
         def src_preprocessor(x, flip, rotation):
-            return prepare_image_for_feature_matching(
+            return _fn_prepare_image_for_feature_matching(
                 image=x,
                 gaussian_blur=args.fine_registration_gaussian_sigma,
                 crop=[x_min, x_max, y_min, y_max],
@@ -453,9 +458,12 @@ def run_registration(
             _t_sts_coords_fine_transformed = apply_transform(
                 _t_sts_coords_fine_to_transform, _t_tform_points, check_bounds=True
             )[:, :-1]
+
+            _tform_params = _t_tform_points.params
         else:
             logging.warning(f"There were not enough matching points ({len(_t_mkpts0)} out of selected {args.fine_min_matches})")
             _t_sts_coords_fine_transformed = _t_sts_coords_fine_to_transform[:, ::-1]
+            _tform_params = None
             
 
         # Rescale points to original HE dimensions
@@ -470,7 +478,7 @@ def run_registration(
             name=f"fine_alignment_tile_{tile_code}",
             im_0=src[x_min:x_max, y_min:y_max],
             im_1=_t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max],
-            transformation_matrix=_t_tform_points.params,
+            transformation_matrix=_tform_params,
             ransac_results=None,
             sift_results=None,
             keypoints0=_t_mkpts1,
@@ -543,7 +551,7 @@ def run_pairwise_aligner(args):
 
 
 def _run_pairwise_aligner(args):
-    with threadpool_limits(limits=args.n_threads):
+    with threadpool_limits(limits=args.num_workers):
         run_pairwise_aligner(args)
 
 

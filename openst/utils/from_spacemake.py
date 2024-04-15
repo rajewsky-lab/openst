@@ -250,9 +250,24 @@ def _run_transcript_assign(sample_config, sample_metadata):
     return required_arguments
 
 def _run_merge_modalities(sample_config, sample_metadata):
+    import shutil
+
     stitched_dge = get_stitched_dge(sample_config, sample_metadata, check_exists=True)
     image_out = get_stitched_image_path(sample_config, sample_metadata, check_exists=True)
-    required_arguments = ["--h5-in", stitched_dge, "--image-in", image_out]
+    merged_dge = get_multimodal_dge(sample_config, sample_metadata)
+
+    if not check_directory_exists(merged_dge):
+        _parent_dir = os.path.dirname(merged_dge)
+        logging.info(f"Creating directory at {_parent_dir}")
+        os.mkdir(_parent_dir)
+
+    if check_file_exists(merged_dge, exception=False):
+        logging.warn(f"No need to create {merged_dge} - it exists")  
+    else:
+        logging.info(f"Copying {stitched_dge} into {merged_dge}")  
+        shutil.copy(stitched_dge, merged_dge)
+    
+    required_arguments = ["--h5-in", merged_dge, "--image-in", image_out]
 
     return required_arguments
 

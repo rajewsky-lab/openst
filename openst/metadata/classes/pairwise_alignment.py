@@ -5,6 +5,7 @@ import numpy as np
 from skimage.transform import SimilarityTransform
 
 from openst.metadata.classes.base import BaseMetadata
+from openst.utils.pimage import is_grayscale
 
 
 class PairwiseAlignmentMetadata(BaseMetadata):
@@ -68,9 +69,12 @@ class AlignmentResult:
             fig, axes = plt.subplots(1, 1)
 
         # TODO: automatically manage the number of channels to avoid errors here!
+        if not is_grayscale(self.im_0):
+            self.im_0 = self.im_0[..., 0]
+
         plot_matches(
             axes,
-            self.im_0[..., 0],
+            self.im_0,
             self.im_1,
             self.keypoints0,
             self.keypoints1,

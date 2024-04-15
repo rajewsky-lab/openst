@@ -44,7 +44,10 @@ def transfer_segmentation(adata_transformed_coords, props_filter):
 
 def subset_adata_to_mask(mask, adata, spatial_key: str = 'spatial'):
     # Subset adata to the valid coordinates from the mask
-    adata = adata[(adata.obsm[spatial_key][:, 0] <= mask.shape[0]) & (adata.obsm[spatial_key][:, 1] <= mask.shape[1])].copy()
+    adata = adata[(adata.obsm[spatial_key][:, 0] >= 0) & 
+                  (adata.obsm[spatial_key][:, 1] <= 0)
+                  (adata.obsm[spatial_key][:, 0] <= mask.shape[0]) & 
+                  (adata.obsm[spatial_key][:, 1] <= mask.shape[1])].copy()
 
     # Subset the labels to those in the mask
     labels = mask[adata.obsm[spatial_key][:, 0].astype(int), adata.obsm[spatial_key][:, 1].astype(int)]

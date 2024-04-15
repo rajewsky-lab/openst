@@ -926,13 +926,6 @@ def get_apply_transform_parser():
         help="Path to the input h5ad file containing spatial coordinates",
     )
     parser.add_argument(
-        "--h5-out",
-        type=str,
-        default="",
-        help="""(Optional) Path where to copy a new Open-ST h5 object file after coordinate transformation.
-        If not specified, data is written in place at --h5-in""",
-    )
-    parser.add_argument(
         "--per-tile",
         action="store_true",
         help="""(Optional) If set, transformations are applied per tile, from their keypoints. 
