@@ -75,19 +75,29 @@ we are going to omit `(spacemake) user@computer:/home/user/openst_e13_mouse_head
 spacemake config add_species \
    --name mouse \
    --reference genome \
-   --sequence <path_to_genome.fa> \
-   --annotation <path_to_genome_annotation.gtf>
+   --sequence GRCm39vM30.genome.fa \
+   --annotation gencodevM30.annotation.gtf
 
 spacemake config add_species \
    --name mouse \
    --reference rRNA \
-   --sequence <path_to_rRNA_sequences.fa>
+   --sequence mouse.rRNA.fa
 
 spacemake config add_species \
    --name mouse \
    --reference phiX \
-   --sequence <path_to_phiX_genome.fa>
+   --sequence phiX.fa
 ```
+
+!!! note
+    The `.fa` and `.gtf` files for mouse are available for http download under the [example datasets](../datasets.md) page.
+    For instance, you can run:
+
+    ```sh
+    # for the mouse genome sequence
+    wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/GRCm39vM30.genome.fa"
+    # etc...
+    ```
 
 ### Adding sample
 
@@ -104,16 +114,28 @@ Remember! You need to be in the `/home/user/openst_e13_mouse_head_demo/spacemake
 then run the following command:
 
 ```sh
+# downloading R1 and R2 sequences
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R1_001.fastq.gz"
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R2_001.fastq.gz"
+
+# downloading R1 and R2 (reseq) sequences
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R1_001.fastq.gz"
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R2_001.fastq.gz"
+
+# downloading the spatial barcode sequences
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_tiles.tar.xz"
+tar -xvf e13_mouse_head_tiles.tar.xz
+
 spacemake projects add_sample \
     --project_id openst_demo \
     --sample_id openst_demo_e13_mouse_head_mouse \
-    --R1 <path_to_R1.fastq.gz> \
-    --R2 <path_to_R2.fastq.gz> \
+    --R1 e13_mouse_head_R1_001.fastq.gz e13_mouse_head_reseq_R1_001.fastq.gz \
+    --R2 e13_mouse_head_R2_001.fastq.gz e13_mouse_head_reseq_R2_001.fastq.gz \
     --species mouse \
     --puck openst \
     --run_mode openst \
     --barcode_flavor openst \
-    --puck_barcode_file tiles/*.txt.gz \
+    --puck_barcode_file e13_mouse_head_tiles/*.txt.gz \
     --map_strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
 ```
 
@@ -131,9 +153,17 @@ into this:
 
 ```yaml
 openst:
-    coordinate_system: puck_id/openst_demo_e13_mouse_head_brain_coordinate_system.csv
+    coordinate_system: puck_id/fc_1_coordinate_system.csv
     spot_diameter_um: 0.6
     width_um: 1200
+```
+
+You can download the coordinate system file from the Open-ST website, for example:
+
+```sh
+# download the coordinate system
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordinate_system.csv"
+cp fc_1_coordinate_system.csv puck_data/.
 ```
 
 ### Running `spacemake`

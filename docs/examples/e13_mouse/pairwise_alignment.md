@@ -21,17 +21,30 @@ in an environment different to the one used for `spacemake`).
 1. You are in the `/home/user/openst_e13_demo` folder (or similar, depending on your system, username...)
 
 ```sh
+mkdir alignment
+
+cp projects/openst_demo/processed_data/openst_demo_e13_mouse_head/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad alignment/spatial_beads_e13_mouse_head.h5ad
+
+# download the image data
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head.tif"
+
+openst merge_modalities \
+    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
+    --image-in e13_mouse_head.tif
+
 openst pairwise_aligner \
-    --image-in alignment/e13_mouse_head.tif \
-    --h5-in projects/openst_demo/processed_data/openst_demo_e13_mouse_head/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad \
-    --h5-out alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
-    --save-image-in-h5 \
+    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
     --only-coarse \
     --device cuda
 ```
 
-This will create the file `alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad`, that hopefully contains a
-proper coarse alignment of the two modalities (at low resolution).
+This will create the file `alignment/spatial_beads_e13_mouse_head.h5ad`, that hopefully contains a proper coarse alignment of the two modalities (at low resolution).
+
+!!! note
+    For this image data, and the spatial coordinates after alignment, the conversion factor to physical distance is **1 pixel = 0.345 µm**.
+
+!!! tip
+    From `openst>=0.0.7`, there is `openst from_spacemake` to populate the data input/output arguments automatically, and keep the processing inside the `spacemake` folder structure. You can read more in the [tutorial](../../computational/from_spacemake.md).
 
 ## Fine alignment (manual)
 
@@ -44,7 +57,7 @@ openst manual_pairwise_aligner
 
 Then, follow these instructions on the GUI, by pressing the *buttons*:
 
-1. Click on *Load h5ad* and browse to the location where the `openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad` file
+1. Click on *Load h5ad* and browse to the location where the `spatial_beads_e13_mouse_head.h5ad` file
 is located. Select it and click *Open*. 
 2. Go to *Data properties*, then click under *Image data*, and select from the tree `uns>spatial_pairwise_aligned>staining_image_transformed`. Click *Ok*.
 3. Click under *Spatial coordinates*, and select from the tree `obsm/spatial_pairwise_aligned_coarse`. Click *Ok*.
@@ -67,11 +80,11 @@ coarse alignment, and the keypoints file, to perform the fine alignment:
 ```sh
 openst apply_transform \
     --keypoints-in alignment/openst_e13_demo_fine_keypoints.json \
-    --h5-in alignment/openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad \
+    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
     --per-tile
 ```
 
 After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing
-`openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad` file.
+`spatial_beads_e13_mouse_head.h5ad` file.
 
 That's it! Now you're ready to go to the next step.

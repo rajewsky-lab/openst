@@ -75,19 +75,29 @@ we are going to omit `(spacemake) user@computer:/home/user/openst_adult_demo/spa
 spacemake config add_species \
    --name mouse \
    --reference genome \
-   --sequence <path_to_genome.fa> \
-   --annotation <path_to_genome_annotation.gtf>
+   --sequence GRCm39vM30.genome.fa \
+   --annotation gencodevM30.annotation.gtf
 
 spacemake config add_species \
    --name mouse \
    --reference rRNA \
-   --sequence <path_to_rRNA_sequences.fa>
+   --sequence mouse.rRNA.fa
 
 spacemake config add_species \
    --name mouse \
    --reference phiX \
-   --sequence <path_to_phiX_genome.fa>
+   --sequence phiX.fa
 ```
+
+!!! note
+    The `.fa` and `.gtf` files for mouse are available for http download under the [example datasets](../datasets.md) page.
+    For instance, you can run:
+
+    ```sh
+    # for the mouse genome sequence
+    wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/genomes/GRCm39vM30.genome.fa"
+    # etc...
+    ```
 
 ### Adding sample
 
@@ -101,19 +111,27 @@ When downloading the tile barcode files, create a folder under `openst_adult_dem
 into this folder. Also, move the coordinate file to the `puck_data` folder in the `spacemake` directory.
 
 Remember! You need to be in the `/home/user/openst_adult_demo/spacemake` directory (or similar, depending on what you created);
-then run the following command:
+then run the following commands:
 
 ```sh
+# downloading R1 and R2 sequences
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R1_001.fastq.gz"
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R2_001.fastq.gz"
+
+# downloading the spatial barcode sequences
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_hippocampus_tiles.tar.xz"
+tar -xvf adult_hippocampus_tiles.tar.xz
+
 spacemake projects add_sample \
     --project_id openst_demo \
     --sample_id openst_demo_adult_mouse \
-    --R1 <path_to_R1.fastq.gz> \
-    --R2 <path_to_R2.fastq.gz> \
+    --R1 adult_mouse_hippocampus_R1_001.fastq.gz \
+    --R2 adult_mouse_hippocampus_R2_001.fastq.gz \
     --species mouse \
     --puck openst \
     --run_mode openst \
     --barcode_flavor openst \
-    --puck_barcode_file tiles/*.txt.gz \
+    --puck_barcode_file adult_hippocampus_tiles/*.txt.gz \
     --map_strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
 ```
 
@@ -122,7 +140,7 @@ after you run the `spacemake init` command (see above). Modify the following lin
 
 ```yaml
 openst:
-    coordinate_system: puck_id/openst_coordinates.csv
+    coordinate_system: puck_data/openst_coordinates.csv
     spot_diameter_um: 0.6
     width_um: 1200
 ```
@@ -131,9 +149,17 @@ into this:
 
 ```yaml
 openst:
-    coordinate_system: puck_id/openst_demo_adult_brain_coordinate_system.csv
+    coordinate_system: puck_data/fc_2_coordinate_system.csv
     spot_diameter_um: 0.6
     width_um: 1200
+```
+
+You can download the coordinate system file from the Open-ST website, for example:
+
+```sh
+# download the coordinate system
+wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordinate_system.csv"
+cp fc_2_coordinate_system.csv puck_data/.
 ```
 
 ### Running `spacemake`
