@@ -102,12 +102,6 @@ def _run_apply_transform(args):
     check_file_exists(args.h5_in)
     check_adata_structure(args.h5_in)
 
-    if args.h5_out == "" and not check_directory_exists(args.h5_out):
-        raise FileNotFoundError("Parent directory for --h5-out does not exist")
-    
-    if args.h5_out == "":
-        args.h5_out = args.h5_in
-
     _to_load = ["obs/total_counts"]
     if args.per_tile:
         _to_load += ["obs/tile_id"]
@@ -134,21 +128,15 @@ def _run_apply_transform(args):
         keypoints
     )
 
-    if check_file_exists(args.h5_out, exception = False):
-        logging.info(f"The output file exists at {args.h5_out}")  
-    else:
-        logging.info(f"Creating new {args.h5_out} from {args.h5_in}")  
-        shutil.copy(args.h5_in, args.h5_out)
-
-    logging.info(f"Modifying coordinates in {args.h5_out}")
-    with h5py.File(args.h5_out, 'r+') as adata:
+    logging.info(f"Modifying coordinates in {args.h5_in}")
+    with h5py.File(args.h5_in, 'r+') as adata:
         if f"{args.spatial_key_out}" in adata:
             # reconvert to YX (same axes as the images)
             adata[f"{args.spatial_key_out}"][...] = _coords_transformed[:][..., ::-1]
         else:
             adata[f"{args.spatial_key_out}"] = _coords_transformed[:][..., ::-1]
 
-    logging.info(f"Output {args.h5_out} file was written. Finished!")
+    logging.info(f"Output {args.h5_in} file was written. Finished!")
 
 if __name__ == "__main__":
     from openst.cli import get_apply_transform_parser
