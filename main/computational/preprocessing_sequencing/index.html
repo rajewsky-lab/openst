@@ -615,6 +615,8 @@
       
         
       
+        
+      
     
     
       
@@ -868,6 +870,27 @@
   
   <span class="md-ellipsis">
     3D reconstruction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_spacemake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From spacemake
   </span>
   
 
@@ -1660,15 +1683,17 @@ If you have used other flow cell, you might need to generate these files followi
 issue in our [repo], and we can generate it for you).</p>
 <p>To manually create 'puck_collection' files, you can run the following in a terminal:</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>spatial_stitch<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--tiles<span class="w"> </span>&lt;space_separated_list_or_wildcards_to_h5ad&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--tile-coordinates<span class="w"> </span>&lt;path_to_coordinate_system&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--h5-out<span class="w"> </span>&lt;output_puck_collection_h5ad&gt;
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--tiles<span class="w"> </span>dge.fc_1_tile_2267.h5ad<span class="w"> </span>dge.fc_1_tile_2268.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--tile-id<span class="w"> </span>fc_1_tile_2267<span class="w"> </span>fc_1_tile_2268<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--tile-coordinates<span class="w"> </span>fc_1_coordinate_system.csv<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>spatial_stitched_spots.h5ad
 </span></code></pre></div>
-<p>This program has additional arguments that are explained when running <code>openst spatial_stitch --help</code>. Make sure to replace
-the placeholders (<code>&lt;...&gt;</code>); for example, <code>&lt;space_separated_list_or_wildcards_to_h5ad&gt;</code> is a space-separated list or a
-implicit (wildcards) path to all h5ad of tiles for a single sample, from spacemake (at the automatically generated <code>dge</code> folder).
-The <code>&lt;path_to_coordinate_system&gt;</code> is a path to the <code>csv</code> file containing the relative offsets of tiles; and, <code>&lt;output_puck_collection_h5ad&gt;</code>
-is the name (full or relative path) of the file that will be generated.</p>
+<p>This program has additional arguments that are explained when running <code>openst spatial_stitch --help</code>. 
+Make sure to populate the arguments with the proper values. In this example, <code>--tiles</code> refer to two h5ad files
+for two tiles (would need to be changed to your specific spacemake folder configuration and file names);
+<code>--tile-id</code> are the tile identifiers for each tile in <code>--tiles</code>, in order. These tile IDs must correspond to the first
+column of the <code>--tile-coordinates</code> file - here, we use fc_1 provided in the examples, but you might need to adapt this
+to your own flow cell. Lastly, <code>--h5-out</code> is specified for consistency with the following steps. </p>
 <h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
 <p>After running all the steps of this section, you will end up with two types of file: (1) the spatial coordinates of flow cell
 tiles (you will only need to generate this once per flow cell); and (2) one <code>h5ad</code> file per sample, containing the gene expression and

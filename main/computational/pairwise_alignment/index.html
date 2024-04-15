@@ -615,6 +615,8 @@
       
         
       
+        
+      
     
     
       
@@ -892,6 +894,27 @@
   
   <span class="md-ellipsis">
     3D reconstruction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../from_spacemake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From spacemake
   </span>
   
 
@@ -1607,12 +1630,17 @@ spots.</p>
 <p>If you want to save time, we provide a script that performs coarse and fine steps of alignment 
 automatically, by leveraging computer vision algorithms. To do so, make sure that you have the <a href="#required-input-data">necessary
 input data</a>; then, open a termina, type and run the following command (just an example):</p>
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif<span class="w"> </span><span class="se">\</span>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="c1"># Add the image data to the Open-ST h5 object</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--metadata<span class="w"> </span>alignment_metadata.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span><span class="c1"># --device cuda # by default, cpu. Only specify if you have cuda-compatible GPU</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="c1"># --only-coarse # skips the fine fiducial registration, in case you want to do that manually</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a>
+</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="c1"># Run the automatic pairwise alignment</span>
+</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>--metadata<span class="w"> </span>alignment_metadata.json
+</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span><span class="c1"># --device cuda # by default, cpu. Only specify if you have cuda-compatible GPU</span>
+</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a><span class="w">    </span><span class="c1"># --only-coarse # does not run the fine registration; can be done manually with the GUI</span>
 </span></code></pre></div>
 <p>Make sure to specify a path where the metadata output file 
 should be created via <code>--metadata</code>, for later visual assessment of the alignment.</p>
@@ -1636,10 +1664,9 @@ overlapping across all tiles.</p>
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>report<span class="w"> </span>--metadata<span class="o">=</span>alignment_metadata.json<span class="w"> </span>--html-out<span class="o">=</span>alignment_report.html
 </span></code></pre></div>
 <h3 id="visual-assessment-with-gui">Visual assessment with GUI<a class="headerlink" href="#visual-assessment-with-gui" title="Permanent link">&para;</a></h3>
-<p>Alternatively, you can visualize the images &amp; ST data interactively using the GUI.
-- With the GUI:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
-</span></code></pre></div></p>
+<p>Alternatively, you can visualize the images &amp; ST data interactively using the GUI.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner
+</span></code></pre></div>
 <p>We provide a Graphical User Interface (GUI) for selecting keypoints between imaging &amp; ST modalities, 
 for visualization and refinement of automatic results. This GUI requires a single Open-ST h5 object,
 the output of <code>openst pairwise_aligner</code>.</p>
@@ -1656,10 +1683,10 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a>
 </span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
-</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a>openst<span class="w"> </span>manual_pairwise_aligner
 </span><span id="__span-3-8"><a id="__codelineno-3-8" name="__codelineno-3-8" href="#__codelineno-3-8"></a>
 </span><span id="__span-3-9"><a id="__codelineno-3-9" name="__codelineno-3-9" href="#__codelineno-3-9"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
-</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-10"><a id="__codelineno-3-10" name="__codelineno-3-10" href="#__codelineno-3-10"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-11"><a id="__codelineno-3-11" name="__codelineno-3-11" href="#__codelineno-3-11"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-12"><a id="__codelineno-3-12" name="__codelineno-3-12" href="#__codelineno-3-12"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-13"><a id="__codelineno-3-13" name="__codelineno-3-13" href="#__codelineno-3-13"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial&#39;</span><span class="w"> </span><span class="se">\</span>
@@ -1669,15 +1696,16 @@ for full manual alignment or refinement of automatic results. This GUI requires 
 </div>
 <div class="tabbed-block">
 <div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a><span class="c1"># Use the GUI to select the keypoints.json file</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_fine&#39;</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_refined&#39;</span>
-</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="c1"># For per-tile alignment, select keypoints per tile (see video below)</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a>openst<span class="w"> </span>manual_pairwise_aligner
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="c1"># Compute a rigid transformation from keypoints.json and apply it to the data</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-7"><a id="__codelineno-4-7" name="__codelineno-4-7" href="#__codelineno-4-7"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-8"><a id="__codelineno-4-8" name="__codelineno-4-8" href="#__codelineno-4-8"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-9"><a id="__codelineno-4-9" name="__codelineno-4-9" href="#__codelineno-4-9"></a><span class="w">    </span>--spatial-key-in<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_fine&#39;</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-10"><a id="__codelineno-4-10" name="__codelineno-4-10" href="#__codelineno-4-10"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span><span class="s1">&#39;obsm/spatial_pairwise_aligned_refined&#39;</span>
+</span><span id="__span-4-11"><a id="__codelineno-4-11" name="__codelineno-4-11" href="#__codelineno-4-11"></a><span class="w">    </span><span class="c1">## --per-tile # when specified, there&#39;s one rigid transform per tile</span>
 </span></code></pre></div>
 </div>
 </div>

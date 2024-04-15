@@ -605,6 +605,8 @@
       
         
       
+        
+      
     
     
       
@@ -755,6 +757,27 @@
   
   <span class="md-ellipsis">
     3D reconstruction
+  </span>
+  
+
+      </a>
+    </li>
+  
+
+              
+            
+              
+                
+  
+  
+  
+  
+    <li class="md-nav__item">
+      <a href="../../../computational/from_spacemake/" class="md-nav__link">
+        
+  
+  <span class="md-ellipsis">
+    From spacemake
   </span>
   
 
@@ -1469,7 +1492,7 @@ proper coarse alignment of the two modalities (at low resolution).</p>
 <h2 id="fine-alignment-manual">Fine alignment (manual)<a class="headerlink" href="#fine-alignment-manual" title="Permanent link">&para;</a></h2>
 <p>You will now visually asses it and refine the previous coarse alignment using the provided GUI tool. 
 From the terminal, run:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>manual_pairwise_aligner_gui
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>manual_pairwise_aligner
 </span></code></pre></div>
 <p>Then, follow these instructions on the GUI, by pressing the <em>buttons</em>:</p>
 <ol>
@@ -1491,10 +1514,10 @@ the spatial trancriptome and image modalities. </p>
 <h2 id="apply-keypoint-transformation-to-coarse-alignment">Apply keypoint transformation to coarse alignment<a class="headerlink" href="#apply-keypoint-transformation-to-coarse-alignment" title="Permanent link">&para;</a></h2>
 <p>Now, you need to run a program that takes the <code>h5ad</code> file with the
 coarse alignment, and the keypoints file, to perform the fine alignment:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>alignment/openst_adult_demo_fine_keypoints.json<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--fine
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--per-tile
 </span></code></pre></div>
 <p>After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing
 <code>openst_demo_adult_mouse_spatial_beads_puck_collection_aligned.h5ad</code> file.</p>

@@ -21,6 +21,11 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://open.st/main/computational/from_spacemake/</loc>
+         <lastmod>2024-04-15</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://open.st/main/computational/generate_expression_matrix/</loc>
          <lastmod>2024-04-15</lastmod>
          <changefreq>daily</changefreq>
