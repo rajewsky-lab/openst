@@ -7,7 +7,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Open-ST: democratizing spatial transcriptomics ">
+        <meta name="description" content="Open-ST: Open-Source Spatial Transcriptomics ">
       
       
         <meta name="author" content="Daniel León-Periñán, Lena Marie Schott">
@@ -1522,9 +1522,8 @@ where <span class="arithmatex">\(N\)</span> maps to <span class="arithmatex">\(M
 </span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>spatial_per_segmented_cell.h5ad
 </span></code></pre></div>
-<p>Replace the placeholders (<code>&lt;...&gt;</code>) as before; in this case, the placeholder <code>&lt;mask_in_path&gt;</code> must be set to
-be equal to the <code>&lt;mask_out_path&gt;</code> (or <code>&lt;mask_combined&gt;</code> if you ran multiple segmentation); also, <code>&lt;path_to_sc_h5ad&gt;</code>
-must be set to a valid path and filename where the output cell-by-gene matrix (not barcode-by-cell) will be written.</p>
+<p>In this case, the argument <code>--mask-in</code> was set to a single mask, but it can be set to the previously 
+introduced <em>combined</em> masks (e.g., <code>--mask-in uns/spatial/staining_image_mask_combined</code>).</p>
 <h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
 <p>After running the steps above, you will have a single <code>h5ad</code> file, containing the transcriptomic information per segmented cell,
 with spatial coordinates compatible with the staining image. The staining image and the segmented image are provided in this object,

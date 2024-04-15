@@ -7,7 +7,7 @@
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width,initial-scale=1">
       
-        <meta name="description" content="Open-ST: democratizing spatial transcriptomics ">
+        <meta name="description" content="Open-ST: Open-Source Spatial Transcriptomics ">
       
       
         <meta name="author" content="Daniel León-Periñán, Lena Marie Schott">
@@ -1658,6 +1658,14 @@ proceeding to segmentation and aggregating into a cell-by-gene matrix,
 <strong>we strongly recommend</strong> visually assessing the alignment results. Specifically, that
 the tissue is overall well-aligned in both modalities, and that the fiducial markers are
 overlapping across all tiles.</p>
+</div>
+<div class="admonition tip">
+<p class="admonition-title">Tip</p>
+<p>If the coarse (or fine) registration doesn't work, there are several parameters that you can change.
+The most important ones are:
+    - <code>--rescale-factor-coarse</code> or <code>--rescale-factor-fine</code>: the highest, the lower resolution the image; thus, more <em>global</em> features are used for registration
+    - <code>--threshold-counts-coarse</code> or <code>--threshold-counts-fine</code>: the highest, the less spots there will be on the image</p>
+<p>These allow to increase the number of matches and possibly the number of RANSAC inliers. There are other RANSAC-specific parameters that can be changed, such as <code>--ransac-coarse-residual-threshold</code>, <code>--ransac-coarse-max-trials</code> and <code>--ransac-fine-min-samples</code>. For more parameters, check <code>openst pairwise_aligner --help</code>.</p>
 </div>
 <h3 id="visual-assessment-with-report">Visual assessment with report<a class="headerlink" href="#visual-assessment-with-report" title="Permanent link">&para;</a></h3>
 <p>You can generate an HTML report that contains a qualitative summary of the alignment (images, parameters...)</p>
