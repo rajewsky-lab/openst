@@ -48,15 +48,7 @@ from skimage.transform import warp
 
 from openst.alignment.apply_transform import estimate_transform, apply_transform_to_coords, keypoints_json_to_dict
 from openst.utils.pseudoimage import create_paired_pseudoimage
-
-def h5_to_dict(val):
-    result = {}
-    for key, value in val.items():
-        if isinstance(value, h5py.Group):
-            result[key] = h5_to_dict(value)
-        else:
-            result[key] = None  # You can set a default value if needed.
-    return result
+from openst.utils.file import h5_to_dict
 
 # GUI elements
 class CollapsibleBox(QWidget):
