@@ -24,25 +24,29 @@ openst image_stitch \
      --microscope='keyence' \
      --imagej-bin=<path_to_fiji_or_imagej> \
      --image-indir=<path_to_tiles> \
-     --tiles-prefix=<to_read> \
-     --image-out=<output_image>
+     --image-out=Image_Stitched_Composite.tif # just an example
 ```
-Make sure to replace the placeholders (`<...>`). For instance,
-`<path_to_fiji_or_imagej>` is the path where the [Fiji](https://imagej.net/software/fiji/downloads) executable is;
+For instance, `<path_to_fiji_or_imagej>` is the path where the [Fiji](https://imagej.net/software/fiji/downloads) executable is;
 `<path_to_tiles>` is the folder where the microscope has saved the individual image files with the tile scan
-and the `.bcl` file with metadata; `<to_read>` is the prefix that is common to all the tile image files,
-and `<tmp_dir>` is a path with write permission where the images will be temporarily moved.
-Finally, `<output_image>` is the full path  and file name that will be given to the stitched image (must be
-a writeable folder).
+and the `.bcl` file with metadata (in the case of _keyence_ microscope).
 
 !!! question
      If you don't know how to specify the `<path_to_fiji_or_imagej>`, please follow the official instructions provided
-     for [Running Headless](https://imagej.net/learn/headless)
+     for [Running Headless](https://imagej.net/learn/headless). For example, nux you can download it using
 
-If each file in the folder is a z-stack, you don't need to specify anything else. Otherwise, if each file represents a 
-FOV and a Z plane (e.g., file names like Image_00001_Z001.tif, Image_00001_Z002.tif,...), you can specify a regex to
-parse the Z plane from the file names, and a single file per FOV will be created before stitching. This can be specified
-with the argument `--join-zstack-regex`, which by default is set to an empty string (i.e., no merging of Z planes is performed).
+     ```bash
+     cd ~
+     wget "https://downloads.imagej.net/fiji/latest/fiji-linux64.zip"
+     unzip fiji-linux64.zip
+     # then, <path_to_fiji_or_imagej> will be "~/Fiji.app/ImageJ-linux64"
+     ```
+
+If each file in the folder is a z-stack or a RGB file already, you don't need to specify anything else. 
+
+Otherwise, if each file is a FOV and a specific Z plane (e.g., file names like Image_00001_Z001.tif, Image_00001_Z002.tif,...), 
+you can specify a regex to parse the Z plane from the file names, and a single file per FOV will be created before stitching. 
+This can be specified with the argument `--join-zstack-regex`, which by default is set to an empty string
+(i.e., no merging of Z planes is performed).
 
 ## (Optional) Addressing image irregularities
 Most of the times, large images have uneven illumination, focus or noise. This can be challenging when doing downstream

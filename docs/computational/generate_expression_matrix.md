@@ -75,9 +75,8 @@ openst transcript_assign \
     --h5-out spatial_per_segmented_cell.h5ad
 ```
 
-Replace the placeholders (`<...>`) as before; in this case, the placeholder `<mask_in_path>` must be set to
-be equal to the `<mask_out_path>` (or `<mask_combined>` if you ran multiple segmentation); also, `<path_to_sc_h5ad>`
-must be set to a valid path and filename where the output cell-by-gene matrix (not barcode-by-cell) will be written.
+In this case, the argument `--mask-in` was set to a single mask, but it can be set to the previously 
+introduced _combined_ masks (e.g., `--mask-in uns/spatial/staining_image_mask_combined`).
 
 ## Expected output
 After running the steps above, you will have a single `h5ad` file, containing the transcriptomic information per segmented cell,
