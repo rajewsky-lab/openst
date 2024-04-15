@@ -92,7 +92,10 @@ def create_paired_pseudoimage(
         values = 1
     
     # new version to generate the pseudoimage
-    np.add.at(_sts_pseudoimage, (coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]), values)
+    # np.add.at(_sts_pseudoimage, (coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]), values)
+    _sts_pseudoimage, _, _ = np.histogram2d(coords_rescaled_int[:, 0], coords_rescaled_int[:, 1],
+                                   bins=(dim_1 + 1, dim_2 + 1),
+                                   range=[[0, dim_1], [0, dim_2]])
     #_sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
 
     if resize_method == 'scikit-image':
@@ -155,6 +158,7 @@ def create_unpaired_pseudoimage(
     render_scale: float = 1,
     render_sigma: float = 1.5,
     output_resolution: float = 1,
+    write_rescaled: bool = True
 ):
     """
     Create pseudoimage for segmentation based on RNA density (experimental feature), i.e.,
@@ -186,15 +190,18 @@ def create_unpaired_pseudoimage(
     pim = show_expression_on_image(marker_filtered_repeat, render_scale, render_sigma, output_resolution)
     logging.info(f"Created pseudoimage with {pim.shape} pixels")
 
-    # we need to write the transformed coordinates so they can be applied to the pseudo image
-    _out_spatial_coord_key = f"{spatial_coord_key}_pseudoimage_scale_{render_scale}_sigma_{render_sigma}"
     marker_filtered_scaled = marker_filtered * output_resolution
-    if _out_spatial_coord_key in adata:
-        adata[_out_spatial_coord_key][...] = marker_filtered_scaled
-    else:
-        adata[_out_spatial_coord_key] = marker_filtered_scaled
 
-    logging.info(f"Added transformed coordinates as {_out_spatial_coord_key} to the AnnData")
+    # we need to write the transformed coordinates so they can be applied to the pseudo image
+    if write_rescaled:
+        _out_spatial_coord_key = f"{spatial_coord_key}_pseudoimage_scale_{render_scale}_sigma_{render_sigma}"
+        
+        if _out_spatial_coord_key in adata:
+            adata[_out_spatial_coord_key][...] = marker_filtered_scaled
+        else:
+            adata[_out_spatial_coord_key] = marker_filtered_scaled
+
+        logging.info(f"Added transformed coordinates as {_out_spatial_coord_key} to the AnnData")
 
     return pim, marker_filtered_scaled
 
