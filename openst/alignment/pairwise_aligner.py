@@ -2,22 +2,12 @@
 Automatic Pairwise Alignment of Spatial Transcriptomics and Imaging Data (Open-ST)
 
 Author: Daniel León-Periñán @ N.Rajewsky Lab (BIMSB)
-Date: August 30, 2023
-Version: 0.1.0
+Date: April 15, 2024
+Version: 0.2.0
 
 Description:
 This script performs automatic pairwise alignment between spatial transcriptomics data and imaging data.
 It aligns the spatial transcriptomics data onto the imaging data to enable spatial comparison and analysis.
-
-Usage example:
-openst pairwise_aligner --image-in input_image.jpg --h5-in input_data.h5ad --h5-out aligned_data.h5ad
-                     --metadata-out metadata.pkl --save-image-in-h5 --rescale-factor-coarse 20
-                     --rescale-factor-fine 5 --tissue-masking-gaussian-sigma 5 --fine-registration-gaussian-sigma 2
-                     --keep-black-background --threshold-counts-coarse 1 --threshold-counts-fine 0
-                     --pseudoimage-size-coarse 4000 --pseudoimage-size-fine 6000 --ransac-coarse-min-samples 3
-                     --ransac-coarse-residual-threshold 2 --ransac-coarse-max-trials 10000 --ransac-fine-min-samples 10
-                     --ransac-fine-residual-threshold 2 --ransac-fine-max-trials 10000 --max-image-pixels 933120000
-                     --feature-matcher 'LoFTR' --n-threads 2 --fine-min-matches 50 --fiducial-model model.pt
 """
 
 import logging
