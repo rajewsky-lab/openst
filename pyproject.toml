@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "openst"
-version = "0.0.8"
+version = "0.0.9"
 description = "The computational pipeline for the Open-ST method."
 license = "GPL-2.0"
 authors = [
