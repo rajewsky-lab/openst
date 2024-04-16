@@ -32,13 +32,13 @@ Other formats, i.e., `jpeg` and `png` are also compatible. Make sure that the im
 and not a downsampled version. As a rule of thumb, at least a few fiducial markers must be clearly distinguishable.
 
 === "Good visibility"
-    ![Good visibility](../static/img/compu_pairwise_align_fiducial_visibility/good_visibility.webp){ loading=lazy }
+    ![Good visibility](../../static/img/compu_pairwise_align_fiducial_visibility/good_visibility.webp){ loading=lazy }
 
 === "_Fair_ visibility"
-    ![Fair visibility](../static/img/compu_pairwise_align_fiducial_visibility/fair_visibility.webp){ loading=lazy }
+    ![Fair visibility](../../static/img/compu_pairwise_align_fiducial_visibility/fair_visibility.webp){ loading=lazy }
 
 === "_Poor_ visibility"
-    ![Poor visibility](../static/img/compu_pairwise_align_fiducial_visibility/poor_visibility.webp){ loading=lazy }
+    ![Poor visibility](../../static/img/compu_pairwise_align_fiducial_visibility/poor_visibility.webp){ loading=lazy }
 
 ### Spatial transcriptomics modality
 The expected input for the spatial transcriptomics modality is a single [h5ad] file containing all
