@@ -87,7 +87,7 @@ def reassign_indices_adata(adata, new_ilocs, joined_coordinates, labels):
 
     mesh_bc_ilocs = np.arange(len(original_ilocs))[original_ilocs]
 
-    joined_dict = {i: mesh_bc_ilocs[x] for i, x in enumerate(ix_array)}
+    joined_dict = {i: mesh_bc_ilocs[ix_array[i].astype(int)] for i, x in enumerate(ix_array)}
 
     indices_joined_spatial_units = dok_matrix((len(joined_dict), len(adata.obs_names)), dtype=np.int8)
 
