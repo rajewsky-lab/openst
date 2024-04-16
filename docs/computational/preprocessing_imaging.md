@@ -1,7 +1,7 @@
 # Preprocessing of imaging data
 If you used our same experimental setup for imaging, you will obtain individual images
 as a result of performing imaging of the stained tissue in a tile-scan fashion. From this point,
-the open=ST pipeline expects to have a single image for the whole tile-scan, rather than individual files
+the Open-ST pipeline expects to have a single image for the whole tile-scan, rather than individual files
 per tile.
 
 This step depends on the microscope used for imaging. In [our implementation](../experimental/library_preparation.md#he-staining-and-imaging), we used a
