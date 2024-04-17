@@ -1080,13 +1080,6 @@ def get_pairwise_aligner_parser():
         default=2,
         help="Times RANSAC will run (x1000 iterations) during coarse registration",
     )
-    coarse_params.add_argument(
-        "--genes-coarse",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
-    )
 
     fine_params = parser.add_argument_group('Fine registration parameters')
     fine_params.add_argument(
@@ -1141,17 +1134,10 @@ def get_pairwise_aligner_parser():
         help="Times RANSAC will run (x1000 iterations) during fine registration",
     )
     fine_params.add_argument(
-        "--fine-min-matches",
+        "--min-matches",
         type=int,
         default=50,
         help="Minimum number of matching keypoints between modalities during fine alignment",
-    )
-    fine_params.add_argument(
-        "--genes-fine",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the fine alignment phase.",
     )
 
     image_preproc = parser.add_argument_group('Image preprocessing parameters')
@@ -1173,12 +1159,6 @@ def get_pairwise_aligner_parser():
         default="LoFTR",
         choices=["LoFTR", "SIFT", "KeyNet"],
         help="Feature matching algorithm",
-    )
-    model_params.add_argument(
-        "--fiducial-model",
-        type=str,
-        default="",
-        help="Path to a object detection model (YOLO) to detect fiducial markers",
     )
 
     compu_params = parser.add_argument_group('Computational parameters')
