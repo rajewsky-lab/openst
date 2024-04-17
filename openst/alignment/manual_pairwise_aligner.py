@@ -292,17 +292,19 @@ class ImageRenderer(QThread):
         # Preparing images and preprocessing routines
         _i_counts_above_threshold = total_counts > self.threshold_counts
         sts_coords = in_coords[_i_counts_above_threshold]
+        tile_id = tile_id[_i_counts_above_threshold]
 
         # We keep the limits also when filtering by UMI (avoid issues with offsets)
         sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
                                                            [x_all_min, y_all_min]])])
+        tile_id = np.concatenate([tile_id, [-1, -1]])
 
         if not self.recenter_coarse:
             _i_sts_coords_coarse_within_image_bounds = np.where(
-                (sts_coords[:, 0] > 0)
-                & (sts_coords[:, 0] < staining_image.shape[1])
-                & (sts_coords[:, 1] > 0)
-                & (sts_coords[:, 1] < staining_image.shape[0])
+                (sts_coords[:, 0] >= 0)
+                & (sts_coords[:, 0] <= staining_image.shape[1])
+                & (sts_coords[:, 1] >= 0)
+                & (sts_coords[:, 1] <= staining_image.shape[0])
             )
 
             if len(_i_sts_coords_coarse_within_image_bounds[0]) < 10:
@@ -347,7 +349,7 @@ class ImageRenderer(QThread):
             # Apply scaling to input image again, for fine registration
             staining_image_rescaled = staining_image[:: self.rescale_factor_fine, :: self.rescale_factor_fine]
 
-            _t_valid_coords = tile_id[_i_counts_above_threshold][_i_sts_coords_coarse_within_image_bounds] == int(
+            _t_valid_coords = tile_id[_i_sts_coords_coarse_within_image_bounds] == int(
                 self.layer
             )
 
