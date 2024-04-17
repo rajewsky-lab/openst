@@ -42,11 +42,14 @@ class AlignmentResult:
         from skimage.transform import warp
 
         # Apply the transformation matrix to the image
-        aligned_im_1 = warp(self.im_1, SimilarityTransform(self.transformation_matrix).inverse)
+        if self.transformation_matrix is not None:
+            aligned_im_1 = warp(self.im_1, SimilarityTransform(np.array(self.transformation_matrix)).inverse)
+        else:
+            aligned_im_1 = self.im_1
 
         # Display images before and after alignment
         if axes is None:
-            fig, axes = plt.subplots(1, 2)
+            fig, axes = plt.subplots(1, 2, figsize=(10, 5))
         axes[0].imshow(self.im_0, cmap="gray")
         axes[0].imshow(self.im_1, cmap="Blues_r", alpha=0.5)
         axes[0].set_axis_off()

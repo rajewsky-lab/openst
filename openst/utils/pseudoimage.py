@@ -94,7 +94,7 @@ def create_paired_pseudoimage(
     # new version to generate the pseudoimage
     # np.add.at(_sts_pseudoimage, (coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]), values)
     _sts_pseudoimage, _, _ = np.histogram2d(coords_rescaled_int[:, 0], coords_rescaled_int[:, 1],
-                                   bins=(dim_1 + 1, dim_2 + 1),
+                                   bins=(dim_1, dim_2),
                                    range=[[0, dim_1], [0, dim_2]])
     #_sts_pseudoimage[coords_rescaled_int[:, 0], coords_rescaled_int[:, 1]] += values
 
