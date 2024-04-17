@@ -28,7 +28,7 @@ config.yaml project_df.csv  projects  puck_data  species_data
 
 (we take the structure from  from the [Adult Mouse tutorial](../examples/adult_mouse/preprocessing_sequencing.md))
 
-From here on, we assume you ran `spacemake`. Please check the [Quick start guide](https://spacemake.readthedocs.io/en/latest/quick-start/index.html#openst-quick-start) for Open-ST data if you haven't done so.
+From here on, we assume you ran `spacemake`. Please check the [Quick start guide](https://spacemake.readthedocs.io/en/latest/quick-start/index.html#open-st-quick-start) for Open-ST data if you haven't done so.
 
 The typical workflow consists of three steps:
 

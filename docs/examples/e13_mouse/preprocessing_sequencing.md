@@ -52,7 +52,7 @@ Create two folders inside your `openst_e13_mouse_head_demo` folder, called `spac
 Download the [DropSeq tools](https://github.com/broadinstitute/Drop-seq/releases/download/v2.5.4/Drop-seq_tools-2.5.4.zip),
 decompress it, and put it inside the `bins` subdirectory.
 
-Then, following the [spacemake *Quick start guide*](https://spacemake.readthedocs.io/en/latest/quick-start/index.html),
+Then, following the [spacemake *Quick start guide*](https://spacemake.readthedocs.io/en/latest/quick-start/index.html#open-st-quick-start),
 browse to the `spacemake` directory you just created in the `openst_e13_mouse_head_demo` folder, and run the initialization:
 
 ```sh
