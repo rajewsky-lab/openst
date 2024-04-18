@@ -346,8 +346,6 @@ class ImageRenderer(QThread):
             staining_image_rescaled = staining_image[:: self.rescale_factor_fine, :: self.rescale_factor_fine]
 
             _t_valid_coords = (tile_id == int(self.layer)) | (tile_id == -1)
-            print(_t_valid_coords)
-            print(sts_coords[_t_valid_coords])
 
             _t_sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],  # we need to flip these coordinates
