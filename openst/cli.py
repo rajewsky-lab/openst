@@ -1089,13 +1089,7 @@ def get_pairwise_aligner_parser():
         help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
     )
     fine_params.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
-    )
-    fine_params.add_argument(
-        "--fine-registration-gaussian-sigma",
+        "--gaussian-sigma-fine",
         type=int,
         default=2,
         help="Gaussian blur used on all modalities during fine registration",
@@ -1107,7 +1101,6 @@ def get_pairwise_aligner_parser():
         help="""Only spatial coordinates with counts larger than this number
         will be kept for pseudoimage rendering during fine alignment""",
     )
-    
     fine_params.add_argument(
         "--pseudoimage-size-fine",
         type=int,
@@ -1145,6 +1138,12 @@ def get_pairwise_aligner_parser():
         "--mask-tissue",
         action="store_true",
         help="Tissue (imaging modality) is masked from the background for the feature detection",
+    )
+    fine_params.add_argument(
+        "--mask-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
     )
     image_preproc.add_argument(
         "--keep-black-background",

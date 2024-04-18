@@ -270,7 +270,7 @@ def run_registration(
         image=src,
         mask_tissue=args.mask_tissue,
         keep_black_background=args.keep_black_background,
-        mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
+        mask_gaussian_blur=args.mask_gaussian_sigma,
     )
     
     def dst_augmenter(x, flip, rotation):
@@ -418,11 +418,11 @@ def run_registration(
         # Preparing image and pseudoimage modalities for feature detection (imaging modality has optimal flip)
         src_augmented  = _fn_prepare_image_for_feature_matching(
             image=src,
-            gaussian_blur=args.fine_registration_gaussian_sigma,
+            gaussian_blur=args.gaussian_sigma_fine,
             crop=[x_min, x_max, y_min, y_max],
             mask_tissue=args.mask_tissue,
             keep_black_background=args.keep_black_background,
-            mask_gaussian_blur=args.tissue_masking_gaussian_sigma,
+            mask_gaussian_blur=args.mask_gaussian_sigma,
         )
 
         dst = []
@@ -431,7 +431,7 @@ def run_registration(
         ):
             dst += prepare_pseudoimage_for_feature_matching(
                 pseudoimage[x_min:x_max, y_min:y_max],
-                gaussian_blur=args.fine_registration_gaussian_sigma,
+                gaussian_blur=args.gaussian_sigma_fine,
                 invert=invert,
             )
 
