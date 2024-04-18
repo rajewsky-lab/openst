@@ -216,7 +216,7 @@ openst from_spacemake \
      --project-id openst_demo \
      --sample-id openst_demo_adult_mouse \
      segment \
-     --model HE_cellpose_rajewsky # default model for segmebntation of H&E images
+     --model HE_cellpose_rajewsky # default model for segmentation of H&E images
 ```
 
 !!! tip
