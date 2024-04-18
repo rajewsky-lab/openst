@@ -46,6 +46,26 @@ pip install openst
   [Python Markdown Extensions]: https://facelessuser.github.io/pymdown-extensions/
   [Using Python's pip to Manage Your Projects' Dependencies]: https://realpython.com/what-is-pip/
 
+!!! warning
+    If you have a Mac with Apple Silicon (M1 or later), please install `openst` on a Rosetta environment 
+    to ensure full compatibility (i.e., `openst manual_pairwise_aligner` might not work otherwise). 
+    Also, the version of scikit-image pinned in the requirements might not be available for Apple Silicon. 
+    Thus, create an environment and install dependencies as follows (assuming you have installed `conda`):
+
+    ```bash
+    CONDA_SUBDIR=osx-64 conda create -n openst python=3.11
+    conda install scikit-image==0.19.3
+    pip install openst
+    ```
+    
+    When running `openst manual_pairwise_aligner` for the first time, startup time will be longer than
+    usual. This is the expected behavior with osx-64 binaries (Rosetta). Also, you can install the optional
+    `napari` (used in `openst preview`):
+
+    ```bash
+    pip install napari
+    ```
+
 ### with docker
 
 The official [Docker image] is a great way to get up and running in a few
