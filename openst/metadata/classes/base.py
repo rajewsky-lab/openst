@@ -7,7 +7,6 @@ import numpy as np
 
 from openst.utils.file import check_directory_exists
 
-
 class BaseMetadata:
     def __init__(self, args):
         self.metadata_type = None
@@ -45,11 +44,11 @@ class BaseMetadata:
             for m in data:
                 output_data.append(self._get_dict_recursive(m))
         elif isinstance(data, np.ndarray):
-            logging.warn(
+            logging.debug(
                 """'np.ndarray' objects are not represented into a dictionary.
-                         Hint: for large images, write a BaseMetadata.render method.
-                               You can store compressed images as base64 strings. 
-                               Other large datasets must not be stored as plain text."""
+                        Hint: for large images, write a BaseMetadata.render method.
+                            You can store compressed images as base64 strings. 
+                            Other large datasets must not be stored as plain text."""
             )
             output_data = ""
         return output_data
