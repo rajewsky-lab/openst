@@ -1,10 +1,10 @@
 import numpy as np
 import torch
-from .base_model import BaseModel
-from . import networks
-from .patchnce import PatchNCELoss
-import util.util as util
 
+from openst.preprocessing.CUT.models.base_model import BaseModel
+from openst.preprocessing.CUT.models import networks
+from openst.preprocessing.CUT.models.patchnce import PatchNCELoss
+from openst.preprocessing.CUT.util import util
 
 class CUTModel(BaseModel):
     """ This class implements CUT and FastCUT model, described in the paper
@@ -98,10 +98,10 @@ class CUTModel(BaseModel):
         initialized at the first feedforward pass with some input images.
         Please also see PatchSampleF.create_mlp(), which is called at the first forward() call.
         """
-        bs_per_gpu = data["A"].size(0) // max(len(self.opt.gpu_ids), 1)
+        bs_per_gpu = self.opt.batch_size
         self.set_input(data)
         self.real_A = self.real_A[:bs_per_gpu]
-        self.real_B = self.real_B[:bs_per_gpu]
+        self.real_B = None
         self.forward()                     # compute fake images: G(A)
         if self.opt.isTrain:
             self.compute_D_loss().backward()                  # calculate gradients for D
@@ -138,14 +138,11 @@ class CUTModel(BaseModel):
             input (dict): include the data itself and its metadata information.
         The option 'direction' can be used to swap domain A and domain B.
         """
-        AtoB = self.opt.direction == 'AtoB'
-        self.real_A = input['A' if AtoB else 'B'].to(self.device)
-        self.real_B = input['B' if AtoB else 'A'].to(self.device)
-        self.image_paths = input['A_paths' if AtoB else 'B_paths']
+        self.real_A = input['A'].to(self.device)
 
     def forward(self):
         """Run forward pass; called by both functions <optimize_parameters> and <test>."""
-        self.real = torch.cat((self.real_A, self.real_B), dim=0) if self.opt.nce_idt and self.opt.isTrain else self.real_A
+        self.real = self.real_A
         if self.opt.flip_equivariance:
             self.flipped_for_equivariance = self.opt.isTrain and (np.random.random() < 0.5)
             if self.flipped_for_equivariance:

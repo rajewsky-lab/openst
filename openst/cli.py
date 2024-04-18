@@ -680,17 +680,40 @@ def get_image_preprocess_parser():
         allow_abbrev=False,
         add_help=False,
     )
-    parser.add_argument("--input_img", type=str, required=True, help="path to input image")
-    parser.add_argument("--cut_dir", type=str, required=True, help="path to CUT directory (to save patched images)")
-    parser.add_argument("--tile_size_px", type=int, required=True, help="size of the tile in pixels")
+    parser.add_argument(
+        "--h5-in",
+        type=str,
+        default="",
+        help="""If set, image is loaded from the Open-ST h5 object (key in --image-in),
+             and retored image is saved there (to the key --image-out)""",
+    )
+    parser.add_argument(
+        "--image-in",
+        type=str,
+        default="uns/spatial/staining_image",
+        help="Key or path to the input image",
+    )
+    parser.add_argument(
+        "--image-out",
+        type=str,
+        default="uns/spatial/staining_image_restored",
+        help="Key or path where the restored image will be written into",
+    )
+    parser.add_argument(
+        "--tile-size-px",
+        type=int,
+        default=512,
+        help="The input image is split into squared tiles of side `--tile-size-px`, for inference."+ 
+        "Larger values avoid boundary effects, but require more memory.",
+    )
+    parser.add_argument("--model", type=str, default="HE_CUT_rajewsky", help="CUT model used for image restoration")
     parser.add_argument(
         "--device",
         type=str,
         default="cpu",
         choices=["cpu", "cuda"],
-        help="Device used to run feature matching model. Can be ['cpu', 'cuda']",
+        help="Device used to run CUT restoration model. Can be ['cpu', 'cuda']",
     )
-    parser.add_argument("--checkpoints_dir", type=str, default="./checkpoints", help="models are saved here")
 
     return parser
 
