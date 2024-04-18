@@ -1512,15 +1512,23 @@ The rest of parameters can be checked with <code>openst segment --help</code>.</
 </span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask_combined
 </span></code></pre></div>
 </div>
+<p>You can assess the quality of the segmentation mask using <code>openst preview</code>, which leverages <code>napari</code> for visualization:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>preview<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span>uns/spatial/staining_image_mask
+</span></code></pre></div>
+<p>This will create a <code>napari</code> window with two image layers. We recommend changing the mask <em>image</em> layer into a
+<a href="https://napari.org/stable/howtos/layers/labels.html"><em>label</em> layer</a>, which is designed for <em>displaying each integer (ID
+from the segmentation mask) as a different random color, with background rendered as transparent</em>.</p>
 <h2 id="assigning-transcripts-to-segmented-cells">Assigning transcripts to segmented cells<a class="headerlink" href="#assigning-transcripts-to-segmented-cells" title="Permanent link">&para;</a></h2>
 <p>Now, we aggregate the initial <span class="arithmatex">\(N\times G\)</span> matrix into an <span class="arithmatex">\(M\times G\)</span> matrix,
 where <span class="arithmatex">\(N\)</span> maps to <span class="arithmatex">\(M\)</span> via the segmentation mask.</p>
 <p>This step allows you to associate capture spots with segmented cells.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>transcript_assign<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--spatial-key<span class="w"> </span>obsm/spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>spatial_per_segmented_cell.h5ad
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>transcript_assign<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--spatial-key<span class="w"> </span>obsm/spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>spatial_per_segmented_cell.h5ad
 </span></code></pre></div>
 <p>In this case, the argument <code>--mask-in</code> was set to a single mask, but it can be set to the previously 
 introduced <em>combined</em> masks (e.g., <code>--mask-in uns/spatial/staining_image_mask_combined</code>).</p>

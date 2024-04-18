@@ -1523,26 +1523,42 @@ Open up a terminal and install <code>openst</code> with:</p>
 good introduction on the mechanics of Python package management and helps you
 troubleshoot if you run into errors.</p>
 </div>
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>If you have a Mac with Apple Silicon (M1 or later), please install <code>openst</code> on a Rosetta environment 
+to ensure full compatibility (i.e., <code>openst manual_pairwise_aligner</code> might not work otherwise). 
+Also, the version of scikit-image pinned in the requirements might not be available for Apple Silicon. 
+Thus, create an environment and install dependencies as follows (assuming you have installed <code>conda</code>):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="nv">CONDA_SUBDIR</span><span class="o">=</span>osx-64<span class="w"> </span>conda<span class="w"> </span>create<span class="w"> </span>-n<span class="w"> </span>openst<span class="w"> </span><span class="nv">python</span><span class="o">=</span><span class="m">3</span>.11
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>conda<span class="w"> </span>install<span class="w"> </span>scikit-image<span class="o">==</span><span class="m">0</span>.19.3
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a>pip<span class="w"> </span>install<span class="w"> </span>openst
+</span></code></pre></div>
+<p>When running <code>openst manual_pairwise_aligner</code> for the first time, startup time will be longer than
+usual. This is the expected behavior with osx-64 binaries (Rosetta). Also, you can install the optional
+<code>napari</code> (used in <code>openst preview</code>):</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>napari
+</span></code></pre></div>
+</div>
 <h3 id="with-docker">with docker<a class="headerlink" href="#with-docker" title="Permanent link">&para;</a></h3>
 <p>The official <a href="https://hub.docker.com/r/rajewsky/openst/">Docker image</a> is a great way to get up and running in a few
 minutes, as it comes with all dependencies pre-installed. Open up a terminal
 and pull the image with:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>rajewsky/openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>rajewsky/openst
 </span></code></pre></div>
 <p>The <code>openst</code> executable is provided as an entry point and <code>serve</code> is the
 default command.</p>
 <p>You can run a terminal for <code>openst</code> by running
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>openst
 </span></code></pre></div></p>
 <p>Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the <code>openst manual_pairwise_aligner</code> tool).
 Follow these steps:</p>
 <ol>
 <li>Install X Server on your host machine if not already installed.</li>
 <li>Allow connections to your X Server by running the following command on your host:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>xhost<span class="w"> </span>+
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>xhost<span class="w"> </span>+
 </span></code></pre></div></li>
 <li>Run the Docker container with the following additional options:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix<span class="w"> </span>openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix<span class="w"> </span>openst
 </span></code></pre></div></li>
 </ol>
 <p>Now, you can execute PyQt5-based applications, and the GUI will be displayed on your host machine.</p>
@@ -1552,7 +1568,7 @@ Follow these steps:</p>
 <li>Ensure that the X Server on your host allows connections (xhost +) before running the container,</li>
 <li>Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.</li>
 <li>Remember to close the X Server connections after using the container:
-  <div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>xhost<span class="w"> </span>-
+  <div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>xhost<span class="w"> </span>-
 </span></code></pre></div></li>
 </ul>
 </div>
@@ -1560,10 +1576,10 @@ Follow these steps:</p>
 <p><code>openst</code> can be directly used from <a href="https://github.com/rajewsky-lab/openst">GitHub</a> by cloning the
 repository into a subfolder of your project root which might be useful if you
 want to use the very latest version:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>git clone https://github.com/rajewsky-lab/openst.git
+<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>git clone https://github.com/rajewsky-lab/openst.git
 </span></code></pre></div>
 <p>Next, install the theme and its dependencies with:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>pip install -e openst
+<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pip install -e openst
 </span></code></pre></div>
 
 
