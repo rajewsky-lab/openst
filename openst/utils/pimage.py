@@ -1,5 +1,6 @@
 import dask
 import numpy as np
+import logging
 
 from dask_image.ndmorph import binary_dilation as dask_binary_dilation
 from dask_image.ndfilters import gaussian as dask_gaussian
@@ -84,7 +85,7 @@ def dask_threshold_otsu(image=None, nbins=256):
 
     """
     if image is not None and image.ndim > 2 and image.shape[-1] in (3, 4):
-        print(f'threshold_otsu is expected to work correctly only for '
+        logging.warn(f'threshold_otsu is expected to work correctly only for '
              f'grayscale images; image shape {image.shape} looks like '
              f'that of an RGB image.')
 
@@ -173,7 +174,7 @@ def dask_rgb2hsv(rgb, *, channel_axis=-1):
 
     if type(rgb) is dask.array.Array:
         out_h = np.zeros_like(out_s)
-        print("Hue channel not implemented when using dask array")
+        logging.warn("Hue channel not implemented when using dask array")
     else:
         # -- H channel
         # red is max
