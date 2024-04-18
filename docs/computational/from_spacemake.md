@@ -219,6 +219,21 @@ openst from_spacemake \
      --model HE_cellpose_rajewsky # default model for segmebntation of H&E images
 ```
 
+!!! tip
+      You can assess the quality of the segmentation mask using `openst preview`, which leverages `napari` for visualization:
+
+      ```sh
+      openst from_spacemake \
+            --project-id openst_demo \
+            --sample-id openst_demo_adult_mouse \
+            preview \
+            --image-key uns/spatial/staining_image uns/spatial/staining_image_mask
+      ```
+
+      This will create a `napari` window with two image layers. We recommend changing the mask _image_ layer into a
+      [_label_ layer](https://napari.org/stable/howtos/layers/labels.html), which is designed for _displaying each integer (ID
+      from the segmentation mask) as a different random color, with background rendered as transparent_.
+
 Then, you can create the DGE from the segmentation and ST data. Make sure to populate the `--spatial-key` argument with the
 proper key depending on whether you ran (semi)automated or fully manual pairwise aligmment.
 

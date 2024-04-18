@@ -61,6 +61,18 @@ The rest of parameters can be checked with `openst segment --help`.
           --mask-out uns/spatial/staining_image_mask_combined
      ```
 
+You can assess the quality of the segmentation mask using `openst preview`, which leverages `napari` for visualization:
+
+```sh
+openst preview \
+     --h5-in spatial_stitched_spots.h5ad \
+     --image-key uns/spatial/staining_image uns/spatial/staining_image_mask
+```
+
+This will create a `napari` window with two image layers. We recommend changing the mask _image_ layer into a
+[_label_ layer](https://napari.org/stable/howtos/layers/labels.html), which is designed for _displaying each integer (ID
+from the segmentation mask) as a different random color, with background rendered as transparent_.
+
 ## Assigning transcripts to segmented cells
 Now, we aggregate the initial $N\times G$ matrix into an $M\times G$ matrix,
 where $N$ maps to $M$ via the segmentation mask.
