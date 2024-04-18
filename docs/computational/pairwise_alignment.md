@@ -183,7 +183,7 @@ We provide a video showcasing the GUI, with an illustrative example of refinemen
 __[Walkthrough of the GUI for manual alignment]__ by @danilexn – :octicons-clock-24:
 5m – Learn how to visualize and align STS and imaging data in a step-by-step guide.
 
-  [Walkthrough of the GUI for manual alignment]: https://www.youtube.com
+  [Walkthrough of the GUI for manual alignment]: https://youtu.be/Fjh4huosVPY
 
 ---
 
