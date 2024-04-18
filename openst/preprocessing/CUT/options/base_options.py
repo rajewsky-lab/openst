@@ -1,5 +1,5 @@
 import argparse
-import os
+import logging
 import torch
 
 import openst.preprocessing.CUT.models as models
@@ -102,7 +102,6 @@ class BaseOptions():
         """Print and save options
 
         It will print both current options and default values(if different).
-        It will save options into a text file / [checkpoints_dir] / opt.txt
         """
         message = ''
         message += '----------------- (Start) CUT restoration options ---------------\n'
@@ -113,19 +112,7 @@ class BaseOptions():
                 comment = '\t[default: %s]' % str(default)
             message += '{:>25}: {:<30}{}\n'.format(str(k), str(v), comment)
         message += '----------------- (End) CUT restoration options -------------------'
-        print(message)
-
-        # save to the disk
-        expr_dir = os.path.join(opt.checkpoints_dir, opt.name)
-        util.mkdirs(expr_dir)
-        file_name = os.path.join(expr_dir, '{}_opt.txt'.format(opt.phase))
-        try:
-            with open(file_name, 'wt') as opt_file:
-                opt_file.write(message)
-                opt_file.write('\n')
-        except PermissionError as error:
-            print("permission error {}".format(error))
-            pass
+        logging.debug(message)
 
     def parse(self):
         """Parse our options, create checkpoints directory suffix, and set up gpu device."""

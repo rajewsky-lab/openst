@@ -231,7 +231,7 @@ class BaseModel(ABC):
         Parameters:
             verbose (bool) -- if verbose: print the network architecture
         """
-        print('---------- (Start) Networks initialized -------------')
+        message = '---------- (Start) Networks initialized -------------\n'
         for name in self.model_names:
             if isinstance(name, str):
                 net = getattr(self, 'net' + name)
@@ -239,9 +239,10 @@ class BaseModel(ABC):
                 for param in net.parameters():
                     num_params += param.numel()
                 if verbose:
-                    print(net)
-                print('[Network %s] Total number of parameters : %.3f M' % (name, num_params / 1e6))
-        print('---------- (End) Networks initialized -------------')
+                    message += f"{net}\n"
+                message += '[Network %s] Total number of parameters : %.3f M\n' % (name, num_params / 1e6)
+        message += '---------- (End) Networks initialized -------------'
+        logging.debug(message)
 
     def set_requires_grad(self, nets, requires_grad=False):
         """Set requies_grad=Fasle for all the networks to avoid unnecessary computations

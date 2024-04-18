@@ -3,16 +3,15 @@ import h5py
 import logging
 import pathlib
 import os
-import torch
 
 from PIL import Image
 from tqdm import tqdm
 
-from torch.utils.data import DataLoader
 import torchvision.transforms as transforms
 
 from openst.preprocessing.CUT.models import create_model
 from openst.preprocessing.CUT.options.test_options import TestOptions
+from openst.preprocessing.CUT.util import tensor2im
 from openst.utils.file import check_directory_exists, check_file_exists, download_url_to_file
 
 OPENST_MODEL_NAMES = [
@@ -24,13 +23,6 @@ _MODEL_URL = "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/CUT_m
 
 def create_dataset(opt):
     dataset = OpenSTDataset(opt)
-    dataloader = DataLoader(
-            dataset,
-            batch_size=1,
-            shuffle=False,
-            num_workers=1,
-            drop_last=False,
-        )
     return dataset
 
 def cache_model_path(basename):
@@ -55,10 +47,20 @@ def cache_model_path(basename):
 
 def get_transform():
     transform_list = []
+    transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=Image.BICUBIC)))
     transform_list += [transforms.ToTensor()]
     transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
 
     return transforms.Compose(transform_list)
+
+def __make_power_2(img, base, method=Image.BICUBIC):
+    ow, oh = img.size
+    h = int(round(oh / base) * base)
+    w = int(round(ow / base) * base)
+    if h == oh and w == ow:
+        return img
+
+    return img.resize((w, h), method)
 
 class OpenSTDataset():
     """Wrapper class of Dataset class that performs multi-threaded data loading"""
@@ -96,8 +98,8 @@ def _images_to_tiles(img, tile_size_px=512):
             tiles.append([x, y])
 
     imgs = []
-    for i, coord in tqdm(enumerate(tiles)):
-        imgs.append(img[coord[0]:(coord[0]+tile_size_px), coord[1]:(coord[1]+tile_size_px)])
+    for coord in tqdm(tiles):
+        imgs.append(Image.fromarray(img[coord[0]:(coord[0]+tile_size_px), coord[1]:(coord[1]+tile_size_px)]).convert('RGB'))
 
     return tiles, imgs 
 
@@ -106,6 +108,8 @@ def _tiles_to_images(tiles, imgs, dest_shape, tile_size_px=512):
     img_restitch = np.zeros(dest_shape)
     for i, coord in tqdm(enumerate(tiles)):
         img_restitch[coord[0]:(coord[0]+tile_size_px), coord[1]:(coord[1]+tile_size_px)] = imgs[i] 
+
+    return img_restitch
 
 
 def _image_preprocess(model, dataset):
@@ -116,7 +120,8 @@ def _image_preprocess(model, dataset):
     for data in tqdm(dataset):
         model.set_input(data)
         model.test()
-        output += [model.get_current_visuals()]
+        # we need to transform (C, X, Y) to original (X, Y, C)
+        output += [tensor2im(model.get_current_visuals()['fake_B'].cpu())]
     
     return output
 
@@ -179,7 +184,7 @@ def _run_image_preprocess(args):
     logging.info(f"Running restoration on {len(imgs_tiles)} tiles")
     imgs_tiles_processed = _image_preprocess(model, dataset)
 
-    logging.info("Merging back into single image")
+    logging.info(f"Merging {len(tiles)} tiles back into single image of shape {_img_shape}")
     restored_img = _tiles_to_images(tiles, imgs_tiles_processed, _img_shape, args.tile_size_px)
     _save_image_adata(adata, restored_img, args)
 
