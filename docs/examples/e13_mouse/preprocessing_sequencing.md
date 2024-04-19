@@ -6,7 +6,7 @@ transcriptomic information mapped to the mouse genome, in space.
 ## Demultiplexing
 We got basecall files in `bcl` format from our sequencing facility.
 
-We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/e13_mouse_head_mouse/sample_sheet.csv).
+We used `bcl2fastq` for demultiplexing, using this [sample sheet](../../static/examples/e13_mouse_head/sample_sheet.csv).
 We used the conda environment where we installed `spacemake` (see [instructions
 on how to install spacemake](https://spacemake.readthedocs.io/en/latest/install.html)), and ran the following commands:
 
@@ -128,7 +128,7 @@ tar -xvf e13_mouse_head_tiles.tar.xz
 
 spacemake projects add_sample \
     --project_id openst_demo \
-    --sample_id openst_demo_e13_mouse_head_mouse \
+    --sample_id openst_demo_e13_mouse_head \
     --R1 e13_mouse_head_R1_001.fastq.gz e13_mouse_head_reseq_R1_001.fastq.gz \
     --R2 e13_mouse_head_R2_001.fastq.gz e13_mouse_head_reseq_R2_001.fastq.gz \
     --species mouse \
@@ -180,10 +180,10 @@ arguments to `spacemake run` - refer to the official documentation.
 
 Once `spacemake` finishes, you will see that several folders and files have been created under `projects`
 (inside the `spacemake` directory). For example, you can check the QC reports in your web browser by opening the
-file at `projects/openst_demo/processed_data/openst_demo_e13_mouse_head_mouse/illumina/complete_data/qc_sheets/qc_sheet_openst_demo_e13_mouse_head_mouse_fc_1_puck_collection.html`,
+file at `projects/openst_demo/processed_data/openst_demo_e13_mouse_head/illumina/complete_data/qc_sheets/qc_sheet_openst_demo_e13_mouse_head_fc_1_puck_collection.html`,
 giving you a first impression of what's the quality of spatial mapping, amount of transcripts and genes per barcoded spot, and others.
 
-Importantly, you will find files in the directory `projects/openst_demo/processed_data/openst_demo_e13_mouse_head_mouse/illumina/complete_data/dge`
+Importantly, you will find files in the directory `projects/openst_demo/processed_data/openst_demo_e13_mouse_head/illumina/complete_data/dge`
 with the name `dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_*.h5ad` (where `*` is a wildcard). These files, and not the ones containing 
 the words `mesh`, `hexagon` or `circle` are the ones that will be used later to perform the pairwise alignment with imaging data, and to
 later reconstruct the cell-by-gene matrix.
