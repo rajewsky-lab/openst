@@ -21,8 +21,8 @@ OPENST_MODEL_NAMES = [
 MODEL_DIR = pathlib.Path.home().joinpath(".CUT", "models")
 _MODEL_URL = "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/CUT_models"
 
-def create_dataset(opt):
-    dataset = OpenSTDataset(opt)
+def create_dataset(args, opt):
+    dataset = OpenSTDataset(args, opt)
     return dataset
 
 def cache_model_path(basename):
@@ -41,12 +41,16 @@ def cache_model_path(basename):
 
         logging.info('Decompressing "{}" to {}'.format(f"{cached_file}.tar.xz", MODEL_DIR))
         with tarfile.open(f"{cached_file}.tar.xz", "r:xz") as tar:
-            tar.extractall(path=MODEL_DIR)
+            tar.extractall(path=MODEL_DIR, filter='data')
 
     return cached_file
 
-def get_transform():
+def get_transform(args):
     transform_list = []
+
+    osize = [args.tile_size_px]*2
+    transform_list.append(transforms.Resize(osize, Image.BICUBIC))
+    transform_list.append(transforms.RandomCrop(args.tile_size_px))
     transform_list.append(transforms.Lambda(lambda img: __make_power_2(img, base=4, method=Image.BICUBIC)))
     transform_list += [transforms.ToTensor()]
     transform_list += [transforms.Normalize((0.5, 0.5, 0.5), (0.5, 0.5, 0.5))]
@@ -65,8 +69,9 @@ def __make_power_2(img, base, method=Image.BICUBIC):
 class OpenSTDataset():
     """Wrapper class of Dataset class that performs multi-threaded data loading"""
 
-    def __init__(self, image_tiles):
+    def __init__(self, args, image_tiles):
         self.image_tiles = image_tiles
+        self.args = args
 
     def __len__(self):
         """Return the number of data in the dataset"""
@@ -84,13 +89,13 @@ class OpenSTDataset():
             A_paths (str)    -- image paths
             B_paths (str)    -- image paths
         """
-        transform = get_transform()
+        transform = get_transform(self.args)
         A = transform(self.image_tiles[index])
         B = None
 
         return {'A': A[None], 'B': B, 'size': A[None].shape}
 
-def _images_to_tiles(img, tile_size_px=512):
+def _image_to_tiles(img, tile_size_px=512):
     _img_shape = img.shape
     tiles = []
     for x in range(0, _img_shape[0]-tile_size_px, tile_size_px):
@@ -104,8 +109,8 @@ def _images_to_tiles(img, tile_size_px=512):
     return tiles, imgs 
 
 
-def _tiles_to_images(tiles, imgs, dest_shape, tile_size_px=512):
-    img_restitch = np.zeros(dest_shape)
+def _tiles_to_image(tiles, imgs, dest_shape, tile_size_px=512):
+    img_restitch = np.zeros(dest_shape, dtype=np.uint8)
     for i, coord in tqdm(enumerate(tiles)):
         img_restitch[coord[0]:(coord[0]+tile_size_px), coord[1]:(coord[1]+tile_size_px)] = imgs[i] 
 
@@ -121,7 +126,9 @@ def _image_preprocess(model, dataset):
         model.set_input(data)
         model.test()
         # we need to transform (C, X, Y) to original (X, Y, C)
-        output += [tensor2im(model.get_current_visuals()['fake_B'].cpu())]
+        _tensor_output = model.get_current_visuals()['fake_B'].cpu()
+        _image_output = tensor2im(_tensor_output)
+        output += [_image_output]
     
     return output
 
@@ -132,7 +139,7 @@ def _load_image_adata(args):
         im = adata[args.image_in][:]
     else:
         check_file_exists(args.image_in)
-        if not check_directory_exists(args.mask_out, exception=False):
+        if not check_directory_exists(args.image_out, exception=False):
             raise FileNotFoundError("Parent directory for --mask-out does not exist")
         
         Image.MAX_IMAGE_PIXELS = 933120000
@@ -161,9 +168,6 @@ def _run_image_preprocess(args):
     adata, img =_load_image_adata(args)
     _img_shape = img.shape
 
-    logging.info(f"Converting image of shape {_img_shape} into tiles")
-    tiles, imgs_tiles = _images_to_tiles(img, args.tile_size_px)
-
     opt = TestOptions("").parse()
     opt.num_threads = 1
     opt.batch_size = 1
@@ -173,19 +177,23 @@ def _run_image_preprocess(args):
     opt.crop_size = args.tile_size_px
     opt.pretrained_name = None
 
+    logging.info(f"Loading model {args.model}")
     model = create_model(opt)
     model.save_dir = cache_model_path(args.model)
     model.setup(opt)
     model.parallelize()
 
+    logging.info(f"Converting image of shape {_img_shape} into tiles")
+    tiles, imgs_tiles = _image_to_tiles(img, args.tile_size_px)
+
     logging.info(f"Creating dataset from image ({len(imgs_tiles)} tiles)")
-    dataset = create_dataset(imgs_tiles)
+    dataset = create_dataset(args, imgs_tiles)
     
     logging.info(f"Running restoration on {len(imgs_tiles)} tiles")
     imgs_tiles_processed = _image_preprocess(model, dataset)
 
     logging.info(f"Merging {len(tiles)} tiles back into single image of shape {_img_shape}")
-    restored_img = _tiles_to_images(tiles, imgs_tiles_processed, _img_shape, args.tile_size_px)
+    restored_img = _tiles_to_image(tiles, imgs_tiles_processed, _img_shape, args.tile_size_px)
     _save_image_adata(adata, restored_img, args)
 
 if __name__ == "__main__":
