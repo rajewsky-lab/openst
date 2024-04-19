@@ -714,6 +714,12 @@ def get_image_preprocess_parser():
         choices=["cpu", "cuda"],
         help="Device used to run CUT restoration model. Can be ['cpu', 'cuda']",
     )
+    parser.add_argument(
+        "--num-workers",
+        type=int,
+        default=1,
+        help="Number of CPU workers for parallel processing",
+    )
 
     return parser
 

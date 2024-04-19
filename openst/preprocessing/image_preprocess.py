@@ -6,8 +6,15 @@ import os
 
 from PIL import Image
 from tqdm import tqdm
+from threadpoolctl import threadpool_limits
 
-import torchvision.transforms as transforms
+try:
+    import torchvision.transforms as transforms
+except ImportError:
+    raise ImportError(
+        "Please install napari: `pip install torchvision` "+
+        "or find more information at https://pytorch.org/get-started/locally/"
+    )
 
 from openst.preprocessing.CUT.models import create_model
 from openst.preprocessing.CUT.options.test_options import TestOptions
@@ -160,7 +167,7 @@ def _save_image_adata(adata, restored_img, args):
         logging.info(f'Saving mask to separate file in {args.image_out}')
         Image.fromarray(restored_img).save(args.image_out)
 
-def _run_image_preprocess(args):
+def run_image_preprocess(args):
     if args.h5_in == "" and args.image_in == "":
         logging.error("You need to provide at least one of `--h5-in` or `--image-in`")
         exit(1)
@@ -195,6 +202,10 @@ def _run_image_preprocess(args):
     logging.info(f"Merging {len(tiles)} tiles back into single image of shape {_img_shape}")
     restored_img = _tiles_to_image(tiles, imgs_tiles_processed, _img_shape, args.tile_size_px)
     _save_image_adata(adata, restored_img, args)
+
+def _run_image_preprocess(args):
+    with threadpool_limits(limits=args.num_workers):
+        run_image_preprocess(args)
 
 if __name__ == "__main__":
     from openst.cli import get_image_preprocess_parser
