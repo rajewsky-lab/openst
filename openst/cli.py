@@ -717,7 +717,7 @@ def get_image_preprocess_parser():
     parser.add_argument(
         "--num-workers",
         type=int,
-        default=1,
+        default=-1,
         help="Number of CPU workers for parallel processing",
     )
 
