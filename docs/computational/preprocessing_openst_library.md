@@ -7,10 +7,6 @@ from Illumina's website).
 For the Open-ST workflow, we leverage [`spacemake`](https://spacemake.readthedocs.io/en/latest/), an
 an automated pipeline designed for the preprocessing, alignment, and quantification of single-cell and spatial transcriptomics data.
 
-We have developed computational tools for processing each of these sequencing rounds.
-By processing (1), you will get a *database* of barcodes and their spatial locations.
-This will used during the automated processing of (2), such that the transcriptome is mapped back to space.
-
 ## Configuring `spacemake`
 We refer to the [official documentation](https://spacemake.readthedocs.io/en/latest/) for a complete tutorial on how to 
 [install](https://spacemake.readthedocs.io/en/latest/install.html) and
