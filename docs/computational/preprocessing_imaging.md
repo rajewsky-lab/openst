@@ -63,16 +63,33 @@ tile-scan. You can run this by running the following command on the stitched ima
 
 ```bash
 openst image_preprocess \
-     --input=<path_to_input_image> \
-     --CUT \
-     --CUT-model=<path_to_model> \
-     --output=<path_to_output>
+     --image-in Image_Stitched_Composite.tif \
+     --image-out Image_Stitched_Composite_Restored.tif
+     # --device cuda # in case you have a CUDA-compatible GPU
 ```
 
-Make sure to replace the placeholders (`<...>`). For instance,
-`<path_to_input_image>` is the full path and file name of the previously stitched image; `<path_to_model>`
-is filename our pre-trained [CUT model](https://github.com/rajewsky-lab/openst/models/CUT.pth), and `<output_image>` 
-is the path to a folder (writeable) and desired filename for the output image.
+If you ran `openst merge_modalities`, then imaging data will be contained inside the Open-ST h5 object, and the command
+can be adapted:
+
+```bash
+openst image_preprocess \
+     --h5-in multimodal/spots_stitched.h5ad # just a placeholder, adapt
+     # --device cuda # in case you have a CUDA-compatible GPU
+```
+
+By default, the image will be loaded from the key `uns/spatial/staining_image`, and the CUT-restored image will be saved
+to `uns/spatial/staining_image_restored`. You can preview the image restoration results using:
+
+```bash
+openst preview \
+     --h5-in multimodal/spots_stitched.h5ad
+     --image-key uns/spatial/staining_image uns/spatial/staining_image_restored
+```
+
+This will load the two images and visualize it using `napari`. Later, you can run segmentation and pairwise alignment
+using either the default merged image (`uns/spatial/staining_image`), or the restored image (`uns/spatial/staining_image_restored`).
+Always assess these preprocessing choices (quantitatively and qualitatively) to decide whether these make sense for your data.
+
 
 ## Expected output
 After running the stitching (and optionally correction algorithms), you will have a single image file per sample. This, together with

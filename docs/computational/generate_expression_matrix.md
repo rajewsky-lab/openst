@@ -13,7 +13,7 @@ To create such a spatial cell-by-gene ($M\times G$) expression matrix, you will 
 
 We efficiently segment cells (or nuclei) from staining images using [cellpose](https://github.com/MouseLand/cellpose).
 We provide a model that we fine-tuned for segmentation of fresh-frozen, H&E-stained tissue,
-[here](https://github.com/danilexn/openst/blob/main/models/HE_cellpose_rajewsky).
+[here](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky).
 You can specify any other model that works best for your data -
 refer to the [cellpose](https://cellpose.readthedocs.io/en/latest/index.html) documentation.
 
@@ -31,7 +31,7 @@ By default, segmentation is extended radially 10 pixels. This can be changed wit
 Make sure to populate the arguments with the values specific to your dataset. Here, we provide `--h5-in` consistent
 with the previous steps, `--image-in` and `--mask-out` will read and write the staining and mask inside the Open-ST h5 object,
 and `--model` is `HE_cellpose_rajewsky`, the default used in our manuscript. This is the model we recommend for H&E images, and
-weights are automatically downloaded. It is also [provided in our repo](https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky).
+weights are automatically downloaded. It is also [provided in our repo](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky).
 The rest of parameters can be checked with `openst segment --help`.
 
 !!! tip
