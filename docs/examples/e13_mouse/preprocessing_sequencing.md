@@ -1,4 +1,4 @@
-# Preprocessing of sequencing
+# Preprocessing transcriptomic library
 
 After sequencing, we proceed with the preprocessing of the data, to go from raw reads to
 transcriptomic information mapped to the mouse genome, in space.
@@ -37,7 +37,7 @@ First of all, intialize the conda environment for `spacemake`
 (spacemake) user@computer:~$
 ```
 
-### Initialization
+### Initialize
 Create two folders inside your `openst_e13_mouse_head_demo` folder, called `spacemake` and `bins`, so you will have:
 
 ```sh
@@ -61,7 +61,7 @@ browse to the `spacemake` directory you just created in the `openst_e13_mouse_he
     --dropseq_tools /home/user/bins/Drop-seq_tools-2.5.1
 ```
 
-### Configuring spacemake
+### Configure
 
 As `spacemake` comes with no default value for species, before anything can be done, a new species has to be added.
 In this case, we add mouse; you will need to download the correct `fa` and `gtf` files. For instance, you can download the
@@ -99,7 +99,7 @@ spacemake config add_species \
     # etc...
     ```
 
-### Adding sample
+### Add sample
 
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
 generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
@@ -111,14 +111,12 @@ When downloading the tile barcode files, create a folder under `openst_e13_mouse
 into this folder. Also, move the coordinate file to the `puck_data` folder in the `spacemake` directory.
 
 Remember! You need to be in the `/home/user/openst_e13_mouse_head_demo/spacemake` directory (or similar, depending on what you created);
-then run the following command:
+then run the following commands:
 
 ```sh
 # downloading R1 and R2 sequences
 wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R1_001.fastq.gz"
 wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_R2_001.fastq.gz"
-
-# downloading R1 and R2 (reseq) sequences
 wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R1_001.fastq.gz"
 wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_reseq_R2_001.fastq.gz"
 
@@ -144,7 +142,7 @@ after you run the `spacemake init` command (see above). Modify the following lin
 
 ```yaml
 openst:
-    coordinate_system: puck_id/openst_coordinates.csv
+    coordinate_system: puck_data/openst_coordinates.csv
     spot_diameter_um: 0.6
     width_um: 1200
 ```
@@ -153,7 +151,7 @@ into this:
 
 ```yaml
 openst:
-    coordinate_system: puck_id/fc_1_coordinate_system.csv
+    coordinate_system: puck_data/fc_1_coordinate_system.csv
     spot_diameter_um: 0.6
     width_um: 1200
 ```
@@ -166,7 +164,7 @@ wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordina
 cp fc_1_coordinate_system.csv puck_data/.
 ```
 
-### Running `spacemake`
+### Run
 That's all you need to configure! Now, you can run spacemake with the following:
 
 ```sh
@@ -191,3 +189,5 @@ later reconstruct the cell-by-gene matrix.
 If you specified options for *meshing* in the `run_mode`, there will be a file containing keywords `puck_collection` and `mesh`, `hexagon` or `circle`.
 This contains *approximate* cell-by-gene information, as the transcripts are aggregated by a regular lattice and not by the true spatial arrangement of
 cells. This might be already enough for some analyses. 
+
+Anyway... keep going with the tutorial if you want to unleash the full potential of Open-ST.

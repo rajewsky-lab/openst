@@ -1,4 +1,4 @@
-# Align image to transcriptome
+# Pairwise alignment
 
 In the previous step, the transcriptomic reads were processed and mapped in tissue space with `spacemake`.
 Now, we perform a pairwise alignment between the imaging and spatial transcriptomics modality, such that
@@ -7,84 +7,113 @@ we can later aggregate transcripts into individual cells delimited by the segmen
 We will illustrate how to do this in a semiautomatic manner: that is, running the coarse alignment in
 an automatic fashion, and the fine alignment (to fiducial marks) via GUI, in a manual manner. Although we
 provide models for fiducial feature detection, the accuracy might be affected by the type of microscope,
-imaging strategy, tissue type and width... Thus, manual fine alignment is a good option. Thanks to the
-GUI specifically designed for this task, the necessary amount of time invested is reasonable
-(~5 minutes per sample consisting of 12 tiles).
+imaging strategy, tissue type and width... Thus, manual fine alignment is a good option. This can be done
+very quickly thanks to the GUI specifically designed for this task (~5 minutes per sample of 12 tiles).
 
-## Coarse alignment
-We assume that you have the single `h5ad` file that contains all the tiles for the experiment (you got it automatically
-from `spacemake`, or you followed the [stitching instructions](preprocessing_sequencing.md#expected-output)).
 
-Now, make sure of two things:
-1. You have an environment where the `openst` package is installed (we recommend doing this
-in an environment different to the one used for `spacemake`).
-1. You are in the `/home/user/openst_e13_demo` folder (or similar, depending on your system, username...)
+## Download and copy image data
+
+For this dataset, we archived the [stitched tile-scan image](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head.tif). 
+This single image was generated from multiple, independently imaged tiles, by leveraging `openst image_stitch`. So, 
+you don't need to use this command, since we already provide the stitched image. Anyway, let us know
+if you want access to this tile images, in case you want to try.
+
+You can download the iamge data from the link above
+
+```bash
+wget "https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head.tif"
+```
+
+and then copy it into relevant path, for example:
+
+```bash
+mkdir spacemake_folder/projects/openst_demo/processed_data/openst_demo_e13_mouse_head/imaging
+cp e13_mouse_head.tif \
+    spacemake_folder/projects/openst_demo/processed_data/openst_demo_e13_mouse_head/imaging/Image_Stitched_Composite.tif
+```
+
+
+the final folder structure should look like:
 
 ```sh
-mkdir alignment
+spacemake_folder
+`-- projects
+    `-- openst_demo
+        `-- processed_data
+            `-- openst_demo_e13_mouse_head
+                `-- imaging
+                    `-- Image_Stitched_Composite.tif
+```
 
-cp projects/openst_demo/processed_data/openst_demo_e13_mouse_head/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad alignment/spatial_beads_e13_mouse_head.h5ad
+## Merging data modalities
 
-# download the image data
-wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head.tif"
+From the relevant `spacemake` main folder, merge both transcriptomics and imaging modalities
 
-openst merge_modalities \
-    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
-    --image-in e13_mouse_head.tif
+```bash
+openst from_spacemake \
+    --project-id openst_demo \
+    --sample-id openst_demo_e13_mouse_head \
+    merge_modalities
+```
 
-openst pairwise_aligner \
-    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
+
+## Coarse pairwise alignment (auto)
+Once the two modalities have been merged, you can run automatic alignment. Here we only run coarse (`--only-coarse`),
+so we can showcase how to do manual refinement with the GUI.
+
+```sh
+openst from_spacemake \
+    --project-id openst_demo \
+    --sample-id openst_demo_e13_mouse_head \
+    pairwise_aligner \
     --only-coarse \
     --device cuda
 ```
 
-This will create the file `alignment/spatial_beads_e13_mouse_head.h5ad`, that hopefully contains a proper coarse alignment of the two modalities (at low resolution).
-
 !!! note
     For this image data, and the spatial coordinates after alignment, the conversion factor to physical distance is **1 pixel = 0.345 µm**.
 
-!!! tip
-    From `openst>=0.0.7`, there is `openst from_spacemake` to populate the data input/output arguments automatically, and keep the processing inside the `spacemake` folder structure. You can read more in the [tutorial](../../computational/from_spacemake.md).
+## Fine pairwise alignment (manual)
 
-## Fine alignment (manual)
-
-You will now visually asses it and refine the previous coarse alignment using the provided GUI tool. 
-From the terminal, run:
+Now you can assess the pairwise alignment visually, and refine it using the provided GUI tool. 
 
 ```sh
-openst manual_pairwise_aligner
+openst from_spacemake \
+    --project-id openst_demo \
+    --sample-id openst_demo_e13_mouse_head \
+    manual_pairwise_aligner \
+    --spatial-key obsm/spatial_pairwise_aligned_coarse \
+    --image-key uns/spatial_pairwise_aligned/staining_image_transformed
 ```
 
-Then, follow these instructions on the GUI, by pressing the *buttons*:
+Then, follow the following steps:
 
-1. Click on *Load h5ad* and browse to the location where the `spatial_beads_e13_mouse_head.h5ad` file
-is located. Select it and click *Open*. 
-2. Go to *Data properties*, then click under *Image data*, and select from the tree `uns>spatial_pairwise_aligned>staining_image_transformed`. Click *Ok*.
-3. Click under *Spatial coordinates*, and select from the tree `obsm/spatial_pairwise_aligned_coarse`. Click *Ok*.
-4. Go to rendering settings, and keep in mind the *Threshold counts* parameter.
-5. Now select the *all_tiles_coarse* option from the *Layer selector*, and click on *Render*. You will see the staining image on the upper left,
+1. Select the *all_tiles_coarse* layer from the *Layer selector*, and click on *Render*. You will see the staining image on the upper left,
    the transcriptomic image on the top right, and the merge on the bottom left. These two modalities should *roughly* match. If not, you would need to
-   run the coarse alignment in manual mode, too.
-6. Once you've checked that the coarse alignment is fine, start selecting the layer 0, and click *Render*.
-7. Now, you need to select the pairs of corresponding fiducial markers on both modalities (top left and top right) by double clicking on the left image, first, and on the right image, second. You can drag the points to new locations, zoom into the images with the mouse wheel, pan the image by holding the mouse right cursor and moving, and remove the points by pressing backspace on your keyboard.
-8. You need to select at least 2 pairs of points per layer. Don't forget to click on *Render* after you select a new layer (e.g., 1, 2, 3...) so it displays. Also, you can preview how the alignment will look like after transformation by pressing *Preview alignment*. This will update the merge view (bottom left). You can change the opacity of the merge images under *Rendering settings*, by adjusting the Image A/B opacity sliders. Also, if you don't see a lot of signal in the transcriptomic pseudoimage, try decreasing the *Threshold counts* and *Pseudoimage size* values. Per tile (layer), adjust the keypoints until you get a good alignment as many times as necessary.
-9. Once you've finished, go under *Keypoint properties* and click on *Save keypoints*. Go to the `alignment` folder under `openst_e13_demo`, and save the file as `openst_e13_demo_fine_keypoints`.
+   run the coarse (low-res) alignment in manual mode, too.
+2. If the coarse alignment looks good, select layer '0' and click *Render*.
+3. Select pairs of corresponding fiducial markers (at least 3) on both modalities by double clicking on the left image, first, and on the right image, second. You can drag the points to new locations, zoom into the images with the mouse wheel, pan the image by holding the mouse right cursor and moving, and remove the points by pressing backspace on your keyboard. You can preview how the alignment will look like after transformation by pressing *Preview alignment*.
+4. Repeat from 2, but selecting a new layer every time ('1', '2', ...).
+5. Once you've finished with all tiles, go under *Keypoint properties* and click *Save keypoints* as `keypoints.json`.
 
-Great! You have just created a file with the corresponding points between the respective coordinate systems of
-the spatial trancriptome and image modalities. 
+With this, you have created a `keypoints.json` file containing pairs of corresponding points between the
+spatial trancriptome and image modalities. 
 
-## Apply keypoint transformation to coarse alignment
-Now, you need to run a program that takes the `h5ad` file with the
-coarse alignment, and the keypoints file, to perform the fine alignment:
+## Apply keypoint transformation
+Then, compute apply the rigid transformations to the coarsely aligned spatial coordinates:
 
 ```sh
-openst apply_transform \
-    --keypoints-in alignment/openst_e13_demo_fine_keypoints.json \
-    --h5-in alignment/spatial_beads_e13_mouse_head.h5ad \
+openst from_spacemake \
+    --project-id openst_demo \
+    --sample-id openst_demo_e13_mouse_head \
+    apply_transform \
+    --keypoints-in keypoints.json \
+    --spatial-key-out obsm/spatial_manual_fine \
     --per-tile
 ```
 
-After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing
-`spatial_beads_e13_mouse_head.h5ad` file.
+The `--per-tile` is important to perform this operation per tile. Otherwise, `apply_transform` will assume
+that the transform needs to be done for all coordinates, and will expect that you have selected corresponding
+keypoints for the layer *all_tiles_coarse*.
 
 That's it! Now you're ready to go to the next step.

@@ -1,4 +1,4 @@
-# Preprocessing of sequencing
+# Preprocessing transcriptomic library
 
 After sequencing, we proceed with the preprocessing of the data, to go from raw reads to
 transcriptomic information mapped to the mouse genome, in space.
@@ -37,7 +37,7 @@ First of all, intialize the conda environment for `spacemake`
 (spacemake) user@computer:~$
 ```
 
-### Initialization
+### Initialize
 Create two folders inside your `openst_adult_demo` folder, called `spacemake` and `bins`, so you will have:
 
 ```sh
@@ -61,7 +61,7 @@ browse to the `spacemake` directory you just created in the `openst_adult_demo` 
     --dropseq_tools /home/user/bins/Drop-seq_tools-2.5.1
 ```
 
-### Configuring spacemake
+### Configure
 
 As `spacemake` comes with no default value for species, before anything can be done, a new species has to be added.
 In this case, we add mouse; you will need to download the correct `fa` and `gtf` files. For instance, you can download the
@@ -99,7 +99,7 @@ spacemake config add_species \
     # etc...
     ```
 
-### Adding sample
+### Add sample
 
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
 generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
@@ -162,7 +162,7 @@ wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordina
 cp fc_2_coordinate_system.csv puck_data/.
 ```
 
-### Running `spacemake`
+### Run
 That's all you need to configure! Now, you can run spacemake with the following:
 
 ```sh
