@@ -41,12 +41,17 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
+         <loc>https://open.st/main/computational/preprocessing_capture_area/</loc>
+         <lastmod>2024-04-19</lastmod>
+         <changefreq>daily</changefreq>
+    </url>
+    <url>
          <loc>https://open.st/main/computational/preprocessing_imaging/</loc>
          <lastmod>2024-04-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://open.st/main/computational/preprocessing_sequencing/</loc>
+         <loc>https://open.st/main/computational/preprocessing_openst_library/</loc>
          <lastmod>2024-04-19</lastmod>
          <changefreq>daily</changefreq>
     </url>
@@ -81,11 +86,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://open.st/main/examples/adult_mouse/preprocessing_imaging/</loc>
-         <lastmod>2024-04-19</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://open.st/main/examples/adult_mouse/preprocessing_sequencing/</loc>
          <lastmod>2024-04-19</lastmod>
          <changefreq>daily</changefreq>
@@ -102,11 +102,6 @@
     </url>
     <url>
          <loc>https://open.st/main/examples/e13_mouse/pairwise_alignment/</loc>
-         <lastmod>2024-04-19</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://open.st/main/examples/e13_mouse/preprocessing_imaging/</loc>
          <lastmod>2024-04-19</lastmod>
          <changefreq>daily</changefreq>
     </url>

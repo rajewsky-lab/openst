@@ -1,0 +1,20 @@
+[Header]
+IEMFileVersion,5
+Date,16/06/2023
+Workflow,GenerateFASTQ
+Application,NextSeq FASTQ Only
+Instrument Type,NextSeq/MiniSeq
+Assay,Nextera XT
+Index Adapters,"Nextera XT v2 Index Kit"
+Chemistry,Default
+
+[Reads]
+32
+98
+
+[Settings]
+Adapter,CTGTCTCTTATACACATCT
+
+[Data]
+Sample_ID,Sample_Name,Sample_Plate,Sample_Well,I7_Index_ID,index,Sample_Project,Description
+FC_sts_76_3,p60_mouse_hippocampu,fc_010,,N704-A,TCCTGAGC,fc_sts_76,FC_sts_76_3_adult_hippocampus_mouse

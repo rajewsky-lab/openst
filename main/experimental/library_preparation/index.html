@@ -304,7 +304,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
@@ -769,8 +771,6 @@
       
         
       
-        
-      
     
     
       
@@ -835,11 +835,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../computational/preprocessing_sequencing/" class="md-nav__link">
+      <a href="../../computational/preprocessing_capture_area/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
+    Preprocessing capture area library
   </span>
   
 
@@ -856,11 +856,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../computational/preprocessing_imaging/" class="md-nav__link">
+      <a href="../../computational/preprocessing_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -881,7 +881,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -902,7 +902,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -924,27 +924,6 @@
   
   <span class="md-ellipsis">
     3D reconstruction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../computational/from_spacemake/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    From spacemake
   </span>
   
 
@@ -1101,8 +1080,6 @@
       
         
       
-        
-      
     
     
       
@@ -1168,28 +1145,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1210,7 +1166,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1231,7 +1187,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1278,8 +1234,6 @@
   
     
     
-      
-        
       
         
       
@@ -1356,28 +1310,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1398,7 +1331,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1419,7 +1352,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1471,146 +1404,6 @@
                 </div>
               </div>
             
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#tissue-sectioning" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tissue sectioning
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fixation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fixation
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#hematoxilin-and-eosin-he-staining-and-imaging" class="md-nav__link">
-    <span class="md-ellipsis">
-      Hematoxilin and eosin (H&amp;E) staining and imaging
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#permeabilization" class="md-nav__link">
-    <span class="md-ellipsis">
-      Permeabilization
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#reverse-transcription" class="md-nav__link">
-    <span class="md-ellipsis">
-      Reverse transcription
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#exo-i-digestion" class="md-nav__link">
-    <span class="md-ellipsis">
-      Exo I digestion
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#tissue-removal" class="md-nav__link">
-    <span class="md-ellipsis">
-      Tissue removal
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#second-strand-synthesis" class="md-nav__link">
-    <span class="md-ellipsis">
-      Second strand synthesis
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#qpcr-for-cycle-number-assessment" class="md-nav__link">
-    <span class="md-ellipsis">
-      qPCR for cycle number assessment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#library-construction" class="md-nav__link">
-    <span class="md-ellipsis">
-      Library construction
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Library construction">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#library-amplification-and-purification" class="md-nav__link">
-    <span class="md-ellipsis">
-      Library amplification and purification
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#size-selection" class="md-nav__link">
-    <span class="md-ellipsis">
-      Size selection
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
             
           
           
@@ -2292,7 +2085,7 @@ Measure the concentration of your size-selected product using the Qubit dsDNA qu
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>

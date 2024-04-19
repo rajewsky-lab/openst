@@ -19,7 +19,7 @@
         <link rel="prev" href="../../experimental/sequencing_of_openst_library/">
       
       
-        <link rel="next" href="../preprocessing_sequencing/">
+        <link rel="next" href="../preprocessing_capture_area/">
       
       
       <link rel="icon" href="../../static/logos/openst_logo_transparent_completeO.png">
@@ -304,7 +304,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
@@ -615,8 +617,6 @@
       
         
       
-        
-      
     
     
       
@@ -718,7 +718,16 @@
           <li class="md-nav__item">
   <a href="#with-pip-recommended" class="md-nav__link">
     <span class="md-ellipsis">
-      with pip recommended
+      with pip, recommended
+    </span>
+  </a>
+  
+</li>
+        
+          <li class="md-nav__item">
+  <a href="#from-git" class="md-nav__link">
+    <span class="md-ellipsis">
+      from git
     </span>
   </a>
   
@@ -728,15 +737,6 @@
   <a href="#with-docker" class="md-nav__link">
     <span class="md-ellipsis">
       with docker
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#with-git" class="md-nav__link">
-    <span class="md-ellipsis">
-      with git
     </span>
   </a>
   
@@ -763,11 +763,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../preprocessing_sequencing/" class="md-nav__link">
+      <a href="../preprocessing_capture_area/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
+    Preprocessing capture area library
   </span>
   
 
@@ -784,11 +784,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../preprocessing_imaging/" class="md-nav__link">
+      <a href="../preprocessing_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -809,7 +809,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -830,7 +830,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -852,27 +852,6 @@
   
   <span class="md-ellipsis">
     3D reconstruction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../from_spacemake/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    From spacemake
   </span>
   
 
@@ -1029,8 +1008,6 @@
       
         
       
-        
-      
     
     
       
@@ -1096,28 +1073,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1138,7 +1094,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1159,7 +1115,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1206,8 +1162,6 @@
   
     
     
-      
-        
       
         
       
@@ -1284,28 +1238,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1326,7 +1259,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1347,7 +1280,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1400,74 +1333,6 @@
               </div>
             
             
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#installation" class="md-nav__link">
-    <span class="md-ellipsis">
-      Installation
-    </span>
-  </a>
-  
-    <nav class="md-nav" aria-label="Installation">
-      <ul class="md-nav__list">
-        
-          <li class="md-nav__item">
-  <a href="#with-pip-recommended" class="md-nav__link">
-    <span class="md-ellipsis">
-      with pip recommended
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#with-docker" class="md-nav__link">
-    <span class="md-ellipsis">
-      with docker
-    </span>
-  </a>
-  
-</li>
-        
-          <li class="md-nav__item">
-  <a href="#with-git" class="md-nav__link">
-    <span class="md-ellipsis">
-      with git
-    </span>
-  </a>
-  
-</li>
-        
-      </ul>
-    </nav>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           
             <div class="md-content" data-md-component="content">
@@ -1495,22 +1360,18 @@
 <h1 id="getting-started">Getting started<a class="headerlink" href="#getting-started" title="Permanent link">&para;</a></h1>
 <p>After folowing the <a href="../../experimental/getting_started/">experimental protocol</a>, we provide the <a href="https://pypi.org/project/openst/"><code>openst</code></a>
 python package for transforming the raw sequencing data into objects that can be used for spatial, single-cell
-analysis.</p>
-<p>More specifically, our pipeline consists of the following steps:</p>
+analysis, in four steps:</p>
 <ol>
-<li><a href="../preprocessing_sequencing/">Preprocessing of sequencing</a></li>
-<li><a href="../preprocessing_imaging/">Preprocessing of imaging</a></li>
-<li><a href="../pairwise_alignment/">Align image to transcriptome</a>: the spatial coordinates of transcripts are aligned
-    to the imaging modality.</li>
-<li><a href="../generate_expression_matrix/">Generating a cell-by-gene matrix</a>: transcripts
-    are quantified per cell using the segmentation information.</li>
+<li><a href="preprocessing_sequencing.md">Preprocessing of sequencing</a></li>
+<li><a href="../pairwise_alignment/">Pairwise alignment</a>: the spatial coordinates of transcriptomics data are aligned
+    to tissue imaging.</li>
+<li><a href="../generate_expression_matrix/">Segmentation and single-cell quantification</a>: transcriptomic data
+    are aggregated into single cells using the information from cell segmentation of tissue images.</li>
 <li><a href="../threed_reconstruction/">3D reconstruction</a> of tissue imaging and transcriptome from serial sections.
    <em>We provide tutorials for interactive visualization of 3D data.</em></li>
 </ol>
-<p>If you're familiar with Python, you can install <code>openst</code> with <a href="#with-pip">pip</a>, the Python package manager.
-If not, we recommend using <a href="#with-docker">docker</a>.</p>
 <h2 id="installation">Installation<a class="headerlink" href="#installation" title="Permanent link">&para;</a></h2>
-<h3 id="with-pip-recommended">with pip <small>recommended</small><a class="headerlink" href="#with-pip-recommended" title="Permanent link">&para;</a></h3>
+<h3 id="with-pip-recommended">with pip, <small>recommended</small><a class="headerlink" href="#with-pip-recommended" title="Permanent link">&para;</a></h3>
 <p>The computational tools of the Open-ST workflow are published as a <a href="https://pypi.org/project/openst/">Python package</a>
 and can be installed with <code>pip</code>, ideally by using a <a href="https://realpython.com/what-is-pip/#using-pip-in-a-python-virtual-environment">virtual environment</a>.
 Open up a terminal and install <code>openst</code> with:</p>
@@ -1539,26 +1400,31 @@ usual. This is the expected behavior with osx-64 binaries (Rosetta). Also, you c
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>pip<span class="w"> </span>install<span class="w"> </span>napari
 </span></code></pre></div>
 </div>
+<h3 id="from-git">from git<a class="headerlink" href="#from-git" title="Permanent link">&para;</a></h3>
+<p><code>openst</code> can be directly installed from the source <a href="https://github.com/rajewsky-lab/openst">GitHub repository</a>:
+<div class="language-text highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>git clone https://github.com/rajewsky-lab/openst.git
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a>pip install -e openst
+</span></code></pre></div></p>
 <h3 id="with-docker">with docker<a class="headerlink" href="#with-docker" title="Permanent link">&para;</a></h3>
 <p>The official <a href="https://hub.docker.com/r/rajewsky/openst/">Docker image</a> is a great way to get up and running in a few
 minutes, as it comes with all dependencies pre-installed. Open up a terminal
 and pull the image with:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>rajewsky/openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>pull<span class="w"> </span>rajewsky/openst
 </span></code></pre></div>
 <p>The <code>openst</code> executable is provided as an entry point and <code>serve</code> is the
 default command.</p>
 <p>You can run a terminal for <code>openst</code> by running
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>openst
 </span></code></pre></div></p>
 <p>Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the <code>openst manual_pairwise_aligner</code> tool).
 Follow these steps:</p>
 <ol>
 <li>Install X Server on your host machine if not already installed.</li>
 <li>Allow connections to your X Server by running the following command on your host:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>xhost<span class="w"> </span>+
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>xhost<span class="w"> </span>+
 </span></code></pre></div></li>
 <li>Run the Docker container with the following additional options:
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix<span class="w"> </span>openst
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-e<span class="w"> </span><span class="nv">DISPLAY</span><span class="o">=</span><span class="nv">$DISPLAY</span><span class="w"> </span>-v<span class="w"> </span>/tmp/.X11-unix:/tmp/.X11-unix<span class="w"> </span>openst
 </span></code></pre></div></li>
 </ol>
 <p>Now, you can execute PyQt5-based applications, and the GUI will be displayed on your host machine.</p>
@@ -1568,19 +1434,10 @@ Follow these steps:</p>
 <li>Ensure that the X Server on your host allows connections (xhost +) before running the container,</li>
 <li>Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.</li>
 <li>Remember to close the X Server connections after using the container:
-  <div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>xhost<span class="w"> </span>-
+  <div class="language-sh highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>xhost<span class="w"> </span>-
 </span></code></pre></div></li>
 </ul>
 </div>
-<h3 id="with-git">with git<a class="headerlink" href="#with-git" title="Permanent link">&para;</a></h3>
-<p><code>openst</code> can be directly used from <a href="https://github.com/rajewsky-lab/openst">GitHub</a> by cloning the
-repository into a subfolder of your project root which might be useful if you
-want to use the very latest version:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>git clone https://github.com/rajewsky-lab/openst.git
-</span></code></pre></div>
-<p>Next, install the theme and its dependencies with:</p>
-<div class="language-text highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>pip install -e openst
-</span></code></pre></div>
 
 
 
@@ -1633,13 +1490,13 @@ want to use the very latest version:</p>
         
         
           
-          <a href="../preprocessing_sequencing/" class="md-footer__link md-footer__link--next" aria-label="Next: Preprocessing of sequencing">
+          <a href="../preprocessing_capture_area/" class="md-footer__link md-footer__link--next" aria-label="Next: Preprocessing capture area library">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Preprocessing of sequencing
+                Preprocessing capture area library
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1705,7 +1562,7 @@ want to use the very latest version:</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>

@@ -304,7 +304,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
@@ -682,8 +684,6 @@
       
         
       
-        
-      
     
     
       
@@ -748,11 +748,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../computational/preprocessing_sequencing/" class="md-nav__link">
+      <a href="../../computational/preprocessing_capture_area/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
+    Preprocessing capture area library
   </span>
   
 
@@ -769,11 +769,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../computational/preprocessing_imaging/" class="md-nav__link">
+      <a href="../../computational/preprocessing_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -794,7 +794,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -815,7 +815,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -837,27 +837,6 @@
   
   <span class="md-ellipsis">
     3D reconstruction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../computational/from_spacemake/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    From spacemake
   </span>
   
 
@@ -1014,8 +993,6 @@
       
         
       
-        
-      
     
     
       
@@ -1081,28 +1058,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1123,7 +1079,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1144,7 +1100,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1191,8 +1147,6 @@
   
     
     
-      
-        
       
         
       
@@ -1269,28 +1223,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1311,7 +1244,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1332,7 +1265,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1384,59 +1317,6 @@
                 </div>
               </div>
             
-            
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#quantification" class="md-nav__link">
-    <span class="md-ellipsis">
-      Quantification
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#loading-and-sequencing" class="md-nav__link">
-    <span class="md-ellipsis">
-      Loading and sequencing
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#expected-data-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Expected (data) output
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
             
           
           
@@ -1499,7 +1379,7 @@
 <p>Either when using your own sequencing equipment or relying on a sequencing facility, you will get access
 to (most likely) already <a href="https://knowledge.illumina.com/software/general/software-general-troubleshooting-list/000005982">demultiplexed</a>
 <code>fastq</code> files; otherwise, you can get access to the <em>raw</em> basecall files in <code>bcl</code> <a href="https://support.illumina.com/content/dam/illumina-support/help/Illumina_DRAGEN_Bio_IT_Platform_v3_7_1000000141465/Content/SW/Informatics/Dragen/ToolsiBCL_fDG.htm">format</a>.</p>
-<p>Either of these files shall be used as the input for spacemake <a href="../../computational/preprocessing_sequencing/#processing-of-the-Open-ST-library">later</a>.</p>
+<p>Either of these files shall be used as the input for spacemake <a href="../computational/preprocessing_sequencing.md#processing-of-the-Open-ST-library">later</a>.</p>
 
 
 
@@ -1624,7 +1504,7 @@ to (most likely) already <a href="https://knowledge.illumina.com/software/genera
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>

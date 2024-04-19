@@ -16,7 +16,7 @@
         <link rel="canonical" href="https://open.st/main/examples/adult_mouse/pairwise_alignment/">
       
       
-        <link rel="prev" href="../preprocessing_imaging/">
+        <link rel="prev" href="../preprocessing_sequencing/">
       
       
         <link rel="next" href="../generate_expression_matrix/">
@@ -27,7 +27,7 @@
     
     
       
-        <title>Align image to transcriptome - Open-ST</title>
+        <title>Pairwise alignment - Open-ST</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#align-image-to-transcriptome" class="md-skip">
+        <a href="#pairwise-alignment" class="md-skip">
           Skip to content
         </a>
       
@@ -142,7 +142,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Align image to transcriptome
+              Pairwise alignment
             
           </span>
         </div>
@@ -304,7 +304,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
@@ -605,8 +607,6 @@
       
         
       
-        
-      
     
     
       
@@ -668,11 +668,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../computational/preprocessing_sequencing/" class="md-nav__link">
+      <a href="../../../computational/preprocessing_capture_area/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
+    Preprocessing capture area library
   </span>
   
 
@@ -689,11 +689,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../../../computational/preprocessing_imaging/" class="md-nav__link">
+      <a href="../../../computational/preprocessing_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -714,7 +714,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -735,7 +735,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -757,27 +757,6 @@
   
   <span class="md-ellipsis">
     3D reconstruction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../../computational/from_spacemake/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    From spacemake
   </span>
   
 
@@ -941,8 +920,6 @@
       
         
       
-        
-      
     
     
       
@@ -1011,28 +988,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1062,7 +1018,7 @@
           
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1073,7 +1029,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1095,27 +1051,45 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#coarse-alignment" class="md-nav__link">
+  <a href="#download-and-copy-image-data" class="md-nav__link">
     <span class="md-ellipsis">
-      Coarse alignment
+      Download and copy image data
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#fine-alignment-manual" class="md-nav__link">
+  <a href="#merging-data-modalities" class="md-nav__link">
     <span class="md-ellipsis">
-      Fine alignment (manual)
+      Merging data modalities
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#apply-keypoint-transformation-to-coarse-alignment" class="md-nav__link">
+  <a href="#coarse-pairwise-alignment-auto" class="md-nav__link">
     <span class="md-ellipsis">
-      Apply keypoint transformation to coarse alignment
+      Coarse pairwise alignment (auto)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#fine-pairwise-alignment-manual" class="md-nav__link">
+    <span class="md-ellipsis">
+      Fine pairwise alignment (manual)
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#apply-keypoint-transformation" class="md-nav__link">
+    <span class="md-ellipsis">
+      Apply keypoint transformation
     </span>
   </a>
   
@@ -1141,7 +1115,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1188,8 +1162,6 @@
   
     
     
-      
-        
       
         
       
@@ -1269,28 +1241,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1311,7 +1262,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1332,7 +1283,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1385,59 +1336,6 @@
               </div>
             
             
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#coarse-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Coarse alignment
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#fine-alignment-manual" class="md-nav__link">
-    <span class="md-ellipsis">
-      Fine alignment (manual)
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#apply-keypoint-transformation-to-coarse-alignment" class="md-nav__link">
-    <span class="md-ellipsis">
-      Apply keypoint transformation to coarse alignment
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           
             <div class="md-content" data-md-component="content">
@@ -1462,80 +1360,95 @@
   
 
 
-<h1 id="align-image-to-transcriptome">Align image to transcriptome<a class="headerlink" href="#align-image-to-transcriptome" title="Permanent link">&para;</a></h1>
+<h1 id="pairwise-alignment">Pairwise alignment<a class="headerlink" href="#pairwise-alignment" title="Permanent link">&para;</a></h1>
 <p>In the previous step, the transcriptomic reads were processed and mapped in tissue space with <code>spacemake</code>.
 Now, we perform a pairwise alignment between the imaging and spatial transcriptomics modality, such that
 we can later aggregate transcripts into individual cells delimited by the segmentation mask.</p>
 <p>We will illustrate how to do this in a semiautomatic manner: that is, running the coarse alignment in
 an automatic fashion, and the fine alignment (to fiducial marks) via GUI, in a manual manner. Although we
 provide models for fiducial feature detection, the accuracy might be affected by the type of microscope,
-imaging strategy, tissue type and width... Thus, manual fine alignment is a good option. Thanks to the
-GUI specifically designed for this task, the necessary amount of time invested is reasonable
-(~5 minutes per sample consisting of 12 tiles).</p>
-<h2 id="coarse-alignment">Coarse alignment<a class="headerlink" href="#coarse-alignment" title="Permanent link">&para;</a></h2>
-<p>We assume that you have the single <code>h5ad</code> file that contains all the tiles for the experiment (you got it automatically
-from <code>spacemake</code>, or you followed the <a href="../preprocessing_sequencing/#expected-output">stitching instructions</a>).</p>
-<p>Now, make sure of two things:
-1. You have an environment where the <code>openst</code> package is installed (we recommend doing this
-in an environment different to the one used for <code>spacemake</code>).
-1. You are in the <code>/home/user/openst_adult_demo</code> folder (or similar, depending on your system, username...)</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>mkdir<span class="w"> </span>alignment
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a>cp<span class="w"> </span>projects/openst_demo/processed_data/openst_demo_adult_mouse/illumina/complete_data/dge/dge.all.polyA_adapter_trimmed.mm_included.spatial_beads_puck_collection.h5ad<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="c1"># download the image data</span>
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a>wget<span class="w"> </span><span class="s2">&quot;http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif&quot;</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a>
-</span><span id="__span-0-8"><a id="__codelineno-0-8" name="__codelineno-0-8" href="#__codelineno-0-8"></a>openst<span class="w"> </span>merge_modalities<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-9"><a id="__codelineno-0-9" name="__codelineno-0-9" href="#__codelineno-0-9"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-10"><a id="__codelineno-0-10" name="__codelineno-0-10" href="#__codelineno-0-10"></a><span class="w">    </span>--image-in<span class="w"> </span>adult_mouse_hippocampus.tif
-</span><span id="__span-0-11"><a id="__codelineno-0-11" name="__codelineno-0-11" href="#__codelineno-0-11"></a>
-</span><span id="__span-0-12"><a id="__codelineno-0-12" name="__codelineno-0-12" href="#__codelineno-0-12"></a>openst<span class="w"> </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-13"><a id="__codelineno-0-13" name="__codelineno-0-13" href="#__codelineno-0-13"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-14"><a id="__codelineno-0-14" name="__codelineno-0-14" href="#__codelineno-0-14"></a><span class="w">    </span>--only-coarse<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-15"><a id="__codelineno-0-15" name="__codelineno-0-15" href="#__codelineno-0-15"></a><span class="w">    </span>--device<span class="w"> </span>cuda
+imaging strategy, tissue type and width... Thus, manual fine alignment is a good option. This can be done
+very quickly thanks to the GUI specifically designed for this task (~5 minutes per sample of 12 tiles).</p>
+<h2 id="download-and-copy-image-data">Download and copy image data<a class="headerlink" href="#download-and-copy-image-data" title="Permanent link">&para;</a></h2>
+<p>For this dataset, we archived the <a href="https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif">stitched tile-scan image</a>. 
+This single image was generated from multiple, independently imaged tiles, by leveraging <code>openst image_stitch</code>. So, 
+you don't need to use this command, since we already provide the stitched image. Anyway, let us know
+if you want access to this tile images, in case you want to try.</p>
+<p>As well, the imaging from this dataset did not require any further postprocessing prior to segmentation,
+as visual inspection of the images did not reveal any strong illumination or focus biases. </p>
+<p><img alt="H&amp;E staining of adult mouse hippocampus (Open-ST)" loading="lazy" src="../../../static/img/adult_mouse_histology.webp" width="300" /></p>
+<p>You can download the image data from the link above</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>wget<span class="w"> </span><span class="s2">&quot;https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif&quot;</span>
 </span></code></pre></div>
-<p>This will create the file <code>alignment/spatial_beads_adult_mouse.h5ad</code>, that hopefully contains a proper coarse alignment of the two modalities (at low resolution). </p>
+<p>and then copy it into relevant path, for example:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>mkdir<span class="w"> </span>spacemake_folder/projects/openst_demo/processed_data/openst_demo_adult_mouse/imaging
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a>cp<span class="w"> </span>adult_mouse_hippocampus.tif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">    </span>spacemake_folder/projects/openst_demo/processed_data/openst_demo_adult_mouse/imaging/Image_Stitched_Composite.tif
+</span></code></pre></div>
+<p>the final folder structure should look like:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>spacemake_folder
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="sb">`</span>--<span class="w"> </span>projects
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span><span class="sb">`</span>--<span class="w"> </span>openst_demo
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">        </span><span class="sb">`</span>--<span class="w"> </span>processed_data
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">            </span><span class="sb">`</span>--<span class="w"> </span>openst_demo_adult_mouse
+</span><span id="__span-2-6"><a id="__codelineno-2-6" name="__codelineno-2-6" href="#__codelineno-2-6"></a><span class="w">                </span><span class="sb">`</span>--<span class="w"> </span>imaging
+</span><span id="__span-2-7"><a id="__codelineno-2-7" name="__codelineno-2-7" href="#__codelineno-2-7"></a><span class="w">                    </span><span class="sb">`</span>--<span class="w"> </span>Image_Stitched_Composite.tif
+</span></code></pre></div>
+<h2 id="merging-data-modalities">Merging data modalities<a class="headerlink" href="#merging-data-modalities" title="Permanent link">&para;</a></h2>
+<p>From the relevant <code>spacemake</code> main folder, merge both transcriptomics and imaging modalities</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">    </span>--project-id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">    </span>--sample-id<span class="w"> </span>openst_demo_adult_mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">    </span>merge_modalities
+</span></code></pre></div>
+<h2 id="coarse-pairwise-alignment-auto">Coarse pairwise alignment (auto)<a class="headerlink" href="#coarse-pairwise-alignment-auto" title="Permanent link">&para;</a></h2>
+<p>Once the two modalities have been merged, you can run automatic alignment. Here we only run coarse (<code>--only-coarse</code>),
+so we can showcase how to do manual refinement with the GUI.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--project-id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--sample-id<span class="w"> </span>openst_demo_adult_mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>--only-coarse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-6"><a id="__codelineno-4-6" name="__codelineno-4-6" href="#__codelineno-4-6"></a><span class="w">    </span>--device<span class="w"> </span>cuda
+</span></code></pre></div>
 <div class="admonition note">
 <p class="admonition-title">Note</p>
 <p>For this image data, and the spatial coordinates after alignment, the conversion factor to physical distance is <strong>1 pixel = 0.345 µm</strong>.</p>
 </div>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p>From <code>openst&gt;=0.0.7</code>, there is <code>openst from_spacemake</code> to populate the data input/output arguments automatically, and keep the processing inside the <code>spacemake</code> folder structure. You can read more in the <a href="../../../computational/from_spacemake/">tutorial</a>.</p>
-</div>
-<h2 id="fine-alignment-manual">Fine alignment (manual)<a class="headerlink" href="#fine-alignment-manual" title="Permanent link">&para;</a></h2>
-<p>You will now visually asses it and refine the previous coarse alignment using the provided GUI tool. 
-From the terminal, run:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>manual_pairwise_aligner
+<h2 id="fine-pairwise-alignment-manual">Fine pairwise alignment (manual)<a class="headerlink" href="#fine-pairwise-alignment-manual" title="Permanent link">&para;</a></h2>
+<p>Now you can assess the pairwise alignment visually, and refine it using the provided GUI tool. </p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">    </span>--project-id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">    </span>--sample-id<span class="w"> </span>openst_demo_adult_mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">    </span>manual_pairwise_aligner<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">    </span>--spatial-key<span class="w"> </span>obsm/spatial_pairwise_aligned_coarse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-6"><a id="__codelineno-5-6" name="__codelineno-5-6" href="#__codelineno-5-6"></a><span class="w">    </span>--image-key<span class="w"> </span>uns/spatial_pairwise_aligned/staining_image_transformed
 </span></code></pre></div>
-<p>Then, follow these instructions on the GUI, by pressing the <em>buttons</em>:</p>
+<p>Then, follow the following steps:</p>
 <ol>
-<li>Click on <em>Load h5ad</em> and browse to the location where the <code>spatial_beads_adult_mouse.h5ad</code> file
-is located. Select it and click <em>Open</em>. </li>
-<li>Go to <em>Data properties</em>, then click under <em>Image data</em>, and select from the tree <code>uns&gt;spatial_pairwise_aligned&gt;staining_image_transformed</code>. Click <em>Ok</em>.</li>
-<li>Click under <em>Spatial coordinates</em>, and select from the tree <code>obsm/spatial_pairwise_aligned_coarse</code>. Click <em>Ok</em>.</li>
-<li>Go to rendering settings, and keep in mind the <em>Threshold counts</em> parameter.</li>
-<li>Now select the <em>all_tiles_coarse</em> option from the <em>Layer selector</em>, and click on <em>Render</em>. You will see the staining image on the upper left,
+<li>Select the <em>all_tiles_coarse</em> layer from the <em>Layer selector</em>, and click on <em>Render</em>. You will see the staining image on the upper left,
    the transcriptomic image on the top right, and the merge on the bottom left. These two modalities should <em>roughly</em> match. If not, you would need to
-   run the coarse alignment in manual mode, too.</li>
-<li>Once you've checked that the coarse alignment is fine, start selecting the layer 0, and click <em>Render</em>.</li>
-<li>Now, you need to select the pairs of corresponding fiducial markers on both modalities (top left and top right) by double clicking on the left image, first, and on the right image, second. You can drag the points to new locations, zoom into the images with the mouse wheel, pan the image by holding the mouse right cursor and moving, and remove the points by pressing backspace on your keyboard.</li>
-<li>You need to select at least 2 pairs of points per layer. Don't forget to click on <em>Render</em> after you select a new layer (e.g., 1, 2, 3...) so it displays. Also, you can preview how the alignment will look like after transformation by pressing <em>Preview alignment</em>. This will update the merge view (bottom left). You can change the opacity of the merge images under <em>Rendering settings</em>, by adjusting the Image A/B opacity sliders. Also, if you don't see a lot of signal in the transcriptomic pseudoimage, try decreasing the <em>Threshold counts</em> and <em>Pseudoimage size</em> values. Per tile (layer), adjust the keypoints until you get a good alignment as many times as necessary.</li>
-<li>Once you've finished, go under <em>Keypoint properties</em> and click on <em>Save keypoints</em>. Go to the <code>alignment</code> folder under <code>openst_adult_demo</code>, and save the file as <code>openst_adult_demo_fine_keypoints</code>.</li>
+   run the coarse (low-res) alignment in manual mode, too.</li>
+<li>If the coarse alignment looks good, select layer '0' and click <em>Render</em>.</li>
+<li>Select pairs of corresponding fiducial markers (at least 3) on both modalities by double clicking on the left image, first, and on the right image, second. You can drag the points to new locations, zoom into the images with the mouse wheel, pan the image by holding the mouse right cursor and moving, and remove the points by pressing backspace on your keyboard. You can preview how the alignment will look like after transformation by pressing <em>Preview alignment</em>.</li>
+<li>Repeat from 2, but selecting a new layer every time ('1', '2', ...).</li>
+<li>Once you've finished with all tiles, go under <em>Keypoint properties</em> and click <em>Save keypoints</em> as <code>keypoints.json</code>.</li>
 </ol>
-<p>Great! You have just created a file with the corresponding points between the respective coordinate systems of
-the spatial trancriptome and image modalities. </p>
-<h2 id="apply-keypoint-transformation-to-coarse-alignment">Apply keypoint transformation to coarse alignment<a class="headerlink" href="#apply-keypoint-transformation-to-coarse-alignment" title="Permanent link">&para;</a></h2>
-<p>Now, you need to run a program that takes the <code>h5ad</code> file with the
-coarse alignment, and the keypoints file, to perform the fine alignment:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>apply_transform<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>alignment/openst_adult_demo_fine_keypoints.json<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">    </span>--h5-in<span class="w"> </span>alignment/spatial_beads_adult_mouse.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">    </span>--per-tile
+<p>With this, you have created a <code>keypoints.json</code> file containing pairs of corresponding points between the
+spatial trancriptome and image modalities. </p>
+<h2 id="apply-keypoint-transformation">Apply keypoint transformation<a class="headerlink" href="#apply-keypoint-transformation" title="Permanent link">&para;</a></h2>
+<p>Then, compute apply the rigid transformations to the coarsely aligned spatial coordinates:</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">    </span>--project-id<span class="w"> </span>openst_demo<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">    </span>--sample-id<span class="w"> </span>openst_demo_adult_mouse<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">    </span>apply_transform<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">    </span>--keypoints-in<span class="w"> </span>keypoints.json<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-6"><a id="__codelineno-6-6" name="__codelineno-6-6" href="#__codelineno-6-6"></a><span class="w">    </span>--spatial-key-out<span class="w"> </span>obsm/spatial_manual_fine<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-7"><a id="__codelineno-6-7" name="__codelineno-6-7" href="#__codelineno-6-7"></a><span class="w">    </span>--per-tile
 </span></code></pre></div>
-<p>After this, no file will be created nor removed; the coordinates of the fine alignment will be added to the existing
-<code>spatial_beads_adult_mouse.h5ad</code> file.</p>
+<p>The <code>--per-tile</code> is important to perform this operation per tile. Otherwise, <code>apply_transform</code> will assume
+that the transform needs to be done for all coordinates, and will expect that you have selected corresponding
+keypoints for the layer <em>all_tiles_coarse</em>.</p>
 <p>That's it! Now you're ready to go to the next step.</p>
 
 
@@ -1572,7 +1485,7 @@ coarse alignment, and the keypoints file, to perform the fine alignment:</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../preprocessing_imaging/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Preprocessing of imaging">
+          <a href="../preprocessing_sequencing/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Preprocessing transcriptomic library">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1582,20 +1495,20 @@ coarse alignment, and the keypoints file, to perform the fine alignment:</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Preprocessing of imaging
+                Preprocessing transcriptomic library
               </div>
             </div>
           </a>
         
         
           
-          <a href="../generate_expression_matrix/" class="md-footer__link md-footer__link--next" aria-label="Next: Generating a cell-by-gene matrix">
+          <a href="../generate_expression_matrix/" class="md-footer__link md-footer__link--next" aria-label="Next: Segmentation and single-cell quantification">
             <div class="md-footer__title">
               <span class="md-footer__direction">
                 Next
               </span>
               <div class="md-ellipsis">
-                Generating a cell-by-gene matrix
+                Segmentation and single-cell quantification
               </div>
             </div>
             <div class="md-footer__button md-icon">
@@ -1661,7 +1574,7 @@ coarse alignment, and the keypoints file, to perform the fine alignment:</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.integrate"], "search": "../../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../../assets/javascripts/bundle.3220b9d7.min.js"></script>

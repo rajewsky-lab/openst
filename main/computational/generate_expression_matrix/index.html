@@ -27,7 +27,7 @@
     
     
       
-        <title>Generating a cell-by-gene matrix - Open-ST</title>
+        <title>Segmentation and single-cell quantification - Open-ST</title>
       
     
     
@@ -87,7 +87,7 @@
     <div data-md-component="skip">
       
         
-        <a href="#generating-a-cell-by-gene-matrix" class="md-skip">
+        <a href="#segmentation-and-single-cell-quantification" class="md-skip">
           Skip to content
         </a>
       
@@ -142,7 +142,7 @@
         <div class="md-header__topic" data-md-component="header-topic">
           <span class="md-ellipsis">
             
-              Generating a cell-by-gene matrix
+              Segmentation and single-cell quantification
             
           </span>
         </div>
@@ -304,7 +304,9 @@
   
 
 
-<nav class="md-nav md-nav--primary md-nav--lifted" aria-label="Navigation" data-md-level="0">
+  
+
+<nav class="md-nav md-nav--primary md-nav--lifted md-nav--integrated" aria-label="Navigation" data-md-level="0">
   <label class="md-nav__title" for="__drawer">
     <a href="../.." title="Open-ST" class="md-nav__button md-logo" aria-label="Open-ST" data-md-component="logo">
       
@@ -615,8 +617,6 @@
       
         
       
-        
-      
     
     
       
@@ -681,11 +681,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../preprocessing_sequencing/" class="md-nav__link">
+      <a href="../preprocessing_capture_area/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
+    Preprocessing capture area library
   </span>
   
 
@@ -702,11 +702,11 @@
   
   
     <li class="md-nav__item">
-      <a href="../preprocessing_imaging/" class="md-nav__link">
+      <a href="../preprocessing_openst_library/" class="md-nav__link">
         
   
   <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -727,7 +727,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -757,7 +757,7 @@
           
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -768,7 +768,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -790,18 +790,27 @@
     <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
       
         <li class="md-nav__item">
-  <a href="#segmentation-of-staining-image" class="md-nav__link">
+  <a href="#cell-segmentation-from-tissue-image" class="md-nav__link">
     <span class="md-ellipsis">
-      Segmentation of staining image
+      Cell segmentation from tissue image
     </span>
   </a>
   
 </li>
       
         <li class="md-nav__item">
-  <a href="#assigning-transcripts-to-segmented-cells" class="md-nav__link">
+  <a href="#quality-control-of-segmentation" class="md-nav__link">
     <span class="md-ellipsis">
-      Assigning transcripts to segmented cells
+      Quality control of segmentation
+    </span>
+  </a>
+  
+</li>
+      
+        <li class="md-nav__item">
+  <a href="#single-cell-quantification" class="md-nav__link">
+    <span class="md-ellipsis">
+      Single-cell quantification
     </span>
   </a>
   
@@ -837,27 +846,6 @@
   
   <span class="md-ellipsis">
     3D reconstruction
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../from_spacemake/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    From spacemake
   </span>
   
 
@@ -1014,8 +1002,6 @@
       
         
       
-        
-      
     
     
       
@@ -1081,28 +1067,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/adult_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1123,7 +1088,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1144,7 +1109,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1191,8 +1156,6 @@
   
     
     
-      
-        
       
         
       
@@ -1269,28 +1232,7 @@
         
   
   <span class="md-ellipsis">
-    Preprocessing of sequencing
-  </span>
-  
-
-      </a>
-    </li>
-  
-
-              
-            
-              
-                
-  
-  
-  
-  
-    <li class="md-nav__item">
-      <a href="../../examples/e13_mouse/preprocessing_imaging/" class="md-nav__link">
-        
-  
-  <span class="md-ellipsis">
-    Preprocessing of imaging
+    Preprocessing transcriptomic library
   </span>
   
 
@@ -1311,7 +1253,7 @@
         
   
   <span class="md-ellipsis">
-    Align image to transcriptome
+    Pairwise alignment
   </span>
   
 
@@ -1332,7 +1274,7 @@
         
   
   <span class="md-ellipsis">
-    Generating a cell-by-gene matrix
+    Segmentation and single-cell quantification
   </span>
   
 
@@ -1385,59 +1327,6 @@
               </div>
             
             
-              
-              <div class="md-sidebar md-sidebar--secondary" data-md-component="sidebar" data-md-type="toc" >
-                <div class="md-sidebar__scrollwrap">
-                  <div class="md-sidebar__inner">
-                    
-
-<nav class="md-nav md-nav--secondary" aria-label="Table of contents">
-  
-  
-  
-    
-  
-  
-    <label class="md-nav__title" for="__toc">
-      <span class="md-nav__icon md-icon"></span>
-      Table of contents
-    </label>
-    <ul class="md-nav__list" data-md-component="toc" data-md-scrollfix>
-      
-        <li class="md-nav__item">
-  <a href="#segmentation-of-staining-image" class="md-nav__link">
-    <span class="md-ellipsis">
-      Segmentation of staining image
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#assigning-transcripts-to-segmented-cells" class="md-nav__link">
-    <span class="md-ellipsis">
-      Assigning transcripts to segmented cells
-    </span>
-  </a>
-  
-</li>
-      
-        <li class="md-nav__item">
-  <a href="#expected-output" class="md-nav__link">
-    <span class="md-ellipsis">
-      Expected output
-    </span>
-  </a>
-  
-</li>
-      
-    </ul>
-  
-</nav>
-                  </div>
-                </div>
-              </div>
-            
           
           
             <div class="md-content" data-md-component="content">
@@ -1462,82 +1351,136 @@
   
 
 
-<h1 id="generating-a-cell-by-gene-matrix">Generating a cell-by-gene matrix<a class="headerlink" href="#generating-a-cell-by-gene-matrix" title="Permanent link">&para;</a></h1>
-<p>After pairwise alignment, the same coordinate system is shared between the spatial barcodes and the
-staining images. </p>
-<p>However, analysis (e.g., clustering, pseudotime, DGE...) is performed on single cells, not on individual capture areas 
-(0.6 μm in the current version of the protocol).</p>
-<p>So, we show how to aggregate the <span class="arithmatex">\(N\times G\)</span> matrix (<span class="arithmatex">\(N\)</span> spots; <span class="arithmatex">\(G\)</span> genes)
-into a <span class="arithmatex">\(M\times G\)</span> matrix (<span class="arithmatex">\(M\)</span> segmented cells; <span class="arithmatex">\(G\)</span> genes), where <span class="arithmatex">\(N\)</span> maps to <span class="arithmatex">\(M\)</span> via the segmentation mask.</p>
-<h2 id="segmentation-of-staining-image">Segmentation of staining image<a class="headerlink" href="#segmentation-of-staining-image" title="Permanent link">&para;</a></h2>
-<p>To create such a spatial cell-by-gene (<span class="arithmatex">\(M\times G\)</span>) expression matrix, you will first need a segmentation mask.</p>
-<p>We efficiently segment cells (or nuclei) from staining images using <a href="https://github.com/MouseLand/cellpose">cellpose</a>.
-We provide a model that we fine-tuned for segmentation of fresh-frozen, H&amp;E-stained tissue,
-<a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">here</a>.
-You can specify any other model that works best for your data -
-refer to the <a href="https://cellpose.readthedocs.io/en/latest/index.html">cellpose</a> documentation.</p>
-<p><div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\ </span><span class="c1"># after running the pairwise alignment</span>
-</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">    </span>--image-in<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">    </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">    </span>--model<span class="w"> </span>HE_cellpose_rajewsky
-</span><span id="__span-0-6"><a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="c1"># --device cuda \ # uses GPU for segmentation, if available</span>
-</span><span id="__span-0-7"><a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="w">    </span><span class="c1"># --chunked \ # specify if you run out of GPU memory - segments in chunks</span>
+<h1 id="segmentation-and-single-cell-quantification">Segmentation and single-cell quantification<a class="headerlink" href="#segmentation-and-single-cell-quantification" title="Permanent link">&para;</a></h1>
+<p>Once the ST and imaging modalities <a href="../pairwise_alignment/#option-a-automated-alignment">have been aligned</a>, 
+you can segment the images into single cells/nuclei, and then aggregate the spot locations into individual cells 
+for subsequent analysis.</p>
+<h2 id="cell-segmentation-from-tissue-image">Cell segmentation from tissue image<a class="headerlink" href="#cell-segmentation-from-tissue-image" title="Permanent link">&para;</a></h2>
+<p>Let's create a new Open-ST h5 object containing a cell-by-gene expression matrix. First, you will need a cell 
+(or nuclear) segmentation mask.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-2"><a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-3"><a id="__codelineno-0-3" name="__codelineno-0-3" href="#__codelineno-0-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-4"><a id="__codelineno-0-4" name="__codelineno-0-4" href="#__codelineno-0-4"></a><span class="w">     </span>segment<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-0-5"><a id="__codelineno-0-5" name="__codelineno-0-5" href="#__codelineno-0-5"></a><span class="w">     </span>--model<span class="w"> </span>HE_cellpose_rajewsky<span class="w"> </span><span class="c1"># default model for segmentation of H&amp;E images</span>
 </span></code></pre></div>
-By default, segmentation is extended radially 10 pixels. This can be changed with the argument <code>--dilate-px</code>.</p>
-<p>Make sure to populate the arguments with the values specific to your dataset. Here, we provide <code>--h5-in</code> consistent
-with the previous steps, <code>--image-in</code> and <code>--mask-out</code> will read and write the staining and mask inside the Open-ST h5 object,
-and <code>--model</code> is <code>HE_cellpose_rajewsky</code>, the default used in our manuscript. This is the model we recommend for H&amp;E images, and
-weights are automatically downloaded. It is also <a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">provided in our repo</a>.
-The rest of parameters can be checked with <code>openst segment --help</code>.</p>
-<div class="admonition tip">
-<p class="admonition-title">Tip</p>
-<p><strong>If your sample also contains very large cells</strong> (e.g., adipocytes) that are not segmented with the previous parameters,
- you can perform a second segmentation with a cellpose model, adjusting the diameter parameter.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">     </span>--image-in<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask_large<span class="w"> </span><span class="se">\</span>
+<div class="tabbed-set tabbed-alternate" data-tabs="1:2"><input checked="checked" id="cell-segmentation-from-tissue-image-from-semiautomatic-alignment" name="__tabbed_1" type="radio" /><input id="cell-segmentation-from-tissue-image-from-manual-alignment" name="__tabbed_1" type="radio" /><div class="tabbed-labels"><label for="cell-segmentation-from-tissue-image-from-semiautomatic-alignment">From (semi)automatic alignment</label><label for="cell-segmentation-from-tissue-image-from-manual-alignment">From manual alignment</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-1-1"><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-2"><a id="__codelineno-1-2" name="__codelineno-1-2" href="#__codelineno-1-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-3"><a id="__codelineno-1-3" name="__codelineno-1-3" href="#__codelineno-1-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-1-4"><a id="__codelineno-1-4" name="__codelineno-1-4" href="#__codelineno-1-4"></a><span class="w">     </span>segment<span class="w"> </span><span class="se">\</span>
 </span><span id="__span-1-5"><a id="__codelineno-1-5" name="__codelineno-1-5" href="#__codelineno-1-5"></a><span class="w">     </span>--model<span class="w"> </span>HE_cellpose_rajewsky<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">     </span>--dilate-px<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
-</span><span id="__span-1-7"><a id="__codelineno-1-7" name="__codelineno-1-7" href="#__codelineno-1-7"></a><span class="w">     </span>--diameter<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="c1"># diameter for the larger cell type</span>
+</span><span id="__span-1-6"><a id="__codelineno-1-6" name="__codelineno-1-6" href="#__codelineno-1-6"></a><span class="w">     </span>--image-in<span class="w"> </span>uns/spatial_pairwise_aligned/staining_image_transformed
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>segment<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">     </span>--model<span class="w"> </span>HE_cellpose_rajewsky
+</span></code></pre></div>
+</div>
+</div>
+</div>
+<p>We segment cells (or nuclei) from staining images using <a href="https://github.com/MouseLand/cellpose">cellpose</a>.
+We provide a model that we fine-tuned for segmentation of fresh-frozen, H&amp;E-stained tissue,
+<a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">here</a>, but you can use
+any other model (e.g., pretrained from cellpose, like <code>cyto2</code> or <code>nuclei</code>, or your own).
+Also, by default, segmentation is extended radially 10 pixels (see <code>--dilate-px</code>), to account for cytoplasm surrounding
+the nucleus as a first approximation of cell shape (might hold or not depending on the tissue).</p>
+<details class="question">
+<summary>I want to segment very small and very large cells...</summary>
+<p>You can perform an additional round of segmentation by, e.g., adjusting the diameter parameter.</p>
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-4"><a id="__codelineno-3-4" name="__codelineno-3-4" href="#__codelineno-3-4"></a><span class="w">     </span>segment<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-5"><a id="__codelineno-3-5" name="__codelineno-3-5" href="#__codelineno-3-5"></a><span class="w">     </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask_large<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-6"><a id="__codelineno-3-6" name="__codelineno-3-6" href="#__codelineno-3-6"></a><span class="w">     </span>--dilate-px<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-7"><a id="__codelineno-3-7" name="__codelineno-3-7" href="#__codelineno-3-7"></a><span class="w">     </span>--diameter<span class="w"> </span><span class="m">50</span><span class="w"> </span><span class="c1"># diameter for the larger cell type</span>
 </span></code></pre></div>
 <p>In this case, we changed <code>--mask-out</code> to a different key, so we can keep both masks inside the Open-ST h5 object.</p>
 <p>Then, you can combine the segmentation masks of both diameter configurations.
  This command will apply an "AND" between all images, to only preserve mask of non-overlapping,
  with the hierarchy provided in the <code>--image-in</code> argument (first has higher priority).</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>segment_merge<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span>uns/spatial/staining_image_mask_large
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask_combined
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>segment_merge<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">     </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span>uns/spatial/staining_image_mask_large
+</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">     </span>--mask-out<span class="w"> </span>uns/spatial/staining_image_mask_combined
+</span></code></pre></div>
+</details>
+<h2 id="quality-control-of-segmentation">Quality control of segmentation<a class="headerlink" href="#quality-control-of-segmentation" title="Permanent link">&para;</a></h2>
+<p>You can assess the quality of segmentation with <code>openst preview</code>:</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="2:2"><input checked="checked" id="quality-control-of-segmentation-from-semiautomatic-alignment" name="__tabbed_2" type="radio" /><input id="quality-control-of-segmentation-from-manual-alignment" name="__tabbed_2" type="radio" /><div class="tabbed-labels"><label for="quality-control-of-segmentation-from-semiautomatic-alignment">From (semi)automatic alignment</label><label for="quality-control-of-segmentation-from-manual-alignment">From manual alignment</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-5-1"><a id="__codelineno-5-1" name="__codelineno-5-1" href="#__codelineno-5-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-2"><a id="__codelineno-5-2" name="__codelineno-5-2" href="#__codelineno-5-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-3"><a id="__codelineno-5-3" name="__codelineno-5-3" href="#__codelineno-5-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-4"><a id="__codelineno-5-4" name="__codelineno-5-4" href="#__codelineno-5-4"></a><span class="w">     </span>preview<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-5-5"><a id="__codelineno-5-5" name="__codelineno-5-5" href="#__codelineno-5-5"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial_pairwise_aligned/staining_image_transformed<span class="w"> </span>uns/spatial/staining_image_mask
 </span></code></pre></div>
 </div>
-<p>You can assess the quality of the segmentation mask using <code>openst preview</code>, which leverages <code>napari</code> for visualization:</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>preview<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span>uns/spatial/staining_image_mask
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-2"><a id="__codelineno-6-2" name="__codelineno-6-2" href="#__codelineno-6-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-3"><a id="__codelineno-6-3" name="__codelineno-6-3" href="#__codelineno-6-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-4"><a id="__codelineno-6-4" name="__codelineno-6-4" href="#__codelineno-6-4"></a><span class="w">     </span>preview<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-6-5"><a id="__codelineno-6-5" name="__codelineno-6-5" href="#__codelineno-6-5"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span>uns/spatial/staining_image_mask
 </span></code></pre></div>
-<p>This will create a <code>napari</code> window with two image layers. We recommend changing the mask <em>image</em> layer into a
+</div>
+</div>
+</div>
+<p>This will create a <code>napari</code> window with two image layers. Change the mask <em>image</em> layer into a
 <a href="https://napari.org/stable/howtos/layers/labels.html"><em>label</em> layer</a>, which is designed for <em>displaying each integer (ID
 from the segmentation mask) as a different random color, with background rendered as transparent</em>.</p>
-<h2 id="assigning-transcripts-to-segmented-cells">Assigning transcripts to segmented cells<a class="headerlink" href="#assigning-transcripts-to-segmented-cells" title="Permanent link">&para;</a></h2>
-<p>Now, we aggregate the initial <span class="arithmatex">\(N\times G\)</span> matrix into an <span class="arithmatex">\(M\times G\)</span> matrix,
-where <span class="arithmatex">\(N\)</span> maps to <span class="arithmatex">\(M\)</span> via the segmentation mask.</p>
-<p>This step allows you to associate capture spots with segmented cells.</p>
-<div class="language-sh highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>transcript_assign<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">    </span>--h5-in<span class="w"> </span>spatial_stitched_spots.h5ad<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">    </span>--spatial-key<span class="w"> </span>obsm/spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-4"><a id="__codelineno-4-4" name="__codelineno-4-4" href="#__codelineno-4-4"></a><span class="w">    </span>--mask-in<span class="w"> </span>uns/spatial/staining_image_mask<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-4-5"><a id="__codelineno-4-5" name="__codelineno-4-5" href="#__codelineno-4-5"></a><span class="w">    </span>--h5-out<span class="w"> </span>spatial_per_segmented_cell.h5ad
+<p>If you are satistied with the quality of the segmentation, <strong>you are all set to continue with single-cell quantification</strong>.</p>
+<h2 id="single-cell-quantification">Single-cell quantification<a class="headerlink" href="#single-cell-quantification" title="Permanent link">&para;</a></h2>
+<p>Then, you can create a single file containing the transcriptomic information aggregated into (segmented) single-cells.</p>
+<div class="tabbed-set tabbed-alternate" data-tabs="3:3"><input checked="checked" id="single-cell-quantification-from-automatic-alignment" name="__tabbed_3" type="radio" /><input id="single-cell-quantification-from-semiautomatic-alignment" name="__tabbed_3" type="radio" /><input id="single-cell-quantification-from-manual-alignment" name="__tabbed_3" type="radio" /><div class="tabbed-labels"><label for="single-cell-quantification-from-automatic-alignment">From automatic alignment</label><label for="single-cell-quantification-from-semiautomatic-alignment">From semiautomatic alignment</label><label for="single-cell-quantification-from-manual-alignment">From manual alignment</label></div>
+<div class="tabbed-content">
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-7-1"><a id="__codelineno-7-1" name="__codelineno-7-1" href="#__codelineno-7-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-2"><a id="__codelineno-7-2" name="__codelineno-7-2" href="#__codelineno-7-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-3"><a id="__codelineno-7-3" name="__codelineno-7-3" href="#__codelineno-7-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-4"><a id="__codelineno-7-4" name="__codelineno-7-4" href="#__codelineno-7-4"></a><span class="w">     </span>transcript_assign<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-5"><a id="__codelineno-7-5" name="__codelineno-7-5" href="#__codelineno-7-5"></a><span class="w">     </span>--spatial-key<span class="w"> </span>obsm/spatial_pairwise_aligned_fine<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-7-6"><a id="__codelineno-7-6" name="__codelineno-7-6" href="#__codelineno-7-6"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial_pairwise_aligned/staining_image_transformed
 </span></code></pre></div>
-<p>In this case, the argument <code>--mask-in</code> was set to a single mask, but it can be set to the previously 
-introduced <em>combined</em> masks (e.g., <code>--mask-in uns/spatial/staining_image_mask_combined</code>).</p>
+</div>
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-2"><a id="__codelineno-8-2" name="__codelineno-8-2" href="#__codelineno-8-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-3"><a id="__codelineno-8-3" name="__codelineno-8-3" href="#__codelineno-8-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-4"><a id="__codelineno-8-4" name="__codelineno-8-4" href="#__codelineno-8-4"></a><span class="w">     </span>transcript_assign<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-5"><a id="__codelineno-8-5" name="__codelineno-8-5" href="#__codelineno-8-5"></a><span class="w">     </span>--spatial-key<span class="w"> </span>obsm/spatial_manual_fine<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-8-6"><a id="__codelineno-8-6" name="__codelineno-8-6" href="#__codelineno-8-6"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial_pairwise_aligned/staining_image_transformed
+</span></code></pre></div>
+</div>
+<div class="tabbed-block">
+<div class="language-sh highlight"><pre><span></span><code><span id="__span-9-1"><a id="__codelineno-9-1" name="__codelineno-9-1" href="#__codelineno-9-1"></a>openst<span class="w"> </span>from_spacemake<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-2"><a id="__codelineno-9-2" name="__codelineno-9-2" href="#__codelineno-9-2"></a><span class="w">     </span>--project-id<span class="w"> </span>openst_demo_project<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-3"><a id="__codelineno-9-3" name="__codelineno-9-3" href="#__codelineno-9-3"></a><span class="w">     </span>--sample-id<span class="w"> </span>openst_demo_sample<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-4"><a id="__codelineno-9-4" name="__codelineno-9-4" href="#__codelineno-9-4"></a><span class="w">     </span>transcript_assign<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-9-5"><a id="__codelineno-9-5" name="__codelineno-9-5" href="#__codelineno-9-5"></a><span class="w">     </span>--spatial-key<span class="w"> </span>obsm/spatial_manual_fine
+</span></code></pre></div>
+</div>
+</div>
+</div>
 <h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
-<p>After running the steps above, you will have a single <code>h5ad</code> file, containing the transcriptomic information per segmented cell,
-with spatial coordinates compatible with the staining image. The staining image and the segmented image are provided in this object,
+<p>After the steps above, you will have a single <code>h5ad</code> file with transcriptomic information per segmented cell,
+with spatial coordinates aligned to the staining image. The staining image and the segmented image are provided in this object,
 so it is possible to visualize it with <a href="https://github.com/scverse/squidpy">squidpy</a> or <a href="https://github.com/scverse/spatialdata">spatialdata</a>,
 among other tools.</p>
-<p>So, this concludes the preprocessing of 2D spatial transcriptomics and imaging data
+<div class="admonition warning">
+<p class="admonition-title">Warning</p>
+<p>In the Open-ST h5 object, the cell with ID 0 will correspond to the background. Please remove it before
+ proceeding with analysis.</p>
+</div>
+<p>This concludes the preprocessing of 2D spatial transcriptomics and imaging data
 of the Open-ST protocol. Next steps include 3D reconstruction, and
 downstream analysis of nD data.</p>
 
@@ -1575,7 +1518,7 @@ downstream analysis of nD data.</p>
       <nav class="md-footer__inner md-grid" aria-label="Footer" >
         
           
-          <a href="../pairwise_alignment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Align image to transcriptome">
+          <a href="../pairwise_alignment/" class="md-footer__link md-footer__link--prev" aria-label="Previous: Pairwise alignment">
             <div class="md-footer__button md-icon">
               
               <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M20 11v2H8l5.5 5.5-1.42 1.42L4.16 12l7.92-7.92L13.5 5.5 8 11h12Z"/></svg>
@@ -1585,7 +1528,7 @@ downstream analysis of nD data.</p>
                 Previous
               </span>
               <div class="md-ellipsis">
-                Align image to transcriptome
+                Pairwise alignment
               </div>
             </div>
           </a>
@@ -1664,7 +1607,7 @@ downstream analysis of nD data.</p>
     </div>
     
     
-    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.follow"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
+    <script id="__config" type="application/json">{"base": "../..", "features": ["announce.dismiss", "content.action.edit", "content.action.view", "content.code.annotate", "content.code.copy", "content.tooltips", "navigation.footer", "navigation.indexes", "navigation.sections", "navigation.tabs", "navigation.path", "navigation.top", "navigation.tracking", "search.highlight", "search.share", "search.suggest", "toc.integrate"], "search": "../../assets/javascripts/workers/search.b8dbb3d2.min.js", "translations": {"clipboard.copied": "Copied to clipboard", "clipboard.copy": "Copy to clipboard", "search.result.more.one": "1 more on this page", "search.result.more.other": "# more on this page", "search.result.none": "No matching documents", "search.result.one": "1 matching document", "search.result.other": "# matching documents", "search.result.placeholder": "Type to start searching", "search.result.term.missing": "Missing", "select.version": "Select version"}, "version": {"default": "latest", "provider": "mike"}}</script>
     
     
       <script src="../../assets/javascripts/bundle.3220b9d7.min.js"></script>
