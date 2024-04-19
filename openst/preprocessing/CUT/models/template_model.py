@@ -9,15 +9,16 @@ It implements a simple image-to-image translation baseline based on regression l
 Given input-output pairs (data_A, data_B), it learns a network netG that can minimize the following L1 loss:
     min_<netG> ||netG(data_A) - data_B||_1
 You need to implement the following functions:
-    <modify_commandline_options>:　Add model-specific options and rewrite default values for existing options.
+    <modify_commandline_options>: Add model-specific options and rewrite default values for existing options.
     <__init__>: Initialize this model class.
     <set_input>: Unpack input data and perform data pre-processing.
     <forward>: Run forward pass. This will be called by both <optimize_parameters> and <test>.
     <optimize_parameters>: Update network weights; it will be called in every training iteration.
 """
 import torch
-from .base_model import BaseModel
-from . import networks
+
+from openst.preprocessing.CUT.models.base_model import BaseModel
+from openst.preprocessing.CUT.models import networks
 
 
 class TemplateModel(BaseModel):
