@@ -1472,7 +1472,7 @@ into a cell-by-genes matrix, where cells are defined from the segmentation mask.
 <h2 id="segmentation-of-staining-image">Segmentation of staining image<a class="headerlink" href="#segmentation-of-staining-image" title="Permanent link">&para;</a></h2>
 <p>To create such a spatial cell-by-gene (<span class="arithmatex">\(M\times G\)</span>) expression matrix, you will first need a segmentation mask.</p>
 <p>We efficiently segment cells (or nuclei) from staining images using <a href="https://github.com/MouseLand/cellpose">cellpose</a>.
-For the H&amp;E-stained tissue provided in this example, we used our <a href="https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky">fine-tuned model</a>.
+For the H&amp;E-stained tissue provided in this example, we used our <a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">fine-tuned model</a>.
 Make sure to download it and save it into a new <code>models</code> folder that you need to create under the <code>openst_e13_demo</code> main folder.</p>
 <p>You can run the segmentation on the previously created <code>openst_demo_e13_mouse_head_spatial_beads_puck_collection_aligned.h5ad</code> file, which
 contains the spatial transcriptome coordinates and staining image after coarse+fine pairwise alignment.</p>

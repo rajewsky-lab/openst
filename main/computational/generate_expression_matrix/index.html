@@ -1473,7 +1473,7 @@ into a <span class="arithmatex">\(M\times G\)</span> matrix (<span class="arithm
 <p>To create such a spatial cell-by-gene (<span class="arithmatex">\(M\times G\)</span>) expression matrix, you will first need a segmentation mask.</p>
 <p>We efficiently segment cells (or nuclei) from staining images using <a href="https://github.com/MouseLand/cellpose">cellpose</a>.
 We provide a model that we fine-tuned for segmentation of fresh-frozen, H&amp;E-stained tissue,
-<a href="https://github.com/danilexn/openst/blob/main/models/HE_cellpose_rajewsky">here</a>.
+<a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">here</a>.
 You can specify any other model that works best for your data -
 refer to the <a href="https://cellpose.readthedocs.io/en/latest/index.html">cellpose</a> documentation.</p>
 <p><div class="language-sh highlight"><pre><span></span><code><span id="__span-0-1"><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>openst<span class="w"> </span>segment<span class="w"> </span><span class="se">\</span>
@@ -1488,7 +1488,7 @@ By default, segmentation is extended radially 10 pixels. This can be changed wit
 <p>Make sure to populate the arguments with the values specific to your dataset. Here, we provide <code>--h5-in</code> consistent
 with the previous steps, <code>--image-in</code> and <code>--mask-out</code> will read and write the staining and mask inside the Open-ST h5 object,
 and <code>--model</code> is <code>HE_cellpose_rajewsky</code>, the default used in our manuscript. This is the model we recommend for H&amp;E images, and
-weights are automatically downloaded. It is also <a href="https://github.com/rajewsky-lab/openst/blob/main/models/HE_cellpose_rajewsky">provided in our repo</a>.
+weights are automatically downloaded. It is also <a href="http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models/HE_cellpose_rajewsky">provided in our repo</a>.
 The rest of parameters can be checked with <code>openst segment --help</code>.</p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>

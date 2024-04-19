@@ -1516,15 +1516,25 @@ to homogeneize the <em>style</em> of the whole tile-scan - that is, reduce possi
 tile-scan. You can run this by running the following command on the stitched image.</p>
 <p><img alt="CUT restoration showcased in the paper" loading="lazy" src="../../static/img/compu_image_preprocessing/preprocessing_CUT.webp" /></p>
 <div class="language-bash highlight"><pre><span></span><code><span id="__span-2-1"><a id="__codelineno-2-1" name="__codelineno-2-1" href="#__codelineno-2-1"></a>openst<span class="w"> </span>image_preprocess<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--input<span class="o">=</span>&lt;path_to_input_image&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>--CUT<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span>--CUT-model<span class="o">=</span>&lt;path_to_model&gt;<span class="w"> </span><span class="se">\</span>
-</span><span id="__span-2-5"><a id="__codelineno-2-5" name="__codelineno-2-5" href="#__codelineno-2-5"></a><span class="w">     </span>--output<span class="o">=</span>&lt;path_to_output&gt;
+</span><span id="__span-2-2"><a id="__codelineno-2-2" name="__codelineno-2-2" href="#__codelineno-2-2"></a><span class="w">     </span>--image-in<span class="w"> </span>Image_Stitched_Composite.tif<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-2-3"><a id="__codelineno-2-3" name="__codelineno-2-3" href="#__codelineno-2-3"></a><span class="w">     </span>--image-out<span class="w"> </span>Image_Stitched_Composite_Restored.tif
+</span><span id="__span-2-4"><a id="__codelineno-2-4" name="__codelineno-2-4" href="#__codelineno-2-4"></a><span class="w">     </span><span class="c1"># --device cuda # in case you have a CUDA-compatible GPU</span>
 </span></code></pre></div>
-<p>Make sure to replace the placeholders (<code>&lt;...&gt;</code>). For instance,
-<code>&lt;path_to_input_image&gt;</code> is the full path and file name of the previously stitched image; <code>&lt;path_to_model&gt;</code>
-is filename our pre-trained <a href="https://github.com/rajewsky-lab/openst/models/CUT.pth">CUT model</a>, and <code>&lt;output_image&gt;</code> 
-is the path to a folder (writeable) and desired filename for the output image.</p>
+<p>If you ran <code>openst merge_modalities</code>, then imaging data will be contained inside the Open-ST h5 object, and the command
+can be adapted:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-3-1"><a id="__codelineno-3-1" name="__codelineno-3-1" href="#__codelineno-3-1"></a>openst<span class="w"> </span>image_preprocess<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-3-2"><a id="__codelineno-3-2" name="__codelineno-3-2" href="#__codelineno-3-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>multimodal/spots_stitched.h5ad<span class="w"> </span><span class="c1"># just a placeholder, adapt</span>
+</span><span id="__span-3-3"><a id="__codelineno-3-3" name="__codelineno-3-3" href="#__codelineno-3-3"></a><span class="w">     </span><span class="c1"># --device cuda # in case you have a CUDA-compatible GPU</span>
+</span></code></pre></div>
+<p>By default, the image will be loaded from the key <code>uns/spatial/staining_image</code>, and the CUT-restored image will be saved
+to <code>uns/spatial/staining_image_restored</code>. You can preview the image restoration results using:</p>
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-4-1"><a id="__codelineno-4-1" name="__codelineno-4-1" href="#__codelineno-4-1"></a>openst<span class="w"> </span>preview<span class="w"> </span><span class="se">\</span>
+</span><span id="__span-4-2"><a id="__codelineno-4-2" name="__codelineno-4-2" href="#__codelineno-4-2"></a><span class="w">     </span>--h5-in<span class="w"> </span>multimodal/spots_stitched.h5ad
+</span><span id="__span-4-3"><a id="__codelineno-4-3" name="__codelineno-4-3" href="#__codelineno-4-3"></a><span class="w">     </span>--image-key<span class="w"> </span>uns/spatial/staining_image<span class="w"> </span>uns/spatial/staining_image_restored
+</span></code></pre></div>
+<p>This will load the two images and visualize it using <code>napari</code>. Later, you can run segmentation and pairwise alignment
+using either the default merged image (<code>uns/spatial/staining_image</code>), or the restored image (<code>uns/spatial/staining_image_restored</code>).
+Always assess these preprocessing choices (quantitatively and qualitatively) to decide whether these make sense for your data.</p>
 <h2 id="expected-output">Expected output<a class="headerlink" href="#expected-output" title="Permanent link">&para;</a></h2>
 <p>After running the stitching (and optionally correction algorithms), you will have a single image file per sample. This, together with
 spatial transcriptomics data from the previous step, will be used in the following to align both modalities, and eventually obtain a
