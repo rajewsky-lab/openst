@@ -25,7 +25,7 @@
         |Sodium chloride NaCl (5M), RNase-free|Invitrogen|Cat#AM9760G|
         |Roti®-Stock 20 % SDS ready-to-use, sterile filtered|Roth|Cat#1057.1|
         |UltraPure 0.5M EDTA, pH 8.0|Life Technologies|Cat#15575020|
-        |Proteinase K (800 mU/uL)|NEB|Cat#P8107S|
+        |Proteinase K (800 mU/μL)|NEB|Cat#P8107S|
         |DNA Polymerase Large Fragment exo- Klenow Fragment (3'-5' exo-)|NEB|Cat#M0212|
         |Ampure XP beads|Beckman coulter|Cat#A63881|
         |Kapa HiFi Hotstart Readymix KK2612|Roche|Cat#7958960001|

@@ -117,8 +117,8 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |0.1M DTT|5mM|5|
 |BSA (20mg/ml)|0.187mg/ml|0.93|
 |10mM dNTP mix|1mM|10|
-|Superscript IV (200U/ul)|6.67 U/uL|3.33|
-|Ribolock(40U/uL)|1U|2.5|
+|Superscript IV (200U/ul)|6.67 U/μL|3.33|
+|Ribolock(40U/μL)|1U|2.5|
 |Ultrapure water| |58.24|
 |**Total**| |**100**|
 
@@ -151,7 +151,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |2M NaCl|200 mM|10|
 |20% SDS|2%|10|
 |0.1M EDTA|5 mM|5|
-|Proteinase K ( 800 mU/uL)|16 mU/uL|2|
+|Proteinase K ( 800 mU/μL)|16 mU/μL|2|
 |Nuclease -free water| |63|
 |**Total**| |**100**|
 
@@ -176,7 +176,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |NEBuffer-2|1x|10|
 |100 uM randomer|10 uM|10|
 |10 mM dNTPs|1 mM|10|
-|Klenow exo (-) Fragment (5 U/uL)|0.5 U/uL|10|
+|Klenow exo (-) Fragment (5 U/μL)|0.5 U/μL|10|
 |Ultrapure water| |60|
 |**Total**| |**100**|
 
@@ -250,7 +250,7 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 |4°C|hold|
 
 1. Prepare the library amplification mix per sample. 
-2. Split each sample mix into four PCR tubes, each with 50 uL volume. 
+2. Split each sample mix into four PCR tubes, each with 50 μL volume. 
 3. Run the PCR with the cycle number determined previously (3.9). 
 4. Pool the 200 μL PCR product per sample and purify using AmpureXP beads at a 1:1 ratio of beads PCR product, following the manufacturer's instructions.
 5. Elute the PCR product in 20 μL ultrapure water. 

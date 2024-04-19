@@ -30,7 +30,7 @@ to create a database of barcode sequences and their spatial locations.
 
 !!! Tip "Tips" 
 
-    - Prepare mixes in excess. ~300 uL per lane is required for the S4 flow cell.
+    - Prepare mixes in excess. ~300 μL per lane is required for the S4 flow cell.
     - If bubbles occur, mark these with pen on the flow cell. Repeat reactions if many bubbles occur and ensure bubbles do not form at the same locations. 
     - Use a P1000 pipette and pipette slowly to avoid the formation of bubbles. 
     - For removing washes, pipette the liquid out and then blow through air using the P1000 to remove remaining liquid.
@@ -39,28 +39,28 @@ to create a database of barcode sequences and their spatial locations.
 
 **DraI mix**
 
-|Reagent|Final concentration|Volume (uL)|
+|Reagent|Final concentration|Volume (μL)|
 |----|----|----|
-|DraI|2U/uL|10|
+|DraI|2U/μL|10|
 |10X CutSmart buffer|1x|10|
 |Ultrapure water||80|
 
-1. Wash flow cell by flowing through 500 uL ultrapure water using a P1000 pipette.  
+1. Wash flow cell by flowing through 500 μL ultrapure water using a P1000 pipette.  
 2. Add DraI mix and incubate at 37°C overnight.
 
 ### Exonucelase I digestion 
 
 **ExoI mix**
 
-| Reagent | Final concentration | Volume (uL) |
+| Reagent | Final concentration | Volume (μL) |
 |----|----|----|
-|ExoI|1 U/uL|5|
+|ExoI|1 U/μL|5|
 |10X ExoI buffer|1x|10|
 |Ultrapure water||85|
 
-1. Wash flow cell by flowing through 500 uL 80% ethanol, then ultrapure water.
+1. Wash flow cell by flowing through 500 μL 80% ethanol, then ultrapure water.
 2. Add Exonuclease I mix and incubate for 45 min at 37°C.
-3. Wash flow cell by flowing through 500 uL ultrapure water three times.
+3. Wash flow cell by flowing through 500 μL ultrapure water three times.
 
 ## Opening, denaturation and washes 
 
