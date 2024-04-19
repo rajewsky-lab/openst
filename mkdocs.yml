@@ -70,7 +70,7 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
-    - toc.follow
+    - toc.integrate
   palette:
     primary: custom
     accent: custom
