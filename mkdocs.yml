@@ -80,8 +80,7 @@ theme:
   favicon: static/logos/openst_logo_transparent_completeO.png
 
 plugins:
-- search:
-    prebuild_index: true
+- search
 - autorefs
 - mknotebooks
 
