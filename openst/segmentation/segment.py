@@ -32,7 +32,7 @@ OPENST_MODEL_NAMES = [
 ]
 
 # adapted from cellpose
-MODEL_DIR = pathlib.Path.home().joinpath(".cellpose", "models")
+MODEL_DIR = pathlib.Path.home().joinpath(".openst", "cellpose", "models")
 _MODEL_URL = "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/models"
 
 def cache_model_path(basename):

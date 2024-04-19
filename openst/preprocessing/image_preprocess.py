@@ -25,7 +25,7 @@ OPENST_MODEL_NAMES = [
     "HE_CUT_rajewsky"
 ]
 
-MODEL_DIR = pathlib.Path.home().joinpath(".CUT", "models")
+MODEL_DIR = pathlib.Path.home().joinpath(".openst", "CUT", "models")
 _MODEL_URL = "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/CUT_models"
 
 def create_dataset(args, opt):
