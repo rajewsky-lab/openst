@@ -21,11 +21,6 @@
          <changefreq>daily</changefreq>
     </url>
     <url>
-         <loc>https://open.st/main/computational/from_spacemake/</loc>
-         <lastmod>2024-04-22</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
          <loc>https://open.st/main/computational/generate_expression_matrix/</loc>
          <lastmod>2024-04-22</lastmod>
          <changefreq>daily</changefreq>
@@ -42,11 +37,6 @@
     </url>
     <url>
          <loc>https://open.st/main/computational/preprocessing_capture_area/</loc>
-         <lastmod>2024-04-22</lastmod>
-         <changefreq>daily</changefreq>
-    </url>
-    <url>
-         <loc>https://open.st/main/computational/preprocessing_imaging/</loc>
          <lastmod>2024-04-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
