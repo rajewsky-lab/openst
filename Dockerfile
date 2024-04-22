@@ -38,9 +38,6 @@ RUN apt-get update && \
         libxcb-xinput0 \
         libxcb-xfixes0 \
         libxcb-shape0 \
-        ffmpeg \
-        libsm6 \
-        libext6 \
         && apt-get clean
 
 ARG DEBIAN_FRONTEND=noninteractive
