@@ -26,6 +26,7 @@ nav:
       - Pairwise alignment: computational/pairwise_alignment.md
       - Segmentation and single-cell quantification: computational/generate_expression_matrix.md
       - 3D reconstruction: computational/threed_reconstruction.md
+      - API: api.md
     - FAQ: faq.md
   - Examples:
     - Getting started: examples/getting_started.md
