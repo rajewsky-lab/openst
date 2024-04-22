@@ -1450,7 +1450,7 @@ and pull the image:</p>
 </span></code></pre></div></p>
 <h4 id="attach-a-local-folder-to-docker">Attach a local folder to <code>docker</code>:<a class="headerlink" href="#attach-a-local-folder-to-docker" title="Permanent link">&para;</a></h4>
 <p>In a terminal:
-<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-p<span class="w"> </span><span class="m">9876</span>:9876<span class="w"> </span>-v<span class="w"> </span>local_folder:/app/docker_folder<span class="w"> </span>openst
+<div class="language-bash highlight"><pre><span></span><code><span id="__span-6-1"><a id="__codelineno-6-1" name="__codelineno-6-1" href="#__codelineno-6-1"></a>docker<span class="w"> </span>run<span class="w"> </span>-it<span class="w"> </span>--rm<span class="w"> </span>-v<span class="w"> </span>local_folder:/app/docker_folder<span class="w"> </span>--entrypoint<span class="w"> </span>bash<span class="w"> </span>openst
 </span></code></pre></div></p>
 <p>Make sure to replace <code>local_folder</code> (and optionally <code>docker_folder</code>).</p>
 <h4 id="support-gui-openst-manual_pairwise_aligner-or-napari">Support GUI (<code>openst manual_pairwise_aligner</code> or <code>napari</code>)<a class="headerlink" href="#support-gui-openst-manual_pairwise_aligner-or-napari" title="Permanent link">&para;</a></h4>
