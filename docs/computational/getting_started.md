@@ -86,7 +86,7 @@ docker run -it --rm --entrypoint bash openst
 #### Attach a local folder to `docker`:
 In a terminal:
 ```bash
-docker run -it --rm -p 9876:9876 -v local_folder:/app/docker_folder openst
+docker run -it --rm -v local_folder:/app/docker_folder --entrypoint bash openst
 ```
 
 Make sure to replace `local_folder` (and optionally `docker_folder`).
