@@ -1464,6 +1464,16 @@ the browser (we recommend Google Chrome or similar).</p>
 <source src='../../static/video/openst_docker_gui.webm' type="video/webm">
 </video>
 
+<div class="admonition warning">
+<p class="admonition-title">Running on Apple Silicon-based Macs</p>
+<p>If you have a Mac with Apple Silicon (M1 or later), you need to configure <code>docker run</code> as:</p>
+<p><div class="language-bash highlight"><pre><span></span><code><span id="__span-8-1"><a id="__codelineno-8-1" name="__codelineno-8-1" href="#__codelineno-8-1"></a>docker<span class="w"> </span>run<span class="w"> </span>--platform<span class="w"> </span>linux/amd64<span class="w"> </span><span class="c1"># .. rest of the command</span>
+</span></code></pre></div>
+This will use emulation of amd64 binaries, so performance might be slower than native.
+Please consider running on a Linux-based workstation, if possible, with a CUDA-supported
+GPU.</p>
+</div>
+
 
 
 
