@@ -38,26 +38,10 @@ RUN apt-get update && \
         libxcb-xinput0 \
         libxcb-xfixes0 \
         libxcb-shape0 \
+        ffmpeg \
+        libsm6 \
+        libext6 \
         && apt-get clean
-
-# install openst from repo
-# see https://github.com/pypa/pip/issues/6548#issuecomment-498615461 for syntax
-RUN pip install --upgrade pip && \
-    pip install "openst @ git+https://github.com/openst/openst.git@${NAPARI_COMMIT}"
-
-# we install napari from pip, for `openst preview` functionality
-RUN pip install napari[all]
-
-# copy examples
-COPY examples /tmp/examples
-
-ENTRYPOINT ["python3", "-m", "openst"]
-
-#########################################################
-# Extend openst with a preconfigured Xpra server target #
-#########################################################
-
-FROM openst AS openst-xpra
 
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -77,9 +61,17 @@ RUN apt-get update && \
     apt-get clean && \
     rm -rf /var/lib/apt/lists/*
 
+# install openst from repo
+# see https://github.com/pypa/pip/issues/6548#issuecomment-498615461 for syntax
+RUN pip install --upgrade pip && \
+    pip install openst
+
+# we install napari from pip, for `openst preview` functionality
+RUN pip install napari[all]
+
 ENV DISPLAY=:100
 ENV XPRA_PORT=9876
-ENV XPRA_START="python3 -m openst"
+ENV XPRA_START="/bin/sh-c bash"
 ENV XPRA_EXIT_WITH_CLIENT="yes"
 ENV XPRA_XVFB_SCREEN="1920x1080x24+32"
 EXPOSE 9876
@@ -88,7 +80,7 @@ CMD echo "Launching openst on Xpra. Connect via http://localhost:$XPRA_PORT or $
     xpra start \
     --bind-tcp=0.0.0.0:$XPRA_PORT \
     --html=on \
-    --start="/bin/sh-c bash" \
+    --start="$XPRA_START" \
     --exit-with-client="$XPRA_EXIT_WITH_CLIENT" \
     --daemon=no \
     --xvfb="/usr/bin/Xvfb +extension Composite -screen 0 $XPRA_XVFB_SCREEN -nolisten tcp -noreset" \
