@@ -33,4 +33,4 @@ ENV DISPLAY=:0
 WORKDIR /app
 
 # Start the terminal when the container runs
-CMD ["xterm"]
+CMD ["/bin/sh", "-c", "bash"]
