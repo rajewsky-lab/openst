@@ -111,7 +111,7 @@ Then, you can create a single file containing the transcriptomic information agg
           --sample-id openst_demo_sample \
           transcript_assign \
           --spatial-key obsm/spatial_pairwise_aligned_fine \
-          --image-key uns/spatial_pairwise_aligned/staining_image_transformed
+          --mask-in uns/spatial_pairwise_aligned/staining_image_transformed
      ```
 
 === "From semiautomatic alignment"
@@ -122,7 +122,7 @@ Then, you can create a single file containing the transcriptomic information agg
           --sample-id openst_demo_sample \
           transcript_assign \
           --spatial-key obsm/spatial_manual_fine \
-          --image-key uns/spatial_pairwise_aligned/staining_image_transformed
+          --mask-in uns/spatial_pairwise_aligned/staining_image_transformed
      ```
 
 === "From manual alignment"
