@@ -102,7 +102,7 @@ spacemake config add_species \
 ### Add sample
 
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
-generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
+generated](../../computational/preprocessing_capture_area.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
 
 For simplicity, we provide the [tile barcode files](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_head_tiles.tar.xz) that are related to this sample, as well as the [coordinate system 
 for the Illumina flow cell](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_1_coordinate_system.csv) that was used to generate the capture area of this experiment.

@@ -2,14 +2,15 @@
 
 After folowing the [experimental protocol](../experimental/getting_started.md), we provide the [`openst`](https://pypi.org/project/openst/)
 python package for transforming the raw sequencing data into objects that can be used for spatial, single-cell
-analysis, in four steps:
+analysis, in five steps:
 
-1. [Preprocessing of sequencing](preprocessing_sequencing.md)
-2. [Pairwise alignment](pairwise_alignment.md): the spatial coordinates of transcriptomics data are aligned
+1. [Preprocessing of Open-ST spatial barcodes (capture area)](preprocessing_capture_area.md)
+2. [Preprocessing of Open-ST transcriptomic library](preprocessing_openst_library.md)
+3. [Pairwise alignment](pairwise_alignment.md): the spatial coordinates of transcriptomics data are aligned
     to tissue imaging.
-3. [Segmentation and single-cell quantification](generate_expression_matrix.md): transcriptomic data
+4. [Segmentation and single-cell quantification](generate_expression_matrix.md): transcriptomic data
     are aggregated into single cells using the information from cell segmentation of tissue images.
-4. [3D reconstruction](threed_reconstruction.md) of tissue imaging and transcriptome from serial sections.
+5. [3D reconstruction](threed_reconstruction.md) of tissue imaging and transcriptome from serial sections.
    *We provide tutorials for interactive visualization of 3D data.*
 
 ## Installation

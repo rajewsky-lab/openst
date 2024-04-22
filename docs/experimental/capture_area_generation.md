@@ -23,7 +23,7 @@ Either when using your own sequencing equipment or relying on a sequencing facil
 to (most likely) already [demultiplexed](https://knowledge.illumina.com/software/general/software-general-troubleshooting-list/000005982)
 `fastq` files; otherwise, you can get access to *raw* basecall files in `bcl` [format](https://support.illumina.com/content/dam/illumina-support/help/Illumina_DRAGEN_Bio_IT_Platform_v3_7_1000000141465/Content/SW/Informatics/Dragen/ToolsiBCL_fDG.htm).
 
-Either of these files shall be used as the input for `openst` [later](../computational/preprocessing_sequencing.md#processing-the-sequencing-of-barcoded-library),
+Either of these files shall be used as the input for `openst` [later](../computational/preprocessing_capture_area.md#processing-the-sequencing-of-barcoded-library),
 to create a database of barcode sequences and their spatial locations.
 
 ## Enzymatic processing
