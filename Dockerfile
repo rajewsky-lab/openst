@@ -66,6 +66,9 @@ RUN pip install --upgrade pip && \
 # we install napari from pip, for `openst preview` functionality
 RUN pip install napari[all]
 
+# remove opencv stuff so it doesn't break
+RUN rm /usr/local/lib/python3.10/dist-packages/cv2/qt/plugins/platforms/libqxcb.so
+
 ENV DISPLAY=:100
 ENV XPRA_PORT=9876
 ENV XPRA_START="xterm"
