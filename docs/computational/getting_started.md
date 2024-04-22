@@ -106,4 +106,14 @@ the browser (we recommend Google Chrome or similar).
 <source src='../../static/video/openst_docker_gui.webm' type="video/webm">
 </video>
 
+!!! warning "Running on Apple Silicon-based Macs"
+    If you have a Mac with Apple Silicon (M1 or later), you need to configure `docker run` as:
+
+    ```bash
+    docker run --platform linux/amd64 # .. rest of the command
+    ```
+    This will use emulation of amd64 binaries, so performance might be slower than native.
+    Please consider running on a Linux-based workstation, if possible, with a CUDA-supported
+    GPU.
+
 [Docker image]: https://hub.docker.com/r/rajewsky/openst/
