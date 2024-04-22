@@ -71,41 +71,39 @@ pip install -e openst
 
 The official [Docker image] is a great way to get up and running in a few
 minutes, as it comes with all dependencies pre-installed. Open up a terminal
-and pull the image with:
+and pull the image:
 
 ``` sh
 docker pull rajewsky/openst
 ```
 
-The `openst` executable is provided as an entry point and `serve` is the
-default command.
-
-You can run a terminal for `openst` by running
+#### Get a `bash` terminal
+In a terminal:
 ```sh
-docker run -it openst
+docker run -it --rm --entrypoint bash openst
 ```
 
-Optionally, you might want to enable X11 redirection to enable GUI support (e.g., for the `openst manual_pairwise_aligner` tool).
-Follow these steps:
-
-1. Install X Server on your host machine if not already installed.
-2. Allow connections to your X Server by running the following command on your host:
-```sh
-xhost +
-```
-3. Run the Docker container with the following additional options:
-```sh
-docker run -it --rm -e DISPLAY=$DISPLAY -v /tmp/.X11-unix:/tmp/.X11-unix openst
+#### Attach a local folder to `docker`:
+In a terminal:
+```bash
+docker run -it --rm -p 9876:9876 -v local_folder:/app/docker_folder openst
 ```
 
-Now, you can execute PyQt5-based applications, and the GUI will be displayed on your host machine.
+Make sure to replace `local_folder` (and optionally `docker_folder`).
 
-!!! note
-    - Ensure that the X Server on your host allows connections (xhost +) before running the container,
-    - Make sure the necessary dependencies are installed on your host machine for PyQt5 applications.
-    - Remember to close the X Server connections after using the container:
-      ```sh
-      xhost -
-      ```
 
-    [Docker image]: https://hub.docker.com/r/rajewsky/openst/
+#### Support GUI (`openst manual_pairwise_aligner` or `napari`)
+In a terminal:
+```bash
+docker run -it --rm -p 9876:9876 openst
+```
+
+Then open [https://localhost:9876](https://localhost:9876) in a browser.
+The video below shows an example launching `openst manual_pairwise_aligner` on
+the browser (we recommend Google Chrome or similar).
+
+<video loop autoplay muted playsinline width="800">
+<source src='../../static/video/openst_docker_gui.webm' type="video/webm">
+</video>
+
+[Docker image]: https://hub.docker.com/r/rajewsky/openst/

@@ -11,3 +11,7 @@
     /* Adjust the margin-left value as needed */
     margin-left: -20px;
 }
+
+video {
+  clip-path: inset(1px 1px);
+}
