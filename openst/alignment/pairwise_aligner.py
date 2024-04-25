@@ -342,7 +342,7 @@ def run_registration(
     # Compute similarity matrix and compute point transformation
     if len(in_mkpts0) < args.min_matches:
         logging.warning(f"There were not enough matching points ({len(in_mkpts0)}"+
-                        "out of selected {args.min_matches})."+
+                        f"out of selected {args.min_matches}). "+
                         "Will not continue with fine registration" if not args.only_coarse else "")
         args.only_coarse = True
 
