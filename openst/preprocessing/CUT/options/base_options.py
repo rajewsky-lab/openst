@@ -1,10 +1,9 @@
 import argparse
-import os
-from util import util
+import logging
 import torch
-import models
-import data
 
+import openst.preprocessing.CUT.models as models
+import openst.preprocessing.CUT.util as util
 
 class BaseOptions():
     """This class defines options used during both training and test time.
@@ -34,8 +33,8 @@ class BaseOptions():
         parser.add_argument('--output_nc', type=int, default=3, help='# of output image channels: 3 for RGB and 1 for grayscale')
         parser.add_argument('--ngf', type=int, default=64, help='# of gen filters in the last conv layer')
         parser.add_argument('--ndf', type=int, default=64, help='# of discrim filters in the first conv layer')
-        parser.add_argument('--netD', type=str, default='basic', choices=['basic', 'n_layers', 'pixel', 'patch', 'tilestylegan2', 'stylegan2'], help='specify discriminator architecture. The basic model is a 70x70 PatchGAN. n_layers allows you to specify the layers in the discriminator')
-        parser.add_argument('--netG', type=str, default='resnet_9blocks', choices=['resnet_9blocks', 'resnet_6blocks', 'unet_256', 'unet_128', 'stylegan2', 'smallstylegan2', 'resnet_cat'], help='specify generator architecture')
+        parser.add_argument('--netD', type=str, default='basic', choices=['basic', 'n_layers', 'pixel', 'patch'], help='specify discriminator architecture. The basic model is a 70x70 PatchGAN. n_layers allows you to specify the layers in the discriminator')
+        parser.add_argument('--netG', type=str, default='resnet_9blocks', choices=['resnet_9blocks', 'resnet_6blocks', 'unet_256', 'unet_128', 'resnet_cat'], help='specify generator architecture')
         parser.add_argument('--n_layers_D', type=int, default=3, help='only used if netD==n_layers')
         parser.add_argument('--normG', type=str, default='instance', choices=['instance', 'batch', 'none'], help='instance normalization or batch normalization for G')
         parser.add_argument('--normD', type=str, default='instance', choices=['instance', 'batch', 'none'], help='instance normalization or batch normalization for D')
@@ -63,11 +62,6 @@ class BaseOptions():
         parser.add_argument('--epoch', type=str, default='latest', help='which epoch to load? set to latest to use latest cached model')
         parser.add_argument('--verbose', action='store_true', help='if specified, print more debugging information')
         parser.add_argument('--suffix', default='', type=str, help='customized suffix: opt.name = opt.name + suffix: e.g., {model}_{netG}_size{load_size}')
-
-        # parameters related to StyleGAN2-based networks
-        parser.add_argument('--stylegan2_G_num_downsampling',
-                            default=1, type=int,
-                            help='Number of downsampling layers used by StyleGAN2Generator')
 
         self.initialized = True
         return parser
@@ -97,11 +91,6 @@ class BaseOptions():
         else:
             opt, _ = parser.parse_known_args(self.cmd_line)  # parse again with new defaults
 
-        # modify dataset-related parser options
-        dataset_name = opt.dataset_mode
-        dataset_option_setter = data.get_option_setter(dataset_name)
-        parser = dataset_option_setter(parser, self.isTrain)
-
         # save and return the parser
         self.parser = parser
         if self.cmd_line is None:
@@ -113,30 +102,17 @@ class BaseOptions():
         """Print and save options
 
         It will print both current options and default values(if different).
-        It will save options into a text file / [checkpoints_dir] / opt.txt
         """
         message = ''
-        message += '----------------- Options ---------------\n'
+        message += '----------------- (Start) CUT restoration options ---------------\n'
         for k, v in sorted(vars(opt).items()):
             comment = ''
             default = self.parser.get_default(k)
             if v != default:
                 comment = '\t[default: %s]' % str(default)
             message += '{:>25}: {:<30}{}\n'.format(str(k), str(v), comment)
-        message += '----------------- End -------------------'
-        print(message)
-
-        # save to the disk
-        expr_dir = os.path.join(opt.checkpoints_dir, opt.name)
-        util.mkdirs(expr_dir)
-        file_name = os.path.join(expr_dir, '{}_opt.txt'.format(opt.phase))
-        try:
-            with open(file_name, 'wt') as opt_file:
-                opt_file.write(message)
-                opt_file.write('\n')
-        except PermissionError as error:
-            print("permission error {}".format(error))
-            pass
+        message += '----------------- (End) CUT restoration options -------------------'
+        logging.debug(message)
 
     def parse(self):
         """Parse our options, create checkpoints directory suffix, and set up gpu device."""

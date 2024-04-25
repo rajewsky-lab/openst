@@ -1,9 +1,9 @@
 [![docs](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml)
+[![Publish Docker image](https://github.com/rajewsky-lab/openst/actions/workflows/docker_hub.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docker_hub.yml)
 [![Downloads](https://pepy.tech/badge/openst)](https://pepy.tech/project/openst)
 [![PyPI Version](https://img.shields.io/pypi/v/openst.svg)](https://pypi.org/project/openst)
 [![PyPI License](https://img.shields.io/pypi/l/openst.svg)](https://pypi.org/project/openst)
 [![Gitter chat](https://badges.gitter.im/openst/community.png)](https://gitter.im/openst/community)
-[![ci](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml)
 
 <img
   src="https://raw.githubusercontent.com/rajewsky-lab/openst/5617df9d35341778487d4c623eaac53b61000006/docs/static/img/openst_logo_color.png"

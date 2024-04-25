@@ -1,0 +1,21 @@
+[Header]
+IEMFileVersion,5
+Investigator Name,Marie_Jan_Elena
+Experiment Name,FC_sts_40
+Date,21/09/2022
+Workflow,GenerateFASTQ
+Application,NextSeq FASTQ Only
+Instrument Type,NextSeq/MiniSeq
+Assay,Nextera XT
+"Index Adapters,""Nextera XT v2 Index Kit"""
+Chemistry,Default
+
+[Reads]
+32
+128
+
+[Settings]
+
+[Data]
+Sample_ID,Sample_Name,Sample_Plate,Sample_Well,I7_Index_ID,index,Sample_Project,Description
+fc_sts_040_6,E13_head_30minpepsin,fc_009,,N729,TCGACGTC,fc_sts_040,fc_sts_040_6_E13_head_30minP_newFC_mouse

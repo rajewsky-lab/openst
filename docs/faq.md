@@ -52,7 +52,7 @@ In order to avoid any RNA contamination is important to wipe down the cryostat a
 [__What pepsin incubation times should I test?__](#pepsin-incubation){ #pepsin-incubation }
 
 It is important to set the permeabilization condition for each tissue type. 
-We recommend to test at least a range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/uL). 
+We recommend to test at least a range including 15 min, 30 min, and 60 min with two different concentration (0.7 and 1.4 U/μL). 
 
 It is preferable to chose the minimum incubation time/ enzyme concentration that
 gives the maximum RNA capture (see [Permeabilization](experimental/library_preparation.md#permeabilization)).
@@ -66,17 +66,17 @@ Here, we list the tested tissues with the permeabilization condition used:
 
     | Tissue type      | Permeabilization condition (time, pepsin concentration)|
     | ----------- | ----------- | 
-    | Metastatic lymph node     | 45 min, 1.4 U/uL| 
-    | Healthy  lymph node | 45 min, 1.4 U/uL|
-    | Head and neck squamous cell carcinoma| 45 min, 1.4 U/uL | 
-    | iPSC-derived Brain Organoids | 15 - 30 min, 0.7 U/uL|
+    | Metastatic lymph node     | 45 min, 1.4 U/μL| 
+    | Healthy  lymph node | 45 min, 1.4 U/μL|
+    | Head and neck squamous cell carcinoma| 45 min, 1.4 U/μL | 
+    | iPSC-derived Brain Organoids | 15 - 30 min, 0.7 U/μL|
 
 === "Mouse"
 
     | Tissue type      | Permeabilization conditions|
     | ----------- | ----------- | 
-    | Mouse head (embryo E13)| 30 min, 0.7 U/uL|
-    | Mouse brain| 30 min, 0.7 U/uL|
+    | Mouse head (embryo E13)| 30 min, 0.7 U/μL|
+    | Mouse brain| 30 min, 0.7 U/μL|
 
 ## Capture area
 [__Can you store capture area pieces?__](#store-capture-areas){ #store-capture-areas }

@@ -1,4 +1,4 @@
-# Preprocessing of sequencing
+# Preprocessing transcriptomic library
 
 After sequencing, we proceed with the preprocessing of the data, to go from raw reads to
 transcriptomic information mapped to the mouse genome, in space.
@@ -37,7 +37,7 @@ First of all, intialize the conda environment for `spacemake`
 (spacemake) user@computer:~$
 ```
 
-### Initialization
+### Initialize
 Create two folders inside your `openst_adult_demo` folder, called `spacemake` and `bins`, so you will have:
 
 ```sh
@@ -52,7 +52,7 @@ Create two folders inside your `openst_adult_demo` folder, called `spacemake` an
 Download the [DropSeq tools](https://github.com/broadinstitute/Drop-seq/releases/download/v2.5.4/Drop-seq_tools-2.5.4.zip),
 decompress it, and put it inside the `bins` subdirectory.
 
-Then, following the [spacemake *Quick start guide*](https://spacemake.readthedocs.io/en/latest/quick-start/index.html),
+Then, following the [spacemake *Quick start guide*](https://spacemake.readthedocs.io/en/latest/quick-start/index.html#open-st-quick-start),
 browse to the `spacemake` directory you just created in the `openst_adult_demo` folder, and run the initialization:
 
 ```sh
@@ -61,7 +61,7 @@ browse to the `spacemake` directory you just created in the `openst_adult_demo` 
     --dropseq_tools /home/user/bins/Drop-seq_tools-2.5.1
 ```
 
-### Configuring spacemake
+### Configure
 
 As `spacemake` comes with no default value for species, before anything can be done, a new species has to be added.
 In this case, we add mouse; you will need to download the correct `fa` and `gtf` files. For instance, you can download the
@@ -99,10 +99,10 @@ spacemake config add_species \
     # etc...
     ```
 
-### Adding sample
+### Add sample
 
 Now you need to add the sample data and metadata to `spacemake`. For this, you will also need the puck (tile) barcode files, which [can be
-generated](../../computational/preprocessing_sequencing.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
+generated](../../computational/preprocessing_capture_area.md#computing-barcodes-and-spatial-coordinates-of-all-tiles) with the `openst` package.
 
 For simplicity, we provide the [tile barcode files](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_hippocampus_tiles.tar.xz) that are related to this sample, as well as the [coordinate system 
 for the Illumina flow cell](https://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordinate_system.csv) that was used to generate the capture area of this experiment.
@@ -162,7 +162,7 @@ wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/fc_2_coordina
 cp fc_2_coordinate_system.csv puck_data/.
 ```
 
-### Running `spacemake`
+### Run
 That's all you need to configure! Now, you can run spacemake with the following:
 
 ```sh

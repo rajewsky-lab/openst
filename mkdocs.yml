@@ -21,29 +21,27 @@ nav:
       - Sequencing of Open-ST library: experimental/sequencing_of_openst_library.md
     - Computational:
       - Getting started: computational/getting_started.md
-      - Preprocessing of sequencing: computational/preprocessing_sequencing.md
-      - Preprocessing of imaging: computational/preprocessing_imaging.md
-      - Align image to transcriptome: computational/pairwise_alignment.md
-      - Generating a cell-by-gene matrix: computational/generate_expression_matrix.md
+      - Preprocessing capture area library: computational/preprocessing_capture_area.md
+      - Preprocessing transcriptomic library: computational/preprocessing_openst_library.md
+      - Pairwise alignment: computational/pairwise_alignment.md
+      - Segmentation and single-cell quantification: computational/generate_expression_matrix.md
       - 3D reconstruction: computational/threed_reconstruction.md
-      - From spacemake: computational/from_spacemake.md
+      - API: api.md
     - FAQ: faq.md
   - Examples:
     - Getting started: examples/getting_started.md
     - Dataset summary: examples/datasets.md
     - Adult mouse hippocampus:
       - Introduction: examples/adult_mouse/introduction.md
-      - Preprocessing of sequencing: examples/adult_mouse/preprocessing_sequencing.md
-      - Preprocessing of imaging: examples/adult_mouse/preprocessing_imaging.md
-      - Align image to transcriptome: examples/adult_mouse/pairwise_alignment.md
-      - Generating a cell-by-gene matrix: examples/adult_mouse/generate_expression_matrix.md
+      - Preprocessing transcriptomic library: examples/adult_mouse/preprocessing_sequencing.md
+      - Pairwise alignment: examples/adult_mouse/pairwise_alignment.md
+      - Segmentation and single-cell quantification: examples/adult_mouse/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/hypo_adult_eda.ipynb
     - E13 mouse head:
       - Introduction: examples/e13_mouse/introduction.md
-      - Preprocessing of sequencing: examples/e13_mouse/preprocessing_sequencing.md
-      - Preprocessing of imaging: examples/e13_mouse/preprocessing_imaging.md
-      - Align image to transcriptome: examples/e13_mouse/pairwise_alignment.md
-      - Generating a cell-by-gene matrix: examples/e13_mouse/generate_expression_matrix.md
+      - Preprocessing transcriptomic library: examples/e13_mouse/preprocessing_sequencing.md
+      - Pairwise alignment: examples/e13_mouse/pairwise_alignment.md
+      - Segmentation and single-cell quantification: examples/e13_mouse/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/e13_head_eda.ipynb
 
 theme:
@@ -70,7 +68,7 @@ theme:
     - search.highlight
     - search.share
     - search.suggest
-    - toc.follow
+    - toc.integrate
   palette:
     primary: custom
     accent: custom
@@ -80,8 +78,7 @@ theme:
   favicon: static/logos/openst_logo_transparent_completeO.png
 
 plugins:
-- search:
-    prebuild_index: true
+- search
 - autorefs
 - mknotebooks
 
