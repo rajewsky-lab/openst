@@ -814,7 +814,7 @@ class ImageAlignmentApp(QMainWindow):
         if dialog.exec():
             spatial_key_out = dialog.getInputs()
         else:
-            QMessageBox.warning(self, "Warning", "Please specify a name to save the coordinates into 'obsm'")
+            QMessageBox.warning(self, "Warning", "Please specify a name to save the coordinates into 'obsm'\n(e.g., 'obsm/spatial_manual_coarse')")
             return
     
         # we apply the transformation using the manual_pairwise_aligner code
@@ -828,10 +828,10 @@ class ImageAlignmentApp(QMainWindow):
         sts_coords_coarse = in_coords[..., ::-1].copy()
         sts_transformed = apply_transform_to_coords(sts_coords_coarse, tile_id, keypoints, check_bounds=False)
 
-        if f"obsm/{spatial_key_out}" in self.adata:
-            self.adata[f"obsm/{spatial_key_out}"][...] = sts_transformed[:][..., ::-1]
+        if spatial_key_out in self.adata:
+            self.adata[spatial_key_out][...] = sts_transformed[:][..., ::-1]
         else:
-            self.adata[f"obsm/{spatial_key_out}"] = sts_transformed[:][..., ::-1]
+            self.adata[spatial_key_out] = sts_transformed[:][..., ::-1]
 
         # TODO: display some success feedback
         self.adata_structure = h5_to_dict(self.adata)
