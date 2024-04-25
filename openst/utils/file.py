@@ -248,6 +248,13 @@ def h5_to_dict(adata) -> dict:
             result[key] = f"{dataset_type}_{dataset_shape}"
     return result
 
+def write_key_to_h5(adata, key, data, delete_before=False):
+    if key in adata and not delete_before:
+        adata[key][:] = data
+    elif key in adata and delete_before:
+        del adata[key]
+    else:
+        adata[key] = data
 
 def download_url_to_file(url, dst, progress=True):
     r"""Download object at the given URL to a local path.

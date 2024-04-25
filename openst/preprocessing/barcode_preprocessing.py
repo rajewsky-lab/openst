@@ -4,6 +4,8 @@ import time
 
 import pandas as pd
 
+import logging
+
 
 tab = str.maketrans("ACTG", "TGAC")
 
@@ -31,7 +33,7 @@ def process_multiple_tiles(
                     current_tile_number = tile_number
 
                 if tile_number != current_tile_number:
-                    print(f"Writing {len(sequences):,} barcodes of file {current_tile_number} to disk")
+                    logging.info(f"Writing {len(sequences):,} barcodes of file {current_tile_number} to disk")
                     df = pd.DataFrame({"cell_bc": sequences, "xcoord": xcoords, "ycoord": ycoords})
                     df.to_csv(
                         os.path.join(
@@ -95,16 +97,17 @@ def _run_barcode_preprocessing(args):
         raise NotImplementedError("We don't support multi-tile files with unsorted tiles yet!")
     else:
         df = process_single_tile(args.fastq_in, sequence_preprocessor)
-        print(f"Writing {len(df):,} barcodes to {os.path.join(args.tilecoords_out, args.out_prefix + args.out_suffix)}")
+        logging.info(f"Writing {len(df):,} barcodes to {os.path.join(args.tilecoords_out, args.out_prefix + args.out_suffix)}")
         df.to_csv(
             os.path.join(args.tilecoords_out, args.out_prefix + args.out_suffix),
             index=False,
             sep="\t",
         )
 
-    print(f"Finished in {round(time.time()-start_time, 2)} sec")
+    logging.info(f"Finished in {round(time.time()-start_time, 2)} sec")
 
 
 if __name__ == "__main__":
+    from openst.cli import get_barcode_preprocessing_parser
     args = get_barcode_preprocessing_parser().parse_args()
     _run_barcode_preprocessing(args)

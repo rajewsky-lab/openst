@@ -285,24 +285,15 @@ class ImageRenderer(QThread):
         image_pair = {}
 
         self.update_text.emit(f"Rendering '{self.layer}'")
-        min_lim, max_lim = in_coords.min(axis=0).astype(int), in_coords.max(axis=0).astype(int)
-        x_all_min, y_all_min = min_lim
-        x_all_max, y_all_max = max_lim
-        
-        # Preparing images and preprocessing routines
-        _i_counts_above_threshold = total_counts > self.threshold_counts
-        sts_coords = in_coords[_i_counts_above_threshold]
-
-        # We keep the limits also when filtering by UMI (avoid issues with offsets)
-        sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
-                                                           [x_all_min, y_all_min]])])
+        sts_coords = in_coords[:]
+        _t_valid_coords = slice(None)
 
         if not self.recenter_coarse:
             _i_sts_coords_coarse_within_image_bounds = np.where(
-                (sts_coords[:, 0] > 0)
-                & (sts_coords[:, 0] < staining_image.shape[1])
-                & (sts_coords[:, 1] > 0)
-                & (sts_coords[:, 1] < staining_image.shape[0])
+                (sts_coords[:, 0] >= 0)
+                & (sts_coords[:, 0] <= staining_image.shape[1])
+                & (sts_coords[:, 1] >= 0)
+                & (sts_coords[:, 1] <= staining_image.shape[0])
             )
 
             if len(_i_sts_coords_coarse_within_image_bounds[0]) < 10:
@@ -310,10 +301,23 @@ class ImageRenderer(QThread):
                                  "Maybe spatial coordinates were never aligned to the image data.\n"+
                                  "Try enabling 'Is unaligned data' under 'Rendering settings' and render again.")
             sts_coords = sts_coords[_i_sts_coords_coarse_within_image_bounds]
+            tile_id = tile_id[_i_sts_coords_coarse_within_image_bounds]
+            total_counts = total_counts[_i_sts_coords_coarse_within_image_bounds]
+            _t_valid_coords = tile_id == int(self.layer) if self.layer != 'all_tiles_coarse' else slice(None)
 
-        # if sts_coords.max(axis=0).max() > 10 * staining_image.shape.max():
-        #     raise ValueError("""The spatial coordinates are too large for the selected image\n
-        #                         Please choose a different rescaling factor!""")
+        min_lim, max_lim = sts_coords[_t_valid_coords].min(axis=0).astype(int), sts_coords[_t_valid_coords].max(axis=0).astype(int)
+        x_all_min, y_all_min = min_lim
+        x_all_max, y_all_max = max_lim
+
+        # Preparing images and preprocessing routines
+        _i_counts_above_threshold = total_counts > self.threshold_counts
+        sts_coords = sts_coords[_i_counts_above_threshold]
+        tile_id = tile_id[_i_counts_above_threshold]
+
+        # We keep the limits also when filtering by UMI (avoid issues with offsets)
+        sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
+                                                        [x_all_min, y_all_min]])])
+        tile_id = np.concatenate([tile_id, [-1, -1]])
 
         # TODO: instead of this, we plot specific sections...
         if self.layer == "all_tiles_coarse":
@@ -325,12 +329,6 @@ class ImageRenderer(QThread):
                 recenter=self.recenter_coarse,
                 resize_method="cv2",
             )
-
-            #sts_coords_to_transform = sts_pseudoimage["coords_rescaled"] * sts_pseudoimage["rescaling_factor"]
-            #min_lim, max_lim = sts_coords_to_transform.min(axis=0).astype(int), sts_coords_to_transform.max(axis=0).astype(int)
-            # min_lim, max_lim = sts_coords.min(axis=0).astype(int), sts_coords.max(axis=0).astype(int)
-            # x_min, y_min = min_lim
-            # x_max, y_max = max_lim
 
             image_pair = {
                 "imageA": staining_image_rescaled,
@@ -347,9 +345,7 @@ class ImageRenderer(QThread):
             # Apply scaling to input image again, for fine registration
             staining_image_rescaled = staining_image[:: self.rescale_factor_fine, :: self.rescale_factor_fine]
 
-            _t_valid_coords = tile_id[_i_counts_above_threshold][_i_sts_coords_coarse_within_image_bounds] == int(
-                self.layer
-            )
+            _t_valid_coords = (tile_id == int(self.layer)) | (tile_id == -1)
 
             _t_sts_pseudoimage = create_paired_pseudoimage(
                 sts_coords[:, ::-1],  # we need to flip these coordinates
@@ -372,7 +368,6 @@ class ImageRenderer(QThread):
             x_max, y_max = max_lim
 
             _pseudoimage = _t_sts_pseudoimage["pseudoimage"][x_min:x_max, y_min:y_max]
-            _pseudoimage = ((_pseudoimage / _pseudoimage.max()) * 255).astype(np.uint8)
 
             self.update_text.emit(f"Creating metadata for '{self.layer}'")
             image_pair = {
@@ -819,7 +814,7 @@ class ImageAlignmentApp(QMainWindow):
         if dialog.exec():
             spatial_key_out = dialog.getInputs()
         else:
-            QMessageBox.warning(self, "Warning", "Please specify a name to save the coordinates into 'obsm'")
+            QMessageBox.warning(self, "Warning", "Please specify a name to save the coordinates into 'obsm'\n(e.g., 'obsm/spatial_manual_coarse')")
             return
     
         # we apply the transformation using the manual_pairwise_aligner code
@@ -833,10 +828,10 @@ class ImageAlignmentApp(QMainWindow):
         sts_coords_coarse = in_coords[..., ::-1].copy()
         sts_transformed = apply_transform_to_coords(sts_coords_coarse, tile_id, keypoints, check_bounds=False)
 
-        if f"obsm/{spatial_key_out}" in self.adata:
-            self.adata[f"obsm/{spatial_key_out}"][...] = sts_transformed[:][..., ::-1]
+        if spatial_key_out in self.adata:
+            self.adata[spatial_key_out][...] = sts_transformed[:][..., ::-1]
         else:
-            self.adata[f"obsm/{spatial_key_out}"] = sts_transformed[:][..., ::-1]
+            self.adata[spatial_key_out] = sts_transformed[:][..., ::-1]
 
         # TODO: display some success feedback
         self.adata_structure = h5_to_dict(self.adata)

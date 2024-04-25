@@ -1109,13 +1109,6 @@ def get_pairwise_aligner_parser():
         default=2,
         help="Times RANSAC will run (x1000 iterations) during coarse registration",
     )
-    coarse_params.add_argument(
-        "--genes-coarse",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the coarse alignment phase.",
-    )
 
     fine_params = parser.add_argument_group('Fine registration parameters')
     fine_params.add_argument(
@@ -1125,13 +1118,7 @@ def get_pairwise_aligner_parser():
         help="Rescaling factor for the input image (1:factor), used during fine pairwise alignment",
     )
     fine_params.add_argument(
-        "--tissue-masking-gaussian-sigma",
-        type=int,
-        default=5,
-        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
-    )
-    fine_params.add_argument(
-        "--fine-registration-gaussian-sigma",
+        "--gaussian-sigma-fine",
         type=int,
         default=2,
         help="Gaussian blur used on all modalities during fine registration",
@@ -1143,7 +1130,6 @@ def get_pairwise_aligner_parser():
         help="""Only spatial coordinates with counts larger than this number
         will be kept for pseudoimage rendering during fine alignment""",
     )
-    
     fine_params.add_argument(
         "--pseudoimage-size-fine",
         type=int,
@@ -1170,17 +1156,10 @@ def get_pairwise_aligner_parser():
         help="Times RANSAC will run (x1000 iterations) during fine registration",
     )
     fine_params.add_argument(
-        "--fine-min-matches",
+        "--min-matches",
         type=int,
         default=50,
         help="Minimum number of matching keypoints between modalities during fine alignment",
-    )
-    fine_params.add_argument(
-        "--genes-fine",
-        nargs="+",
-        type=str,
-        default=None,
-        help="Genes used for plotting the pseudoimage during the fine alignment phase.",
     )
 
     image_preproc = parser.add_argument_group('Image preprocessing parameters')
@@ -1188,6 +1167,12 @@ def get_pairwise_aligner_parser():
         "--mask-tissue",
         action="store_true",
         help="Tissue (imaging modality) is masked from the background for the feature detection",
+    )
+    fine_params.add_argument(
+        "--mask-gaussian-sigma",
+        type=int,
+        default=5,
+        help="The gaussian blur sigma used during the isolation of the tissue on the HE (preprocessing)",
     )
     image_preproc.add_argument(
         "--keep-black-background",
@@ -1202,12 +1187,6 @@ def get_pairwise_aligner_parser():
         default="LoFTR",
         choices=["LoFTR", "SIFT", "KeyNet"],
         help="Feature matching algorithm",
-    )
-    model_params.add_argument(
-        "--fiducial-model",
-        type=str,
-        default="",
-        help="Path to a object detection model (YOLO) to detect fiducial markers",
     )
 
     compu_params = parser.add_argument_group('Computational parameters')

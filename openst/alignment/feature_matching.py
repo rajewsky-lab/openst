@@ -40,8 +40,8 @@ def _find_matches_loftr(im_0: np.ndarray, im_1: np.ndarray, pretrained: str = "o
     matcher = KF.LoFTR(pretrained=pretrained).to(device)
 
     input_dict = {
-        "image0": torch.tensor(im_0)[None, None].float().to(device),
-        "image1": torch.tensor(im_1)[None, None].float().to(device),
+        "image0": torch.tensor(im_0.copy())[None, None].float().to(device),
+        "image1": torch.tensor(im_1.copy())[None, None].float().to(device),
     }
 
     with torch.inference_mode():
@@ -271,6 +271,11 @@ def match_images(
     # TODO: check rotations list
     # TODO: documentation
 
+    if (isinstance(src, list) and isinstance(src_augmenter, Callable)) \
+        or (isinstance(dst, list) and isinstance(dst_augmenter, Callable)):
+        raise NotImplementedError("Cannot run matching >1 src/dst images and an augmenter\n" +
+                                  "Please choose only one augmentation strategy")
+
     _src, _dst = src, dst
     max_keypoints = 0
     best_flip = flips[0]
@@ -313,8 +318,8 @@ def match_images(
         else:
             best_inliers = np.ones(len(mkpts0), dtype=bool)
 
-        if len(mkpts0) > max_keypoints:
-            max_keypoints = len(mkpts0)
+        if best_inliers.sum() > max_keypoints:
+            max_keypoints = best_inliers.sum()
             best_flip = [_flip_x, _flip_y]
             best_rotation = _rotation
 
