@@ -401,6 +401,10 @@ def run_registration(
             values=_t_counts,
         )
 
+        # assign same coarse coordinates if the tile falls outside of the image
+        if len(_t_sts_pseudoimage['coords_rescaled']) == 0:
+            out_coords_output_fine[_t_tile_id] = out_coords_output_coarse[_t_tile_id]
+
         # Axis limits to crop both modalities to tile region
         _t_sts_coords_to_transform = _t_sts_pseudoimage["coords_rescaled"] * _t_sts_pseudoimage["rescaling_factor"]
 
