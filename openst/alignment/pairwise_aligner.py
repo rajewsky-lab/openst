@@ -457,7 +457,7 @@ def run_registration(
 
             _t_sts_coords_fine_transformed = apply_transform(
                 _t_sts_coords_fine_to_transform, _t_tform_points, check_bounds=True
-            )[:, :-1]
+            )[:, :2]
 
             _tform_params = _t_tform_points.params.tolist()
         else:
