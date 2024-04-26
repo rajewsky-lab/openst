@@ -317,7 +317,15 @@ class ImageRenderer(QThread):
         # We keep the limits also when filtering by UMI (avoid issues with offsets)
         sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
                                                         [x_all_min, y_all_min]])])
-        tile_id = np.concatenate([tile_id, [-1, -1]])
+        
+        if not self.recenter_coarse:
+            min_lim, max_lim = [0, 0], staining_image.shape[:2][::-1]
+            x_all_min, y_all_min = min_lim
+            x_all_max, y_all_max = max_lim
+            sts_coords = np.concatenate([sts_coords, np.array([[x_all_max, y_all_max],
+                                                        [x_all_min, y_all_min]])])
+    
+        tile_id = np.concatenate([tile_id, [-1, -1, -2, -2]])
 
         # TODO: instead of this, we plot specific sections...
         if self.layer == "all_tiles_coarse":
@@ -1110,6 +1118,9 @@ class ImageAlignmentApp(QMainWindow):
                         "lims": _lims,
                         "factor_rescale": _rescale,
                         "offset_factor": _ofs_factor,
+                        "rescaling_factor": v['rescaling_factor'],
+                        "scale": v['scale'],
+                        "rescale_factor": v['rescale_factor'],
                         "point_src_offset_rescaled": [
                             f"{((((xA+xA_0+radius_A)+_lims[0])*_rescale)):.2f}",
                             f"{((((yA+yA_0+radius_A)+_lims[2])*_rescale)):.2f}",
