@@ -57,7 +57,7 @@ def _run_preview(args):
     from openst.utils.file import check_file_exists
     
     check_file_exists(args.h5_in)
-    adata = h5py.File(args.h5_in, 'r+')
+    adata = h5py.File(args.h5_in, 'r')
 
     if args.file_structure:
         logging.info(f"Showing structure from {args.h5_in}")
