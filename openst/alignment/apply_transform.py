@@ -1,14 +1,13 @@
 import logging
 import json
 import h5py
-import shutil
 
 import numpy as np
 from skimage.transform import estimate_transform as ski_estimate_transform
 
 from openst.alignment.transformation import apply_transform
-from openst.utils.file import (check_adata_structure, check_directory_exists,
-                               check_file_exists, load_properties_from_adata)
+from openst.utils.file import (check_adata_structure, check_file_exists,
+                               load_properties_from_adata)
 
 def estimate_transform(model: str, src: np.ndarray, dst: np.ndarray):
     """
@@ -71,8 +70,12 @@ def apply_transform_to_coords(
             _t_valid_coords = tile_id.codes == tile_code
             tform_points, needs_flip = estimate_transform("similarity", mkpts_fine1, mkpts_fine0)
             if needs_flip:
+                if len(mkpts_fine1) < 3:
+                    logging.warn(f"Skipping tile {tile_code}: optimal transform required flipping but supported by < 3 keypoints")
+                    continue
+        
                 # this applies flipping to the coordinates
-                sts_coords_transformed[..., 0] = (sts_coords_transformed[..., 0]*-1) - ((mkpts_fine1[..., 1]*-1).min() - (mkpts_fine1[..., 1]).min())
+                sts_coords_transformed[..., 0][_t_valid_coords] = ((sts_coords_transformed[..., 0]*-1) - ((mkpts_fine1[..., 1]*-1).min() - (mkpts_fine1[..., 1]).min()))[_t_valid_coords]
 
             sts_coords_transformed[..., :2][_t_valid_coords] = apply_transform(sts_coords_transformed[..., :2][_t_valid_coords], tform_points, check_bounds=check_bounds)[..., :2][..., ::-1]
 
