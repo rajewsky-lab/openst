@@ -65,8 +65,8 @@ browse to the `spacemake` directory you just created in the `openst_adult_demo` 
 
 As `spacemake` comes with no default value for species, before anything can be done, a new species has to be added.
 In this case, we add mouse; you will need to download the correct `fa` and `gtf` files. For instance, you can download the
-mouse genome from [gencode](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M9/GRCm38.p4.genome.fa.gz),
-as well as the [annotation](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M9/gencode.vM9.annotation.gtf.gz).
+mouse genome from [gencode](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M30/GRCm39.genome.fa.gz),
+as well as the [annotation](https://ftp.ebi.ac.uk/pub/databases/gencode/Gencode_mouse/release_M30/gencode.vM30.annotation.gtf.gz).
 
 Then, you need to run the following commands (remember, in the same `spacemake` folder as before, with the `spacemake` conda environment;
 we are going to omit `(spacemake) user@computer:/home/user/openst_adult_demo/spacemake$` for brevity).
