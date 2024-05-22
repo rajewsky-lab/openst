@@ -2,137 +2,137 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
     <url>
          <loc>https://open.st/main/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/api/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/faq/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/introduction/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/generate_expression_matrix/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/getting_started/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/pairwise_alignment/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/preprocessing_capture_area/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/preprocessing_openst_library/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/computational/threed_reconstruction/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/datasets/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/getting_started/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/adult_mouse/generate_expression_matrix/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/adult_mouse/introduction/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/adult_mouse/pairwise_alignment/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/adult_mouse/preprocessing_sequencing/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/e13_mouse/generate_expression_matrix/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/e13_mouse/introduction/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/e13_mouse/pairwise_alignment/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/examples/e13_mouse/preprocessing_sequencing/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/experimental/capture_area_generation/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/experimental/getting_started/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/experimental/library_preparation/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/experimental/sequencing_of_openst_library/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/experimental/tissue_processing_and_RNA_qc/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/static/examples/notebooks/e13_head_eda/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
     <url>
          <loc>https://open.st/main/static/examples/notebooks/hypo_adult_eda/</loc>
-         <lastmod>2024-05-08</lastmod>
+         <lastmod>2024-05-22</lastmod>
          <changefreq>daily</changefreq>
     </url>
 </urlset>
