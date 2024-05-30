@@ -2,6 +2,10 @@
 
 Here we provide a single table with all the links, size and md5 checksums for the publicly available files provided in the following tutorials.
 
+!!! tip
+
+    When using Linux or macOS, we recommend using [`wget`](https://www.gnu.org/software/wget/manual/wget.html) to download these data
+
 ## Adult mouse hippocampus
 | File | Link | md5 checksum |
 | ---- | ---- | ------------ |
