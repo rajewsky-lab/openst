@@ -38,7 +38,7 @@ pip install openst
   [Python Markdown Extensions]: https://facelessuser.github.io/pymdown-extensions/
   [Using Python's pip to Manage Your Projects' Dependencies]: https://realpython.com/what-is-pip/
 
-!!! warning
+!!! warning "Running on Apple Silicon-based Macs"
     If you have a Mac with Apple Silicon (M1 or later), please install `openst` on a Rosetta environment 
     to ensure full compatibility (i.e., `openst manual_pairwise_aligner` might not work otherwise). 
     Also, the version of scikit-image pinned in the requirements might not be available for Apple Silicon. 
@@ -57,6 +57,21 @@ pip install openst
     ```bash
     pip install napari
     ```
+
+??? warning "Installed on Linux, accessing via SSH from Windows or macOS"
+    If you install `openst` on Linux, and then use SSH from Windows or macOS to run it, you will need to have
+    X11 redirection for the GUI-based components (i.e., `manual_pairwise_aligner` and `preview`).
+
+    For example, you have to run SSH as:
+    ```bash
+    ssh -X user@server
+    ```
+
+    If you are using macOS, please download and install [X-quartz](https://www.xquartz.org).
+
+    If you are using Windows, we recommend using [Tabby](https://tabby.sh) as the terminal, then 
+    [VcXsrv](https://sourceforge.net/projects/vcxsrv/) as the X Server. You will need to setup a new SSH Profile with 
+    X11 forwarding in Tabby.
 
 ### from git
 
