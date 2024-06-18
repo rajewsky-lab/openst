@@ -8,7 +8,7 @@ copyright: Copyright &copy; 2024 Open-ST
 
 repo_name: rajewsky-lab/openst
 repo_url: https://github.com/rajewsky-lab/openst
-edit_uri: https://github.com/rajewsky-lab/openst/edit/master/openst_wiki
+edit_uri: https://github.com/rajewsky-lab/openst/edit/main/docs
 nav:
   - Home: index.md
   - Step-by-step:
