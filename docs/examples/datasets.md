@@ -16,6 +16,7 @@ Here we provide a single table with some links, size and md5 checksums for the f
 | ---- | ---- | ------------ |
 | adult_hippocampus_tiles.tar.xz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_hippocampus_tiles.tar.xz) | 3788d6774212d8eb50ffb17fc970c1c3  |
 | adult_mouse_hippocampus.h5ad.tar.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.h5ad.tar.gz) | 833bd94d8901b6605fd41c22e5755e1c |
+| adult_mouse_hippocampus_by_cell.h5ad.tar.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_by_cell.h5ad.tar.gz) | c837f3184d25fb4842a0e27bde1b3941 |
 | adult_mouse_hippocampus_R1_001.fastq.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R1_001.fastq.gz) | cff74ca79bfa645de31cee80f035b6fe |
 | adult_mouse_hippocampus_R2_001.fastq.gz | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus_R2_001.fastq.gz) | 4f3af67c09967ca6bdd9575a02692a4f |
 | adult_mouse_hippocampus.tif | [http](http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_mouse_hippocampus.tif) | d23dba7f2eeb88c3de9fa869099b30dd |
