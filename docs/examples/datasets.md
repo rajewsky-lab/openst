@@ -1,10 +1,15 @@
 # Datasets
 
-Here we provide a single table with all the links, size and md5 checksums for the publicly available files provided in the following tutorials.
+Here we provide a single table with some links, size and md5 checksums for the files provided in the following tutorials.
+
 
 !!! tip
 
-    When using Linux or macOS, we recommend using [`wget`](https://www.gnu.org/software/wget/manual/wget.html) to download these data
+    All raw reads for the datasets showcased in our paper are available at [SRA](https://www.ncbi.nlm.nih.gov/Traces/study/?acc=PRJNA1055947), and all processed objects (H&E images and spatial transcriptomes) are available at [GEO](https://www.ncbi.nlm.nih.gov/geo/query/acc.cgi?acc=GSE251926)
+
+!!! tip
+
+    When downloading any of the files below, using Linux or macOS, we recommend [`wget`](https://www.gnu.org/software/wget/manual/wget.html).
 
 ## Adult mouse hippocampus
 | File | Link | md5 checksum |

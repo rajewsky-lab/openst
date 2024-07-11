@@ -30,7 +30,7 @@ options:
 
 ## `image_stitch`
 Stitch image fields of view into a single image. Currently, it only supports `--microscope keyence`, for the
-default microscopy setup used in our preprint.
+default microscopy setup used in our paper.
 
 Usage:
 ```text
