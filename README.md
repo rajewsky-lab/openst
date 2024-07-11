@@ -12,7 +12,7 @@
 
 # Open-ST: open-source spatial transcriptomics
 
-### [🌐 website](https://rajewsky-lab.github.io/openst/latest) | [📜 preprint](https://www.biorxiv.org/content/10.1101/2023.12.22.572554v1) | [🐁 datasets](https://rajewsky-lab.github.io/openst/latest/examples/datasets/)
+### [🌐 website](https://rajewsky-lab.github.io/openst/latest) | [📜 paper](https://authors.elsevier.com/c/1jJckL7PXqR3U) | [🐁 datasets](https://rajewsky-lab.github.io/openst/latest/examples/datasets/)
 
 Open-ST is an open-source spatial transcriptomics method 
 with efficient whole-transcriptome capture at sub-cellular resolution (0.6 μm) at low cost 
