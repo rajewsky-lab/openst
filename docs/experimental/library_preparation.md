@@ -68,13 +68,13 @@ For incubations, add enough volume to cover the capture area completely. For all
 
 1. Add isopropanol to the tissues on the capture area and incubate for 1 min, then remove the solution and dry the tissues. 
 2. Add hematoxylin, and incubate for 5 min.
-3. Wash the capture area with Ultrapure water until the hematoxylin dye is completely removed (10-15x). 
+3. Wash the capture area with Ultrapure water until the hematoxylin dye is completely removed (dipping 10-15x). 
 4. Add bluing buffer, and incubate for 2 min. 
 5. Wash the capture area with Ultrapure water, dipping 5 times. 
 6. Add buffered eosin onto tissue section for 1 min.
 7. Wash the capture area with Ultrapure water, dipping 10-15x. 
 8. Let the capture area air-dry at room temperature for 10 min. Dry the tissues completely with no residual water. 
-9. Put the capture area face-down on a coverslip (#1.5, 24x50mm) and image on brightfield with the 20x objective.
+9. Image the tissue on brightfield with the 20x objective. (If using an inverted microscope, put the capture area face-down on a coverslip (#1.5, 24x50mm) for imaging)
 
 After imaging, place the capture areas with the tissue section face up into a multi-well gasket, such as the 16-Well ProChamber Microarray System (Grace Bio-Labs, Cat#645508). We use 100 μL reaction volume throughout the protocol whilst using the gasket. 
 
@@ -91,10 +91,13 @@ __[Open-ST: imaging and incubating]__ by Marie Schott & Anastasiya Boltengagen �
 We recommend performing a pilot experiment in which you compare different permeabilization conditions using a qPCR assay. We suggest comparing different pepsin incubation times (for example, 0, 15, 30, 45, and 60 min) at 37°C.    
 Follow the library preparation steps until *qPCR for cycle number assessment*. Earlier amplification corresponds to a higher concentration of starting material, ie. more efficient mRNA capture. If conditions amplify together, chose the shorter time or lower pepsin concentration for permeabilization of your sample.  
 
+!!! Note
+
+    To prevent evaporation use plate sealing tape to seal your multiwell chamber during all following incubations in the chamber. 
 
 1. Weigh and dissolve the pepsin to have a solution with 7 U/ul pepsin in 2xSSC pH 2.5. 
 2. Dilute 1:10 with 2xSSC pH 2.5 to get the final concentration of 0.7 U/μl.
-3. Prewarm permeabilization mix at 37℃ several minutes before use. 
+3. Prewarm permeabilization mix (0.7 U/uL) at 37℃ several minutes before use. 
 4. Incubate at 37°C for X min (ex. 15 min - 30 min - 60 min) according to the tissue used.  
 
 
@@ -124,7 +127,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 
 1. Remove the pepsin solution. 
 2. Wash the capture area carefully with 100 μl RT Buffer once.
-3. Add 100 μL RT mix per capture area. Incubate overnight at 42°C. 
+3. Add 100 μL RT mix per capture area. Seal the multiwell chamber with a piece of plate-sealing tape to prevent evaporation. Incubate overnight at 42°C. 
 
 ## Exo I digestion
 
@@ -139,7 +142,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 
 1. Remove the RT solution. 
 2. Add 100 μL Exonuclease I mix per capture area to eliminate DNA that did not hybridize with mRNA.  
-2. Incubate 45 min at 37℃. 
+2. Seal chamber and incubate 45 min at 37℃. 
 
 ## Tissue removal 
 
@@ -147,7 +150,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 
 |Reagent|Final concentration|Volume (μL)|
 |:----|:----|:----|
-|Tris-Cl pH 8.0|100 mM|10|
+|1M Tris-Cl pH 8.0|100 mM|10|
 |2M NaCl|200 mM|10|
 |20% SDS|2%|10|
 |0.1M EDTA|5 mM|5|
@@ -156,7 +159,7 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |**Total**| |**100**|
 
 1. Remove the Exonuclease I mix. 
-2. Add 100 μl of 1x tissue removal mix per capture area and incubate for 40 minutes at 37℃.
+2. Add 100 μl of 1x tissue removal mix per capture area, seal chamber, and incubate for 40 minutes at 37℃.
 3. Wash as follows: 
     1. Wash the capture area with ultrapure water three times. 
     2. Wash the capture area  with 100 μl of freshly prepared 0.1N NaOH three times* (*each with 5 min incubation at room temperature). 
@@ -180,16 +183,15 @@ Follow the library preparation steps until *qPCR for cycle number assessment*. E
 |Ultrapure water| |60|
 |**Total**| |**100**|
 
-1. Add 100 μL second strand synthesis mix per capture area. Incubate at 37°C for 2 h. 
+1. Add 100 μL second strand synthesis mix per capture area. Seal chamber and incubate at 37°C for 2 h. 
 2. Wash with 100 μL ultrapure water 3 times. 
-3. Elute the second strand product by incubating the capture areas in 100 μl of freshly prepared 0.1 N NaOH twice for 5 min each. Recover the elutions and pool the second strand product together per sample.
-4. Mix 200 μl of second strand product with 28.6 μl of 1M Tris-HCl pH 7.5. Proceed directly to next step.
+3. Elute the second strand product by incubating the capture areas in 100 μl of freshly prepared 0.1 N NaOH twice for 5 min each. **Recover the elutions** (=2nd strand product), pooling the two elutions per sample.
+4. Mix the 200 μl of second strand product per sample with 28.6 μl of 1M Tris-HCl pH 7.5. Proceed directly to next step.
 
-Purify the 228.6 μL elution using AmpureXP beads at a ratio of 1.8 beads to 1x second strand product, following the manufacturer's instructions.
+Purify the 228.6 μL elution using AmpureXP beads at a ratio of 1.8 beads to 1x second strand product (=411 μL beads/sample) , following the manufacturer's instructions.
 Elute the product in 82.5 μL ultrapure water.  
 
 ## qPCR for cycle number assessment 
-
 
 !!! Note 
 
@@ -253,7 +255,8 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 2. Split each sample mix into four PCR tubes, each with 50 μL volume. 
 3. Run the PCR with the cycle number determined previously (3.9). 
 4. Pool the 200 μL PCR product per sample and purify using AmpureXP beads at a 1:1 ratio of beads PCR product, following the manufacturer's instructions.
-5. Elute the PCR product in 20 μL ultrapure water. 
+5. Elute the PCR product in 20 μL ultrapure water.
+6. Optionally measure the library concentration (e.g using the Qubit) and check the library profile using automated gel electrophoresis before proceeding to gel-based size selection. 
 
 ![Library profile after size selection](../static/img/60_2_BioA_preBP.png){ loading=lazy }
 
@@ -265,7 +268,7 @@ Subtract 5 cycles to account fo the qPCR input (3%). This number is your recomme
 ### Size selection 
 
 Perform size selection of your sample to obtain fragments 350 - 1100 bp. Use the Bluepippin or PippinHT 1.5% agarose gel and follow the manufacturer's instructions. 
-Measure the concentration of your size-selected product using the Qubit dsDNA quanitification kit. 
+Measure the concentration of your size-selected product using the Qubit dsDNA quanitification kit and analyze the library profile using automated gel electrophoresis (e.g. BioAnalyzer or Tapestation) 
 
 ![Library profile after size selection](../static/img/60_2_BioA_postBP.png){ loading=lazy }
 
