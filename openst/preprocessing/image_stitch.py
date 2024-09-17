@@ -24,8 +24,6 @@ def generate_zstacks_from_tiles(input_dir, join_zstack_regex):
 
     zstack_files = defaultdict(list)
 
-
-
     # Compile regex pattern
     pattern = re.compile(join_zstack_regex)
     for filename in os.listdir(input_dir):
@@ -82,7 +80,48 @@ def _image_stitch_imagej_keyence(
     ]
 
 
-SUPPORTED_MICROSCOPES = {"keyence": _image_stitch_imagej_keyence}
+def _image_stitch_imagej_axio(
+    imagej_bin: str,
+    input_dir: str,
+    image_out: str,
+):
+    import xml.etree.ElementTree as ET
+
+    xml_file_path = os.path.join(input_dir, "_meta.xml")
+    macro_keyence_path = get_absolute_package_path("preprocessing/imagej_macros/axio_stitch.ijm")
+
+    # Checking whether the grid file exists
+    check_file_exists(xml_file_path)
+
+    # Loading the xml metadata for gridx and gridy
+    tree = ET.parse(xml_file_path)
+    root = tree.getroot()
+    
+    GRIDX = root.find('./Tags/V148')
+    GRIDY = root.find('./Tags/V149')
+    # we assume names like 02_PCW06.tif
+    filename_base, extension_base = root.find('./Tags/V5').text.split(".")
+    
+    if GRIDX is not None and GRIDY is not None:
+        GRIDX = int(GRIDX.text)
+        GRIDY = int(GRIDY.text)
+    else:
+        raise ValueError("Could not parse the grid size for the current tiles")
+
+    logging.info(f"Grid size: X = {GRIDX}, Y = {GRIDY}")
+    logging.info(f"Running macro {macro_keyence_path} with ImageJ at {imagej_bin}")
+
+    return [
+        f"{imagej_bin}",
+        "--headless",
+        "--console",
+        "-macro",
+        f"{macro_keyence_path}",
+        f"{GRIDX};{GRIDY};{input_dir};{image_out};{filename_base}_p{{ii}}.png",
+    ]
+
+
+SUPPORTED_MICROSCOPES = {"keyence": _image_stitch_imagej_keyence, "axio": _image_stitch_imagej_axio}
 
 
 def image_stitch_imagej(imagej_bin: str, microscope: str, input_dir: str, image_out: str):
