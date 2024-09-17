@@ -4,7 +4,7 @@ build-backend = "poetry.core.masonry.api"
 
 [tool.poetry]
 name = "openst"
-version = "0.1.2"
+version = "0.1.3"
 description = "The computational pipeline for the Open-ST method."
 license = "GPL-2.0"
 authors = [
@@ -58,6 +58,7 @@ pyqt5-qt5 = "==5.15.2"
 pyqt5-sip = "==12.12.2"
 ome-zarr = ">=0.8.2"
 pyqtgraph = ">=0.13.3"
+dnaio
 
 [tool.poetry.urls]
 "Documentation" = "https://rajewsky-lab.github.io/openst/"
