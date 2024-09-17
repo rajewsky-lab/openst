@@ -506,7 +506,7 @@ def get_image_stitch_parser():
         "--microscope",
         type=str,
         help="microscope model or imaging strategy that was used for imaging",
-        choices=["keyence"],
+        choices=["keyence", "axio"],
         required=True,
     )
 
@@ -806,6 +806,47 @@ def cmd_run_barcode_preprocessing(args):
     from openst.preprocessing.barcode_preprocessing import _run_barcode_preprocessing
 
     _run_barcode_preprocessing(args)
+
+FLOWCELL_MAP_HELP = "Convert basecalls from a whole flow cell into a map of barcodes to spatial coordinates"
+def get_flowcell_map_parser():
+    parser = argparse.ArgumentParser(
+        allow_abbrev=False,
+        add_help=False,
+        description=FLOWCELL_MAP_HELP,
+    )
+    parser.add_argument("--bcl-in", type=str, required=True, help="Input directory containing BCL files")
+    parser.add_argument("--bcl-out", required=True, help="Output directory for FASTQ files")
+    parser.add_argument("--tilecoords-out", required=True, help="Output directory for tile coordinates")
+    parser.add_argument("--out-suffix", type=str, default=".txt.gz", help="Suffix for output files")
+    parser.add_argument("--out-prefix", type=str, default="fc_1_", help="Prefix for output files")
+    parser.add_argument("--crop-seq", type=str, default=":", help="Python slice format for cropping sequences")
+    parser.add_argument("--rev-comp", action="store_true", help="Reverse complement the sequences")
+    parser.add_argument("--parallel-processes", type=int, default=1, help="Number of parallel processes to use")
+    parser.add_argument("--dedup-out", required=True, help="Output directory for deduplicated tiles")
+    parser.add_argument("--merge-out", required=True, help="Output directory for merged tiles")
+    parser.add_argument("--distribute-out", required=True, help="Output directory for distributed files")
+    parser.add_argument("--compress-out", required=True, help="Output directory for compressed files")
+    parser.add_argument("--fastq-in", type=str, required=True, help="Path to the fastq file")
+
+    return parser
+
+
+def setup_flowcell_map_parser(parent_parser):
+    parser = parent_parser.add_parser(
+        "flowcell_map",
+        help=FLOWCELL_MAP_HELP,
+        parents=[get_flowcell_map_parser()],
+    )
+    parser.set_defaults(func=cmd_run_flowcell_map)
+
+    return parser
+
+
+def cmd_run_flowcell_map(args):
+    from openst.preprocessing.flowcell_map import _run_flowcell_map
+
+    _run_flowcell_map(args)
+
 
 REPORT_HELP = "Generate HTML reports from metadata files (json)"
 def get_report_parser():
