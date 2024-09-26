@@ -125,7 +125,7 @@ def merge_tiles(input_folder: str, output_file: str, threads: int):
 
     try:
         # Use process substitution to pass the file list to sort
-        cmd = f"sort --parallel={threads} --batch-size=128 --buffer-size={MEM_PER_CORE*threads}G -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
+        cmd = f"sort --parallel={threads} --batch-size=128 --buffer-size={max(4, int(MEM_PER_CORE*threads))}G -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
         returncode, stdout, stderr = run_command(["bash", "-c", cmd], "merge")
         log_output("merge", returncode, stdout, stderr)
         if returncode != 0:
