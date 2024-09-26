@@ -186,6 +186,15 @@ def check_os():
         return False
     return True
 
+def create_lanes_tiles_S4():
+    lanes_and_tiles = []
+    for lane in range(1, 5):
+        for side in range(1, 3):
+            for column in range(1, 7):
+                for row in range(1, 79):
+                    lanes_and_tiles.append(f"{lane}_{side}{column}{row:02d}")
+
+    return lanes_and_tiles
 
 def _run_flowcell_map(args: argparse.Namespace):
     if not check_os():
@@ -204,14 +213,17 @@ def _run_flowcell_map(args: argparse.Namespace):
         )
         args.parallel_processes = max_cores
 
+    if not os.path.exists(args.tiles_out):
+        os.makedirs(args.tiles_out)
+        logging.warning(f"Created output directory: {args.tiles_out}")
+
     run_info_path = os.path.join(args.bcl_in, "RunInfo.xml")
     if not os.path.exists(run_info_path):
-        logging.error(
-            f"RunInfo.xml not found at {run_info_path} - did you specify a proper Illumina basecalls folder?"
-        )
-        return
-
-    lanes_and_tiles = parse_run_info_xml(run_info_path)
+        lanes_and_tiles = parse_run_info_xml(run_info_path)
+    else:
+        logging.warning(f"RunInfo.xml not found at {run_info_path}. Generating lanes and tiles programmatically.")
+        lanes_and_tiles = create_lanes_tiles_S4()
+        
 
     with tempfile.TemporaryDirectory(dir=args.tiles_out) as temp_dir:
         args.bcl_out = os.path.join(temp_dir, "bcl_out")
