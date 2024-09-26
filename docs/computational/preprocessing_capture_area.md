@@ -42,7 +42,23 @@ For each flow cell, we generate plain text files with three columns: `cell_bc`, 
 These files are later used by `spacemake` to reconstruct the spatial coordinates from transcriptomic libraries. 
 This process is performed only once per barcoded flow cell.
 
-To create the barcode-to-coordinate map for all tiles, use the following command:
+!!! warning "Software dependencies"
+    Running `openst flowcell_map` below requires installing either `bcl2fastq` or `bclconvert`.
+    You can find instructions for [`bcl2fastq`](https://emea.support.illumina.com/sequencing/sequencing_software/bcl2fastq-conversion-software.html),
+    and [`bclconvert`](https://emea.support.illumina.com/sequencing/sequencing_software/bcl-convert.html).
+    
+    Then, make sure they are added to the `PATH` environment variable.
+    
+    For instance, in Linux: 
+    ```bash
+    export PATH=/path/to/bcl2fastq:$PATH
+    # or
+    # export PATH=/path/to/bclconvert:$PATH
+    ```
+
+    Make sure you use a version of these softwares compatible with your sequencer.
+
+Once dependencies have been installed, create the barcode-to-coordinate map for all tiles:
 
 ```sh
 openst flowcell_map \
@@ -58,10 +74,24 @@ Make sure to specify the arguments:
 
 This command will create as many barcode-to-coordinate compressed text files as there are tiles in the flow cell under the folder `/path/to/fc_tiles`
 
-## (Optional) Retrieve spatial barcodes coordinates for one tile
-The `x_pos` and `y_pos` coordinates from the table above are given for each tile, separately. This information is
-encoded in the `bcl` and `fastq` files. To obtain per-tile barcodes and coordinates, run the following code: 
+### Workflow Details
+The `openst flowcell_map` command executes a multi-step workflow to process the barcode data:
 
+1. **Tile Processing**: Each of the 3,744 tiles (for the S4 flow cell) is processed individually using `bcl2fastq` (or `bclconvert`).
+2. **Barcode Preprocessing**: The `barcode_preprocessing` function from our openst tools is applied to each tile. This step:
+    - Trims barcodes according to the specified `--crop-seq` parameter
+    - Computes the reverse complement of the barcodes (if `--rev-comp` is specified)
+    - Adds spatial coordinates (`x_pos` and `y_pos`) to each barcode
+
+3. **Individual Tile Deduplication**: Each processed tile file is deduplicated to remove duplicate barcodes within the same tile.
+4. **Cross-tile Merging and Deduplication**: All deduplicated tile files are merged, and a second round of deduplication is performed to remove duplicate barcodes across different tiles.
+5. **File Splitting**: The merged and deduplicated data is split back into individual files, one for each original tile. This step facilitates faster processing with `spacemake` in subsequent analyses. The final tile files are compressed to save storage space.
+
+!!! info "Coordinate system of tiles"
+    The spatial coordinates acquired with `bcl2fastq` (or `bclconvert`) are in a tile-specific coordinate system. For samples spanning multiple tiles, mapping to a global coordinate system becomes necessary. This global mapping is typically done using the `puck_collection` functionality from `spacemake`.
+
+## (Optional) Retrieve spatial barcodes coordinates for one tile
+It is also possible to obtain per-tile barcodes and coordinates: 
 
 ```sh
 openst barcode_preprocessing \
@@ -72,6 +102,10 @@ openst barcode_preprocessing \
     --rev-comp \
     --single-tile
 ```
+
+!!! warning
+    These files do not undergo deduplication, therefore some barcodes might be repeated. Run `openst flowcell_map` to make sure there
+    are no duplicated barcodes across the flow cell.
 
 Make sure to replace the placeholders.
 `/path/to/tile.fastq` to the `fastq` file of a specific tile; `/path/to/fc_tiles` where the table-like
