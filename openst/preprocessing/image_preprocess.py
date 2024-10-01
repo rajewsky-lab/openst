@@ -172,10 +172,11 @@ def run_image_preprocess(args):
         logging.error("You need to provide at least one of `--h5-in` or `--image-in`")
         exit(1)
 
-    adata, img =_load_image_adata(args)
+    adata, img = _load_image_adata(args)
     _img_shape = img.shape
 
-    opt = TestOptions("").parse()
+    gpu_id = "0" if args.device == "cuda" else "-1"
+    opt = TestOptions(f"--gpu_ids {gpu_id}").parse()
     opt.num_threads = 1
     opt.batch_size = 1
     opt.serial_batches = True
