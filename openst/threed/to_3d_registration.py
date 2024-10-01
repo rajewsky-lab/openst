@@ -19,7 +19,7 @@ def convert_adata_to_crosstab(adata: AnnData, genes: list = None):
     adata = adata[adata.obs_names[np.unique(adata.X.nonzero()[0])]].copy()
 
     df_locations = pd.DataFrame(
-        {"barcodes": adata.obs_names, "xcoord": adata.obsm["spatial"][:, 0], "ycoord": adata.obsm["spatial"][:, 1]}
+        {"barcodes": adata.obs_names, "x_pos": adata.obsm["spatial"][:, 0], "y_pos": adata.obsm["spatial"][:, 1]}
     )
     df_genes = pd.crosstab(
         np.repeat(adata.var_names[adata.X.nonzero()[1]], adata.X.data),

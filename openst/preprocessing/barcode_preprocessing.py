@@ -34,7 +34,7 @@ def process_multiple_tiles(
 
                 if tile_number != current_tile_number:
                     logging.info(f"Writing {len(sequences):,} barcodes of file {current_tile_number} to disk")
-                    df = pd.DataFrame({"cell_bc": sequences, "xcoord": xcoords, "ycoord": ycoords})
+                    df = pd.DataFrame({"cell_bc": sequences, "x_pos": xcoords, "y_pos": ycoords})
                     df.to_csv(
                         os.path.join(
                             out_path,
@@ -74,7 +74,7 @@ def process_single_tile(in_fastq: str, sequence_preprocessor: callable = None) -
 
             idx += 1
 
-    df = pd.DataFrame({"cell_bc": sequences, "xcoord": xcoords, "ycoord": ycoords})
+    df = pd.DataFrame({"cell_bc": sequences, "x_pos": xcoords, "y_pos": ycoords})
     return df
 
 
