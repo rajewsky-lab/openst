@@ -95,7 +95,7 @@ def process_deduplication_file(file: str, input_folder: str, output_folder: str)
     input_file = os.path.join(input_folder, file)
     output_file = os.path.join(output_folder, f".uncompressed.sorted.{file}")
     cmd = f"""
-    zcat "{input_file}" | 
+    LC_ALL=C zcat "{input_file}" | 
     awk -F'\\t' 'NR==1{{print $0"\\tfilename"; next}} {{print $0"\\t{file}"}}' | 
     tail -n +2 | 
     sort -u -k1,1 -t$'\\t' > "{output_file}"
@@ -126,7 +126,7 @@ def merge_tiles(input_folder: str, output_file: str, threads: int):
 
     try:
         # Use process substitution to pass the file list to sort
-        cmd = f"sort --parallel={threads} --batch-size=128 -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
+        cmd = f"LC_ALL=C sort --parallel={threads} --batch-size=128 -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
         returncode, stdout, stderr = run_command(["bash", "-c", cmd], "merge")
         log_output("merge", returncode, stdout, stderr)
         if returncode != 0:
