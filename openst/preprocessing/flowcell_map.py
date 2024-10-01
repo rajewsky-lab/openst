@@ -15,6 +15,7 @@ from tqdm import tqdm
 
 # for the last merge sort, in gigabytes
 MEM_PER_CORE = 4
+MAX_FILES = 7_488
 
 log_lock = threading.Lock()
 
@@ -125,7 +126,7 @@ def merge_tiles(input_folder: str, output_file: str, threads: int):
 
     try:
         # Use process substitution to pass the file list to sort
-        cmd = f"sort --parallel={threads} --batch-size=128 --buffer-size={max(4, int(MEM_PER_CORE*threads))}G -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
+        cmd = f"sort --parallel={threads} --batch-size=128 -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
         returncode, stdout, stderr = run_command(["bash", "-c", cmd], "merge")
         log_output("merge", returncode, stdout, stderr)
         if returncode != 0:
@@ -136,12 +137,39 @@ def merge_tiles(input_folder: str, output_file: str, threads: int):
 
 
 def distribute_per_file(input_file: str, output_folder: str):
+    import resource
+    import csv
+    
     os.makedirs(output_folder, exist_ok=True)
-    cmd = f'awk -F\'\\t\' \'{{print $1"\\t"$2"\\t"$3 > "{output_folder}/"$4}}\' {input_file}'
-    returncode, stdout, stderr = run_command(["bash", "-c", cmd], "distribute")
-    log_output("distribute", returncode, stdout, stderr)
-    if returncode != 0:
-        logging.warning(f"return code {returncode}, at command '{cmd}'")
+    
+    # Increase the limit of open files
+    _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (min(MAX_FILES, hard), hard))
+    
+    file_handles = {}
+    csvw_handles = {}
+    
+    try:
+        with open(input_file, 'r') as f:
+            reader = csv.reader(f, delimiter='\t')
+            for row in tqdm(reader, desc="Distributing files"):
+                id = row[-1]
+                if id not in file_handles:
+                    file_handles[id] = open(os.path.join(output_folder, id), 'w', newline='')
+                    csvw_handles[id] = csv.writer(file_handles[id], delimiter='\t')
+                    csvw_handles[id].writerow(["cell_bc", "xcoord", "ycoord"])
+                csvw_handles[id].writerow(row[:-1])
+    
+    except Exception as e:
+        logging.error(f"Error during file distribution: {str(e)}")
+        raise
+    
+    finally:
+        # Close all file handles
+        for f in file_handles.values():
+            f.close()
+    
+    logging.info(f"File distribution completed. Output in {output_folder}")
 
 
 def process_compression_file(file: str, input_folder: str, output_folder: str):
@@ -224,13 +252,13 @@ def _run_flowcell_map(args: argparse.Namespace):
         logging.warning(f"RunInfo.xml not found at {run_info_path}. Generating lanes and tiles programmatically.")
         lanes_and_tiles = create_lanes_tiles_S4()
         
-
+    # we will not use temporary directories for the time being
     with tempfile.TemporaryDirectory(dir=args.tiles_out) as temp_dir:
-        args.bcl_out = os.path.join(temp_dir, "bcl_out")
-        args.tilecoords_out = os.path.join(temp_dir, "tilecoords_out")
-        args.dedup_out = os.path.join(temp_dir, "dedup_out")
-        args.merge_out = os.path.join(temp_dir, "merge_out")
-        args.distribute_out = os.path.join(temp_dir, "distribute_out")
+        args.bcl_out = os.path.join(args.tiles_out, "bcl_out")
+        args.tilecoords_out = os.path.join(args.tiles_out, "tilecoords_out")
+        args.dedup_out = os.path.join(args.tiles_out, "dedup_out")
+        args.merge_out = os.path.join(args.tiles_out, "merge_out")
+        args.distribute_out = os.path.join(args.tiles_out, "distribute_out")
 
         for dir_path in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
             os.makedirs(dir_path, exist_ok=True)
