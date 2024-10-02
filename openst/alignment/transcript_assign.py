@@ -52,6 +52,9 @@ def subset_adata_to_mask(mask, adata, spatial_key: str = 'spatial'):
     # Subset the labels to those in the mask
     labels = mask[adata.obsm[spatial_key][:, 0].astype(int), adata.obsm[spatial_key][:, 1].astype(int)]
 
+    # Set first label as zero for background
+    labels[0] = 0
+
     # Assign label as cell_ID
     adata.obs["cell_ID"] = labels
 
