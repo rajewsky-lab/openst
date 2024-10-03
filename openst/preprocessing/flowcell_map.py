@@ -21,9 +21,8 @@ from tqdm import tqdm
 
 # for the last merge sort, in gigabytes
 MEM_PER_CORE = 4
-MAX_FILES = 7_488
 CHUNK_SIZE = 10_000_000
-MAX_FILES = 4_000
+MAX_FILES = 50_000
 
 log_lock = threading.Lock()
 
@@ -252,7 +251,7 @@ def merge_intermediate_files(output_folder, num_processes):
     # Get unique base names across all temp folders
     base_names = set()
     for folder in temp_folders:
-        if not os.path.exists(temp_folders):
+        if not os.path.exists(folder):
             logging.error(f"The temporary folder 'temp_{i}' does not exist")
             break
         base_names.update(name.rsplit('.', 2)[0] for name in os.listdir(folder))
