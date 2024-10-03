@@ -5,10 +5,9 @@ import time
 import pandas as pd
 
 import logging
-
+import dnaio
 
 tab = str.maketrans("ACTG", "TGAC")
-
 
 def reverse_complement_table(seq):
     return seq.translate(tab)[::-1]
@@ -23,35 +22,30 @@ def process_multiple_tiles(
     in_fastq: str, out_path: str, out_prefix: str, out_suffix: str, sequence_preprocessor: callable = None
 ):
     current_tile_number = None
-    sequences, xcoords, ycoords = [[], [], []]
-    idx = 0
-    with gzip.open(in_fastq, "rt") as f:
+    n_written = 0
+    with dnaio.open(in_fastq) as f:
         for line in f:
-            if idx % 4 == 0:
-                tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.strip())
-                if current_tile_number is None:
-                    current_tile_number = tile_number
+            tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.name)
+            if current_tile_number != tile_number:
 
-                if tile_number != current_tile_number:
-                    logging.info(f"Writing {len(sequences):,} barcodes of file {current_tile_number} to disk")
-                    df = pd.DataFrame({"cell_bc": sequences, "x_pos": xcoords, "y_pos": ycoords})
-                    df.to_csv(
-                        os.path.join(
-                            out_path,
-                            out_prefix + current_tile_number + out_suffix,
-                        ),
-                        index=False,
-                        sep="\t",
-                    )
-                    current_tile_number = tile_number
-                    sequences, xcoords, ycoords = [[], [], []]
-            elif idx % 4 == 1:
-                sequence = sequence_preprocessor(line) if sequence_preprocessor is not None else line
-                sequences.append(sequence)
-                xcoords.append(xcoord)
-                ycoords.append(ycoord)
+                if current_tile_number is not None:
+                    logging.info(f"Written {n_written} spatial barcodes to {current_tile_number}")
+                    tile_file.close()
 
-            idx += 1
+                current_tile_number = tile_number
+
+                tile_fname = os.path.join(
+                                out_path,
+                                out_prefix + current_tile_number + out_suffix,
+                            )
+
+                tile_file = open(tile_fname, "w")
+                tile_file.write("\t".join(["cell_bc", "xcoord", "ycoord"])+"\n")
+                n_written = 0
+
+            sequence = sequence_preprocessor(line.sequence) if sequence_preprocessor is not None else line.sequence
+            tile_file.write("\t".join([sequence, xcoord, ycoord])+"\n")
+            n_written += 1
 
 
 def process_single_tile(in_fastq: str, sequence_preprocessor: callable = None) -> pd.DataFrame:

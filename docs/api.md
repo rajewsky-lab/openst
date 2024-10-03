@@ -28,6 +28,30 @@ options:
   --unsorted            (Optional) set when file is unsorted respect to tiles; might be slower
 ```
 
+## `flowcell_map`
+Convert basecalls from a whole flow cell into barcodes-to-spatial coordinates maps (tabular format) that can be used with spacemake
+for spatial mapping of transcriptomic libraries.
+
+Usage:
+```text
+openst flowcell_map [-h] --bcl-in BCL_IN --tiles-out TILES_OUT [--out-suffix OUT_SUFFIX] [--out-prefix OUT_PREFIX]
+                           [--crop-seq CROP_SEQ] [--rev-comp] [--parallel-processes PARALLEL_PROCESSES]
+
+options:
+  -h, --help            show this help message and exit
+  --bcl-in BCL_IN       Input directory containing BCL files
+  --tiles-out TILES_OUT
+                        Output directory for tile coordinate files
+  --out-suffix OUT_SUFFIX
+                        (Optional) Suffix for output files
+  --out-prefix OUT_PREFIX
+                        (Optional) Prefix for output files
+  --crop-seq CROP_SEQ   (Optional) Python slice format for cropping sequences
+  --rev-comp            (Optional) Reverse complement the sequences
+  --parallel-processes PARALLEL_PROCESSES
+                        (Optional) Number of parallel processes to use
+```
+
 ## `image_stitch`
 Stitch image fields of view into a single image. Currently, it only supports `--microscope keyence`, for the
 default microscopy setup used in our paper.
