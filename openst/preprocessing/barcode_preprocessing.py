@@ -68,7 +68,7 @@ def process_single_tile(in_fastq: str, sequence_preprocessor: callable = None) -
 
             idx += 1
 
-    df = pd.DataFrame({"cell_bc": sequences, "xcoord": xcoords, "ycoord": ycoords})
+    df = pd.DataFrame({"cell_bc": sequences, "x_pos": xcoords, "y_pos": ycoords})
     return df
 
 
