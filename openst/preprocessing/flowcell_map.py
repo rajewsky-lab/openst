@@ -11,13 +11,36 @@ import xml.etree.ElementTree as ET
 from concurrent.futures import ProcessPoolExecutor
 from typing import List, Tuple
 
+import csv
+import gzip
+import resource
+import itertools
+import shutil
+
 from tqdm import tqdm
 
 # for the last merge sort, in gigabytes
 MEM_PER_CORE = 4
 MAX_FILES = 7_488
+CHUNK_SIZE = 10_000_000
+MAX_FILES = 4_000
 
 log_lock = threading.Lock()
+
+def calculate_offsets(file_path, num_processes):
+    file_size = os.path.getsize(file_path)
+    chunk_size = file_size // num_processes
+    offsets = []
+
+    with open(file_path, 'rb') as f:
+        offset = 0
+        for _ in range(num_processes):
+            offsets.append(offset)
+            f.seek(chunk_size, 1)
+            f.readline()  # Move to the next full line
+            offset = f.tell()
+
+    return offsets
 
 def run_command(cmd: List[str], description: str) -> Tuple[int, str, str]:
     """Run a command and return its exit code, stdout, and stderr."""
@@ -114,60 +137,166 @@ def deduplicate_tiles(input_folder: str, output_folder: str):
         for _ in tqdm(futures, total=len(futures), desc="deduplicate"):
             _.result()
 
-def merge_tiles(input_folder: str, output_file: str, threads: int):
+def sort_chunk(chunk_files, output_file, temp_dir):
+    cmd = f"LC_ALL=C sort -m -u -k1,1 -t $'\\t' -T {temp_dir} {' '.join(chunk_files)} > {output_file}"
+    subprocess.run(["bash", "-c", cmd], check=True)
+    return output_file
+
+def merge_tiles(input_folder: str, output_file: str, threads: int, chunk_size: int = 100):
     os.makedirs(os.path.dirname(output_file), exist_ok=True)
     files = [os.path.join(input_folder, f) for f in os.listdir(input_folder) if f.startswith(".uncompressed.sorted.")]
     
-    # Create a temporary file with the list of files to sort
-    with tempfile.NamedTemporaryFile(mode='w+', delete=False) as temp_file:
-        for file in files:
-            temp_file.write(f"{file}\n")
-        temp_file_name = temp_file.name
+    # Create a temporary directory for intermediate files
+    with tempfile.TemporaryDirectory(dir=input_folder) as temp_dir:
+        # Stage 1: Sort chunks of files in parallel
+        chunk_outputs = []
+        with ProcessPoolExecutor(max_workers=threads) as executor:
+            futures = []
+            for i in range(0, len(files), chunk_size):
+                chunk = files[i:i+chunk_size]
+                chunk_output = os.path.join(temp_dir, f"chunk_sorted_{i}.txt")
+                futures.append(executor.submit(sort_chunk, chunk, chunk_output, temp_dir))
+            
+            for future in tqdm(futures, desc="Sorting chunks"):
+                chunk_outputs.append(future.result())
+        
+        # Stage 2: Final merge of all chunk outputs
+        final_merge_cmd = f"LC_ALL=C sort --parallel={threads} -m -u -k1,1 -t $'\\t' -T {temp_dir} {' '.join(chunk_outputs)} > {output_file}"
+        
+        try:
+            subprocess.run(["bash", "-c", final_merge_cmd], check=True)
+            logging.info(f"Final merge completed successfully. Output: {output_file}")
+        except subprocess.CalledProcessError as e:
+            logging.error(f"Error during final merge: {str(e)}")
+            raise
 
-    try:
-        # Use process substitution to pass the file list to sort
-        cmd = f"LC_ALL=C sort --parallel={threads} --batch-size=128 -m -u -k1,1 -t $'\\t' -T {input_folder} $(cat {temp_file_name}) > {output_file}"
-        returncode, stdout, stderr = run_command(["bash", "-c", cmd], "merge")
-        log_output("merge", returncode, stdout, stderr)
-        if returncode != 0:
-            logging.warning(f"return code {returncode}, at command '{cmd}'")
-    finally:
-        # Clean up the temporary file
-        os.unlink(temp_file_name)
 
-
-def distribute_per_file(input_file: str, output_folder: str):
-    import resource
-    import csv
-    
-    os.makedirs(output_folder, exist_ok=True)
-    
-    # Increase the limit of open files
-    _, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
-    resource.setrlimit(resource.RLIMIT_NOFILE, (min(MAX_FILES, hard), hard))
-    
+def process_chunk(file_path, start_offset, end_offset, output_folder, chunk_id, num_processes):
     file_handles = {}
     csvw_handles = {}
+    temp_folder = os.path.join(output_folder, f"temp_{chunk_id}")
+    os.makedirs(temp_folder, exist_ok=True)
+
+    flush_interval = 10_000_000
+    lines_processed = 0
+
+    with open(file_path, 'r') as f:
+        f.seek(start_offset)
+        current_position = start_offset
+        
+        # Skip the first line if not starting from the beginning (it might be partial)
+        if start_offset > 0:
+            f.readline()
+            current_position = f.tell()
+
+        pbar = None
+        if start_offset == 0:
+            total_size = end_offset - start_offset
+            pbar = tqdm(total=total_size*num_processes, unit='B', unit_scale=True, desc=f'Processing in {num_processes} chunks')
+        
+        while current_position < end_offset:
+            line = f.readline()
+            if not line:  # End of file
+                break
+            
+            new_position = f.tell()
+            if pbar:
+                pbar.update((new_position - current_position)*num_processes)
+            current_position = new_position
+
+            row = next(csv.reader([line], delimiter='\t'))
+            
+            id = row[-1]
+            if id not in file_handles:
+                file_handles[id] = open(os.path.join(temp_folder, f"{id}"), 'w', newline='')
+                csvw_handles[id] = csv.writer(file_handles[id], delimiter='\t')
+                csvw_handles[id].writerow(["cell_bc", "xcoord", "ycoord"])
+            csvw_handles[id].writerow(row[:-1])
+
+            lines_processed += 1
+            if lines_processed % flush_interval == 0:
+                for handle in file_handles.values():
+                    handle.flush()
+                    os.fsync(handle.fileno())
+
+        if pbar:
+            pbar.close()
+
+    for handle in file_handles.values():
+        handle.flush()
+        os.fsync(handle.fileno())
+        handle.close()
+
+def merge_file(base_name, temp_folders, output_folder):
+    final_file = os.path.join(output_folder, f"{base_name}.txt.gz")
+    temp_files = [os.path.join(folder, f"{base_name}.txt.gz") 
+                  for folder in temp_folders 
+                  if os.path.exists(os.path.join(folder, f"{base_name}.txt.gz"))]
+    
+    with gzip.open(final_file, 'wt', newline='') as f_out:
+        writer = csv.writer(f_out, delimiter='\t')
+        writer.writerow(["cell_bc", "xcoord", "ycoord"])  # Write header once
+        for temp_file in temp_files:
+            with open(temp_file, 'r') as f_in:
+                reader = csv.reader(f_in, delimiter='\t')
+                next(reader)  # Skip header
+                for row in reader:
+                    writer.writerow(row)
+            os.remove(temp_file)
+    
+    return base_name
+
+def merge_intermediate_files(output_folder, num_processes):
+    temp_folders = [os.path.join(output_folder, f"temp_{i}") for i in range(num_processes)]
+    
+    # Get unique base names across all temp folders
+    base_names = set()
+    for folder in temp_folders:
+        if not os.path.exists(temp_folders):
+            logging.error(f"The temporary folder 'temp_{i}' does not exist")
+            break
+        base_names.update(name.rsplit('.', 2)[0] for name in os.listdir(folder))
+    
+    with ProcessPoolExecutor(max_workers=num_processes) as executor:
+        futures = [executor.submit(merge_file, base_name, temp_folders, output_folder) 
+                   for base_name in base_names]
+        
+        for future in tqdm(futures, total=len(futures), desc="Merging files"):
+            future.result()
+    
+    # Clean up temp folders
+    for folder in temp_folders:
+        shutil.rmtree(folder)
+
+def distribute_per_file(input_file: str, output_folder: str, num_processes: int = None):
+    os.makedirs(output_folder, exist_ok=True)
+    
+    soft, hard = resource.getrlimit(resource.RLIMIT_NOFILE)
+    resource.setrlimit(resource.RLIMIT_NOFILE, (min(MAX_FILES, hard), hard))
+    
+    if num_processes is None:
+        num_processes = os.cpu_count()
     
     try:
-        with open(input_file, 'r') as f:
-            reader = csv.reader(f, delimiter='\t')
-            for row in tqdm(reader, desc="Distributing files"):
-                id = row[-1]
-                if id not in file_handles:
-                    file_handles[id] = open(os.path.join(output_folder, id), 'w', newline='')
-                    csvw_handles[id] = csv.writer(file_handles[id], delimiter='\t')
-                    csvw_handles[id].writerow(["cell_bc", "xcoord", "ycoord"])
-                csvw_handles[id].writerow(row[:-1])
+        offsets = calculate_offsets(input_file, num_processes)
+        offsets.append(os.path.getsize(input_file))  # Add end of file offset
+        
+        with ProcessPoolExecutor(max_workers=num_processes) as executor:
+            futures = []
+            for i in range(num_processes):
+                start_offset = offsets[i]
+                end_offset = offsets[i+1]
+                futures.append(executor.submit(process_chunk, input_file, start_offset, end_offset, output_folder, i, num_processes))
+            
+            for future in tqdm(futures, total=num_processes, desc="Processing chunks"):
+                future.result()
+        
+        logging.info("All chunks processed. Merging intermediate files...")
+        merge_intermediate_files(output_folder, num_processes)
     
     except Exception as e:
         logging.error(f"Error during file distribution: {str(e)}")
         raise
-    
-    finally:
-        # Close all file handles
-        for f in file_handles.values():
-            f.close()
     
     logging.info(f"File distribution completed. Output in {output_folder}")
 
@@ -259,6 +388,7 @@ def _run_flowcell_map(args: argparse.Namespace):
         args.dedup_out = os.path.join(args.tiles_out, "dedup_out")
         args.merge_out = os.path.join(args.tiles_out, "merge_out")
         args.distribute_out = os.path.join(args.tiles_out, "distribute_out")
+        merged_file = os.path.join(args.merge_out, "merged_deduplicated.txt")
 
         for dir_path in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
             os.makedirs(dir_path, exist_ok=True)
@@ -268,40 +398,40 @@ def _run_flowcell_map(args: argparse.Namespace):
             for tile in lanes_and_tiles:
                 f.write(f"{tile}\n")
 
-        # process tiles in parallel
-        with ProcessPoolExecutor(max_workers=args.parallel_processes) as executor:
-            futures = [executor.submit(process_tile, tile, args) for tile in lanes_and_tiles]
-            for _ in tqdm(futures, total=len(futures), desc="Processing tiles"):
-                _.result()
+        if len(os.listdir(args.dedup_out)) == 0:
+            # process tiles in parallel
+            with ProcessPoolExecutor(max_workers=args.parallel_processes) as executor:
+                futures = [executor.submit(process_tile, tile, args) for tile in lanes_and_tiles]
+                for _ in tqdm(futures, total=len(futures), desc="Processing tiles"):
+                    _.result()
 
         if not os.path.exists(args.tilecoords_out) or not os.listdir(args.tilecoords_out):
             logging.error(f"Tile coordinates output directory {args.tilecoords_out} does not exist or is empty")
             return
 
         logging.info("Deduplicating individual tiles")
-        deduplicate_tiles(args.tilecoords_out, args.dedup_out)
+        if not os.path.exists(merged_file):
+            deduplicate_tiles(args.tilecoords_out, args.dedup_out)
 
         if not os.path.exists(args.dedup_out) or not os.listdir(args.dedup_out):
             logging.error(f"Deduplicated tiles directory {args.dedup_out} does not exist or is empty")
             return
 
         logging.info("Merging and deduplicating all tiles")
-        merged_file = os.path.join(args.merge_out, "merged_deduplicated.txt")
-        merge_tiles(args.dedup_out, merged_file, args.parallel_processes)
+        if not os.path.exists(os.path.join(args.merge_out, "done")):
+            merge_tiles(args.dedup_out, merged_file, args.parallel_processes)
+
+        open(os.path.join(args.merge_out, "done"), 'a').close()
 
         if not os.path.exists(merged_file):
             logging.error(f"Merged file {merged_file} does not exist")
             return
+        
+        logging.info("Writing compressed tiles")
+        if not os.path.exists(os.path.join(args.tiles_out, "done")):
+            distribute_per_file(merged_file, args.tiles_out, args.parallel_processes)
 
-        logging.info("Writing tiles")
-        distribute_per_file(merged_file, args.distribute_out)
-
-        if not os.path.exists(args.distribute_out) or not os.listdir(args.distribute_out):
-            logging.error(f"Distributed files directory {args.distribute_out} does not exist or is empty")
-            return
-
-        logging.info("Compressing tiles")
-        compress_files(args.distribute_out, args.tiles_out)
+        open(os.path.join(args.tiles_out, "done"), 'a').close()
 
     if not os.path.exists(args.tiles_out) or not os.listdir(args.tiles_out):
         logging.error(f"Final puck file directory {args.tiles_out} does not exist or is empty")
