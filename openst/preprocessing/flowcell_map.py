@@ -392,7 +392,7 @@ def _run_flowcell_map(args: argparse.Namespace):
         for dir_path in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
             os.makedirs(dir_path, exist_ok=True)
     
-        lanes_and_tiles_path = os.path.join(args.bcl_in, "lanes_and_tiles.txt")
+        lanes_and_tiles_path = os.path.join(args.tiles_out, "lanes_and_tiles.txt")
         with open(lanes_and_tiles_path, "w") as f:
             for tile in lanes_and_tiles:
                 f.write(f"{tile}\n")
