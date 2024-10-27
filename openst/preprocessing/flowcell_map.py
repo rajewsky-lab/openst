@@ -442,7 +442,7 @@ def _run_flowcell_map(args: argparse.Namespace):
         elif len(args.fastq_in) != 0:
             with ProcessPoolExecutor(max_workers=args.parallel_processes) as executor:
                 futures = [executor.submit(process_fastq, fq, args) for fq in args.fastq_in]
-                for _ in tqdm(futures, total=len(futures), desc="Processing tiles"):
+                for _ in tqdm(futures, total=len(futures), desc="Processing FASTQ files"):
                     _.result()
 
     if not os.path.exists(args.tilecoords_out) or not os.listdir(args.tilecoords_out):
