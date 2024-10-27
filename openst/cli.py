@@ -814,8 +814,12 @@ def get_flowcell_map_parser():
         add_help=False,
         description=FLOWCELL_MAP_HELP,
     )
-    parser.add_argument("--bcl-in", type=str, required=True, help="Input directory containing BCL files")
+    parser.add_argument("--bcl-in", type=str, default="", help="Input directory containing BCL files")
+    parser.add_argument("--fastq-in", type=str, nargs="+", default="", help="FASTQ file(s) containing the barcode sequencing")
     parser.add_argument("--tiles-out", required=True, help="Output directory for tile coordinate files")
+    parser.add_argument("--tmp-dir", type=str, default=None, help="""Temporary output directory. If flowcell_map exists 
+                        before finishing, setting this to the same directory as the previous run will restart flowcell_map
+                        from the last finished step.""")
     parser.add_argument("--out-suffix", type=str, default=".txt.gz", help="Suffix for output files")
     parser.add_argument("--out-prefix", type=str, default="fc_1_", help="Prefix for output files")
     parser.add_argument("--crop-seq", type=str, default=":", help="Python slice format for cropping sequences")

@@ -14,7 +14,7 @@ def reverse_complement_table(seq):
 
 
 def get_tile_number_and_coordinates(read_name):
-    read_name = read_name.split(" ")[0].split(":")[-3:]
+    read_name = read_name.split(" ")[0].split(":")[-4:]
     return read_name
 
 
@@ -25,18 +25,18 @@ def process_multiple_tiles(
     n_written = 0
     with dnaio.open(in_fastq) as f:
         for line in f:
-            tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.name)
+            lane, tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.name)
             if current_tile_number != tile_number:
 
                 if current_tile_number is not None:
-                    logging.info(f"Written {n_written} spatial barcodes to {current_tile_number}")
+                    logging.info(f"Written {n_written} spatial barcodes to {lane}_{current_tile_number}")
                     tile_file.close()
 
                 current_tile_number = tile_number
 
                 tile_fname = os.path.join(
                                 out_path,
-                                out_prefix + current_tile_number + out_suffix,
+                                out_prefix + lane + "_" + current_tile_number + out_suffix,
                             )
 
                 tile_file = open(tile_fname, "w")
@@ -55,7 +55,7 @@ def process_single_tile(in_fastq: str, sequence_preprocessor: callable = None) -
     with gzip.open(in_fastq, "rt") as f:
         for line in f:
             if idx % 4 == 0:
-                tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.strip())
+                _, tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.strip())
                 all_tile_numbers.add(tile_number)
                 if len(all_tile_numbers) > 1:
                     raise ValueError("You specified a single tile, and the file contains more than one...")

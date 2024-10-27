@@ -113,6 +113,31 @@ def process_tile(tile: str, args: argparse.Namespace):
     if returncode != 0:
         logging.warning(f"return code {returncode}, at command '{openst_cmd}'")
 
+def process_fastq(fq: str, args: argparse.Namespace):
+    os.makedirs(args.tilecoords_out, exist_ok=True)
+
+    openst_cmd = [
+        "openst",
+        "barcode_preprocessing",
+        "--fastq-in",
+        fq,
+        "--tilecoords-out",
+        args.tilecoords_out,
+        "--out-suffix",
+        args.out_suffix,
+        "--out-prefix",
+        args.out_prefix,
+        "--crop-seq",
+        args.crop_seq
+    ]
+    if args.rev_comp:
+        openst_cmd.append("--rev-comp")
+
+    returncode, stdout, stderr = run_command(openst_cmd, f"openst barcode_preprocessing")
+    log_output(f"openst barcode_preprocessing for a multi-tile fastq file", returncode, stdout, stderr)
+    if returncode != 0:
+        logging.warning(f"return code {returncode}, at command '{openst_cmd}'")
+
 def process_deduplication_file(file: str, input_folder: str, output_folder: str):
     input_file = os.path.join(input_folder, file)
     output_file = os.path.join(output_folder, f".uncompressed.sorted.{file}")
@@ -252,7 +277,7 @@ def merge_intermediate_files(output_folder, num_processes):
     base_names = set()
     for folder in temp_folders:
         if not os.path.exists(folder):
-            logging.error(f"The temporary folder 'temp_{i}' does not exist")
+            logging.error(f"The temporary folder '{folder}' does not exist")
             break
         base_names.update(name.rsplit('.', 2)[0] for name in os.listdir(folder))
     
@@ -356,6 +381,10 @@ def _run_flowcell_map(args: argparse.Namespace):
     if not check_os():
         return
 
+    if len(args.bcl_in) == 0 and len(args.fastq_in) == 0:
+        logging.error("You must specify either --bcl-in <folder_to_bcl> or --fastq-in <fastq_files>")
+        return
+
     demux_tool = check_bcl2fastq()
     if demux_tool is None:
         return
@@ -369,6 +398,10 @@ def _run_flowcell_map(args: argparse.Namespace):
         )
         args.parallel_processes = max_cores
 
+    if os.path.exists(os.path.join(args.tiles_out, "done")):
+        logging.warning("openst flowcell_map was executed successfully on this folder")
+        return
+
     if not os.path.exists(args.tiles_out):
         os.makedirs(args.tiles_out)
         logging.warning(f"Created output directory: {args.tiles_out}")
@@ -379,62 +412,76 @@ def _run_flowcell_map(args: argparse.Namespace):
     else:
         logging.warning(f"RunInfo.xml not found at {run_info_path}. Generating lanes and tiles programmatically.")
         lanes_and_tiles = create_lanes_tiles_S4()
+
+    if args.tmp_dir == "" or args.tmp_dir is None:
+        logging.debug("Will write temporary files to the same output directory.")
+        args.tmp_dir = args.tiles_out
+
         
-    # we will not use temporary directories for the time being
-    with tempfile.TemporaryDirectory(dir=args.tiles_out) as temp_dir:
-        args.bcl_out = os.path.join(args.tiles_out, "bcl_out")
-        args.tilecoords_out = os.path.join(args.tiles_out, "tilecoords_out")
-        args.dedup_out = os.path.join(args.tiles_out, "dedup_out")
-        args.merge_out = os.path.join(args.tiles_out, "merge_out")
-        args.distribute_out = os.path.join(args.tiles_out, "distribute_out")
-        merged_file = os.path.join(args.merge_out, "merged_deduplicated.txt")
+    args.bcl_out = os.path.join(args.tmp_dir, "bcl_out")
+    args.tilecoords_out = os.path.join(args.tmp_dir, "tilecoords_out")
+    args.dedup_out = os.path.join(args.tmp_dir, "dedup_out")
+    args.merge_out = os.path.join(args.tmp_dir, "merge_out")
+    args.distribute_out = os.path.join(args.tmp_dir, "distribute_out")
+    merged_file = os.path.join(args.merge_out, "merged_deduplicated.txt")
 
-        for dir_path in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
-            os.makedirs(dir_path, exist_ok=True)
-    
-        lanes_and_tiles_path = os.path.join(args.tiles_out, "lanes_and_tiles.txt")
-        with open(lanes_and_tiles_path, "w") as f:
-            for tile in lanes_and_tiles:
-                f.write(f"{tile}\n")
+    for dir_path in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
+        os.makedirs(dir_path, exist_ok=True)
 
-        if len(os.listdir(args.dedup_out)) == 0:
-            # process tiles in parallel
+    lanes_and_tiles_path = os.path.join(args.tiles_out, "lanes_and_tiles.txt")
+    with open(lanes_and_tiles_path, "w") as f:
+        for tile in lanes_and_tiles:
+            f.write(f"{tile}\n")
+
+    if len(os.listdir(args.dedup_out)) == 0:
+        # process tiles in parallel
+        if len(args.bcl_in) != 0:
             with ProcessPoolExecutor(max_workers=args.parallel_processes) as executor:
                 futures = [executor.submit(process_tile, tile, args) for tile in lanes_and_tiles]
                 for _ in tqdm(futures, total=len(futures), desc="Processing tiles"):
                     _.result()
+        elif len(args.fastq_in) != 0:
+            with ProcessPoolExecutor(max_workers=args.parallel_processes) as executor:
+                futures = [executor.submit(process_fastq, fq, args) for fq in args.fastq_in]
+                for _ in tqdm(futures, total=len(futures), desc="Processing tiles"):
+                    _.result()
 
-        if not os.path.exists(args.tilecoords_out) or not os.listdir(args.tilecoords_out):
-            logging.error(f"Tile coordinates output directory {args.tilecoords_out} does not exist or is empty")
-            return
+    if not os.path.exists(args.tilecoords_out) or not os.listdir(args.tilecoords_out):
+        logging.error(f"Tile coordinates output directory {args.tilecoords_out} does not exist or is empty")
+        return
 
-        logging.info("Deduplicating individual tiles")
-        if not os.path.exists(merged_file):
-            deduplicate_tiles(args.tilecoords_out, args.dedup_out)
+    logging.info("Deduplicating individual tiles")
+    if not os.path.exists(merged_file):
+        deduplicate_tiles(args.tilecoords_out, args.dedup_out)
 
-        if not os.path.exists(args.dedup_out) or not os.listdir(args.dedup_out):
-            logging.error(f"Deduplicated tiles directory {args.dedup_out} does not exist or is empty")
-            return
+    if not os.path.exists(args.dedup_out) or not os.listdir(args.dedup_out):
+        logging.error(f"Deduplicated tiles directory {args.dedup_out} does not exist or is empty")
+        return
 
-        logging.info("Merging and deduplicating all tiles")
-        if not os.path.exists(os.path.join(args.merge_out, "done")):
-            merge_tiles(args.dedup_out, merged_file, args.parallel_processes)
+    logging.info("Merging and deduplicating all tiles")
+    if not os.path.exists(os.path.join(args.merge_out, "done")):
+        merge_tiles(args.dedup_out, merged_file, args.parallel_processes)
 
-        open(os.path.join(args.merge_out, "done"), 'a').close()
+    open(os.path.join(args.merge_out, "done"), 'a').close()
 
-        if not os.path.exists(merged_file):
-            logging.error(f"Merged file {merged_file} does not exist")
-            return
-        
-        logging.info("Writing compressed tiles")
-        if not os.path.exists(os.path.join(args.tiles_out, "done")):
-            distribute_per_file(merged_file, args.tiles_out, args.parallel_processes)
+    if not os.path.exists(merged_file):
+        logging.error(f"Merged file {merged_file} does not exist")
+        return
+    
+    logging.info("Writing compressed tiles")
+    if not os.path.exists(os.path.join(args.tiles_out, "done")):
+        distribute_per_file(merged_file, args.tiles_out, args.parallel_processes)
 
-        open(os.path.join(args.tiles_out, "done"), 'a').close()
+    open(os.path.join(args.tiles_out, "done"), 'a').close()
 
     if not os.path.exists(args.tiles_out) or not os.listdir(args.tiles_out):
         logging.error(f"Final puck file directory {args.tiles_out} does not exist or is empty")
         return
+    
+    logging.info("Cleaning temporary directories and files")
+    for d in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
+        if os.path.exists(d):
+            os.remove(d)
 
     # TODO: create a file with statistics (how many tiles are created, how many barcodes, how many deduplicated)
     logging.info("Flowcell mapping completed successfully")
