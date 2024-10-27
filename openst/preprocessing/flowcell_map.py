@@ -407,7 +407,7 @@ def _run_flowcell_map(args: argparse.Namespace):
         logging.warning(f"Created output directory: {args.tiles_out}")
 
     run_info_path = os.path.join(args.bcl_in, "RunInfo.xml")
-    if not os.path.exists(run_info_path):
+    if os.path.exists(run_info_path):
         lanes_and_tiles = parse_run_info_xml(run_info_path)
     else:
         logging.warning(f"RunInfo.xml not found at {run_info_path}. Generating lanes and tiles programmatically.")
