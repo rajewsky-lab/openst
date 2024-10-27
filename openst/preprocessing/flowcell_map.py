@@ -14,7 +14,6 @@ from typing import List, Tuple
 import csv
 import gzip
 import resource
-import itertools
 import shutil
 
 from tqdm import tqdm
