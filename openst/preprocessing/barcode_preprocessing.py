@@ -23,30 +23,43 @@ def process_multiple_tiles(
 ):
     current_tile_number = None
     n_written = 0
-    with dnaio.open(in_fastq) as f:
-        for line in f:
-            lane, tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.name)
-            if current_tile_number != tile_number:
+    tile_file = None
 
-                if current_tile_number is not None:
-                    logging.info(f"Written {n_written} spatial barcodes to {lane}_{current_tile_number}")
-                    tile_file.close()
+    def open_output_file(filename: str):
+        """Helper function to open file with appropriate compression"""
+        if filename.endswith('.gz'):
+            return gzip.open(filename, 'wt')
+        return open(filename, 'w')
 
-                current_tile_number = tile_number
+    try:
+        with dnaio.open(in_fastq) as f:
+            for line in f:
+                lane, tile_number, xcoord, ycoord = get_tile_number_and_coordinates(line.name)
+                if current_tile_number != tile_number:
 
-                tile_fname = os.path.join(
-                                out_path,
-                                out_prefix + lane + "_" + current_tile_number + out_suffix,
-                            )
+                    if current_tile_number is not None:
+                        logging.info(f"Written {n_written} spatial barcodes to {lane}_{current_tile_number}")
+                        tile_file.close()
 
-                tile_file = open(tile_fname, "w")
-                tile_file.write("\t".join(["cell_bc", "xcoord", "ycoord"])+"\n")
-                n_written = 0
+                    current_tile_number = tile_number
 
-            sequence = sequence_preprocessor(line.sequence) if sequence_preprocessor is not None else line.sequence
-            tile_file.write("\t".join([sequence, xcoord, ycoord])+"\n")
-            n_written += 1
+                    tile_fname = os.path.join(
+                                    out_path,
+                                    out_prefix + lane + "_" + current_tile_number + out_suffix,
+                                )
 
+                    tile_file = open_output_file(tile_fname)
+                    tile_file.write("\t".join(["cell_bc", "xcoord", "ycoord"])+"\n")
+                    n_written = 0
+
+                sequence = sequence_preprocessor(line.sequence) if sequence_preprocessor is not None else line.sequence
+                tile_file.write("\t".join([sequence, xcoord, ycoord])+"\n")
+                n_written += 1
+    finally:
+        if tile_file is not None:
+            if current_tile_number is not None:
+                logging.info(f"Written {n_written} spatial barcodes to {lane}_{current_tile_number}")
+            tile_file.close()
 
 def process_single_tile(in_fastq: str, sequence_preprocessor: callable = None) -> pd.DataFrame:
     all_tile_numbers = set()
