@@ -6,7 +6,7 @@ leveraging the **Open-ST** workflow (experimental and computational).
 ## Datasets
 
 We provide raw data, instructions on how to reproduce the preprocessing pipeline, the corresponding preprocessed
-data (for comparison), and notebooks for some exploratory visualization and downstream analysis. We publicly provide mouse datasets, showcased in the [paper](https://authors.elsevier.com/c/1jJckL7PXqR3U).
+data (for comparison), and notebooks for some exploratory visualization and downstream analysis. We publicly provide mouse datasets, showcased in the [paper](https://doi.org/10.1016/j.cell.2024.05.055).
 
 <div class="grid cards" markdown>
 
