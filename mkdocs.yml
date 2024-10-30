@@ -45,10 +45,10 @@ nav:
       - Exploratory analysis (Jupyter): static/examples/notebooks/e13_head_eda.ipynb
     - (3D) Metastatic Lymph Node:
       - Introduction: examples/human_metastatic/introduction.md
-      - Environment setup: examples/human_metastatic/0_environment.md
-      - Preprocessing sequencing data: examples/human_metastatic/1_spacemake.md
-      - Alignment and single-cell quantification: examples/human_metastatic/2_openst.md
-      - 3D reconstruction: examples/human_metastatic/3_stim.md
+      - Environment setup: examples/human_metastatic/0_environment.ipynb
+      - Preprocessing sequencing data: examples/human_metastatic/1_spacemake.ipynb
+      - Alignment and single-cell quantification: examples/human_metastatic/2_openst.ipynb
+      - 3D reconstruction: examples/human_metastatic/3_stim.ipynb
 
 theme:
   name: material
