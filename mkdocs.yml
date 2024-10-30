@@ -43,6 +43,12 @@ nav:
       - Pairwise alignment: examples/e13_mouse/pairwise_alignment.md
       - Segmentation and single-cell quantification: examples/e13_mouse/generate_expression_matrix.md
       - Exploratory analysis (Jupyter): static/examples/notebooks/e13_head_eda.ipynb
+    - (3D) Metastatic Lymph Node:
+      - Introduction: examples/human_metastatic/introduction.md
+      - Environment setup: examples/human_metastatic/0_environment.md
+      - Preprocessing sequencing data: examples/human_metastatic/1_spacemake.md
+      - Alignment and single-cell quantification: examples/human_metastatic/2_openst.md
+      - 3D reconstruction: examples/human_metastatic/3_stim.md
 
 theme:
   name: material
