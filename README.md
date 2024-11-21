@@ -1,4 +1,5 @@
 [![docs](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docs.yml)
+[![DOI](https://zenodo.org/badge/688846984.svg)](https://doi.org/10.5281/zenodo.14197712)
 [![Publish Docker image](https://github.com/rajewsky-lab/openst/actions/workflows/docker_hub.yml/badge.svg)](https://github.com/rajewsky-lab/openst/actions/workflows/docker_hub.yml)
 [![Downloads](https://pepy.tech/badge/openst)](https://pepy.tech/project/openst)
 [![PyPI Version](https://img.shields.io/pypi/v/openst.svg)](https://pypi.org/project/openst)
