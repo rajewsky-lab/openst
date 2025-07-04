@@ -125,16 +125,16 @@ wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/e13_mouse_hea
 tar -xvf e13_mouse_head_tiles.tar.xz
 
 spacemake projects add_sample \
-    --project_id openst_demo \
-    --sample_id openst_demo_e13_mouse_head \
+    --project-id openst_demo \
+    --sample-id openst_demo_e13_mouse_head \
     --R1 e13_mouse_head_R1_001.fastq.gz e13_mouse_head_reseq_R1_001.fastq.gz \
     --R2 e13_mouse_head_R2_001.fastq.gz e13_mouse_head_reseq_R2_001.fastq.gz \
     --species mouse \
     --puck openst \
-    --run_mode openst \
+    --run-mode openst \
     --barcode_flavor openst \
-    --puck_barcode_file e13_mouse_head_tiles/*.txt.gz \
-    --map_strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
+    --puck-barcode-file e13_mouse_head_tiles/*.txt.gz \
+    --map-strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
 ```
 
 You can specify the coordinate system by modifying the `openst` run mode in the `config.yaml` file that is created

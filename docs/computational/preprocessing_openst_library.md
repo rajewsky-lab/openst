@@ -17,15 +17,15 @@ an Open-ST sample can be added:
 
 ```bash
 spacemake projects add_sample \
-   --project_id <project_id> \
-   --sample_id <sample_id> \
+   --project-id <project_id> \
+   --sample-id <sample_id> \
    --R1 <path_to_R1.fastq.gz> \ # single R1 or several R1 files
    --R2 <path_to_R2.fastq.gz> \ # single R2 or several R2 files
    --species <species> \
    --puck openst \
-   --puck_barcode_file <path_to_puck_barcode_file.tsv.gz> \
+   --puck-barcode-file <path_to_puck_barcode_file.tsv.gz> \
    --run_mode openst \
-   --barcode_flavor openst
+   --barcode-flavor openst
 ```
 
 The above will add a new Open-ST project with `barcode_flavor`, `run_mode`, `puck` all set to `openst`.

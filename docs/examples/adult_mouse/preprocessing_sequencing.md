@@ -123,16 +123,16 @@ wget "http://bimsbstatic.mdc-berlin.de/rajewsky/openst-public-data/adult_hippoca
 tar -xvf adult_hippocampus_tiles.tar.xz
 
 spacemake projects add_sample \
-    --project_id openst_demo \
-    --sample_id openst_demo_adult_mouse \
+    --project-id openst_demo \
+    --sample-id openst_demo_adult_mouse \
     --R1 adult_mouse_hippocampus_R1_001.fastq.gz \
     --R2 adult_mouse_hippocampus_R2_001.fastq.gz \
     --species mouse \
     --puck openst \
     --run_mode openst \
-    --barcode_flavor openst \
-    --puck_barcode_file adult_hippocampus_tiles/*.txt.gz \
-    --map_strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
+    --barcode-flavor openst \
+    --puck-barcode-file adult_hippocampus_tiles/*.txt.gz \
+    --map-strategy "bowtie2:phiX->bowtie2:rRNA->STAR:genome:final"
 ```
 
 You can specify the coordinate system by modifying the `openst` run mode in the `config.yaml` file that is created
