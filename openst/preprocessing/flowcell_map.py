@@ -480,7 +480,10 @@ def _run_flowcell_map(args: argparse.Namespace):
     logging.info("Cleaning temporary directories and files")
     for d in [args.bcl_out, args.tilecoords_out, args.dedup_out, args.merge_out, args.distribute_out]:
         if os.path.exists(d):
-            os.remove(d)
+            if os.path.isdir(d):
+                shutil.rmtree(d)
+            elif os.path.isfile(d):
+                os.remove(d)
 
     # TODO: create a file with statistics (how many tiles are created, how many barcodes, how many deduplicated)
     logging.info("Flowcell mapping completed successfully")
