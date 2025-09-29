@@ -658,7 +658,7 @@ class ImageAlignmentApp(QMainWindow):
         self.point_size_slider_label = QLabel("Point size", self)
         self.point_size_slider = QSlider(Qt.Horizontal)
         self.point_size_slider.setMinimum(1)
-        self.point_size_slider.setMaximum(200)
+        self.point_size_slider.setMaximum(300)
         self.point_size_slider.setValue(100)
         lay.addWidget(self.point_size_slider_label)
         lay.addWidget(self.point_size_slider)
